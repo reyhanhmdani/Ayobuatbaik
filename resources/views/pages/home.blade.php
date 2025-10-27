@@ -1,4 +1,4 @@
-@extends('components.layout.app-padded')
+@extends('components.layout.app')
 
 @section('title', 'Ayobuatbaik - Platform Donasi Digital')
 
@@ -9,7 +9,7 @@
 
 @section('content')
 <!-- About Section -->
-<section class="mb-12">
+<section class="px-4 py-8 mb-12">
     <div class="text-center mb-8">
         <h2 class="text-2xl font-bold text-primary mb-3">Tentang Ayobuatbaik</h2>
         <div class="w-20 h-1 bg-secondary mx-auto mb-4"></div>
@@ -58,7 +58,7 @@
     </div>
 </section>
 <!-- Program Section -->
-<section class="mb-12" id="program">
+<section class="px-4 py-8 mb-12" id="program">
     <div class="text-center mb-8">
         <h2 class="text-2xl font-bold text-primary mb-3">Program Donasi</h2>
         <div class="w-20 h-1 bg-secondary mx-auto mb-4"></div>
@@ -188,7 +188,7 @@
     </div>
 </section>
 <!-- Berita Section -->
-<section class="mb-12" id="berita">
+<section class="px-4 py-8 mb-12" id="berita">
     <div class="mb-8">
         <h2 class="text-xl font-bold text-primary mb-2">Berita & Artikel</h2>
         <p class="text-gray-500 text-sm">Update terbaru program dan artikel inspiratif</p>
@@ -268,7 +268,6 @@
         </button>
     </div>
 </section>
-
 @include('components.layout.footer')
 @endsection
 

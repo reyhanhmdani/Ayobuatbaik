@@ -5,7 +5,7 @@
             <span class="text-xs">Home</span>
         </a>
 
-        <a href="/program" class="mobile-nav-item text-primary">
+        <a href="/programs" class="mobile-nav-item text-primary">
             <i class="fas fa-hand-holding-heart text-lg mb-1"></i>
             <span class="text-xs">Program</span>
         </a>
