@@ -52,7 +52,7 @@ body {
 }
 
 .slider-dot.active {
-    background-color: #d4af37;
+    background-color: #febe10;
     transform: scale(1.2);
     opacity: 1;
 }
@@ -77,9 +77,9 @@ body {
 }
 
 /* Features Section */
-.features-section {
+/* .features-section {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
+} */
 
 /* Mobile Navigation */
 .mobile-nav {
@@ -107,7 +107,7 @@ body {
 }
 
 .mobile-nav-item.active {
-    color: #d4af37;
+    color: #16a34a;
 }
 
 .mobile-nav-item:active {
@@ -133,13 +133,13 @@ body {
 }
 
 .tab-button.active {
-    color: #d4af37;
-    border-bottom: 2px solid #d4af37;
+    color: #e5b121;
+    border-bottom: 2px solid #e5b121;
 }
 
 /* Donation Styles */
 .donation-btn {
-    background: linear-gradient(135deg, #d4af37, #dfd86f, #b8860b);
+    background: linear-gradient(135deg, #e5b121, #dfd86f, #b8860b);
     color: white;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -160,11 +160,11 @@ body {
 }
 
 .amount-option:hover {
-    border-color: #d4af37;
+    border-color: #e5b121;
 }
 
 .amount-option.selected {
-    border-color: #d4af37;
+    border-color: #e5b121;
     background-color: rgba(212, 175, 55, 0.1);
 }
 
@@ -179,9 +179,9 @@ body {
 }
 
 .filter-option.active {
-    background-color: #d4af37;
+    background-color: #e5b121;
     color: white;
-    border-color: #d4af37;
+    border-color: #e5b121;
 }
 
 /* Search Bar */
@@ -207,7 +207,7 @@ body {
     position: absolute;
     top: 10px;
     left: 10px;
-    background: rgba(212, 175, 55, 0.9);
+    background: #e5b121;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;
@@ -258,7 +258,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #d4af37;
+    background: #e5b121;
     border-radius: 10px;
 }
 
@@ -330,7 +330,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #d4af37;
+    background: #e5b121;
     border-radius: 10px;
 }
 
@@ -357,3 +357,5 @@ body {
     object-fit: cover;
     border-radius: 8px;
 }
+
+/* ADMIN */

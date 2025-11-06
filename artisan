@@ -1,15 +1,31 @@
 #!/usr/bin/env php
 <?php
+use Illuminate\Contracts\Console\Kernel;
 
-use Symfony\Component\Console\Input\ArgvInput;
+define("LARAVEL_START", microtime(true));
 
-define('LARAVEL_START', microtime(true));
+require __DIR__ . "/vendor/autoload.php";
 
-// Register the Composer autoloader...
-require __DIR__.'/vendor/autoload.php';
+$app = require_once __DIR__ . "/bootstrap/app.php";
 
-// Bootstrap Laravel and handle the command...
-$status = (require_once __DIR__.'/bootstrap/app.php')
-    ->handleCommand(new ArgvInput);
+/*
+|--------------------------------------------------------------------------
+| Run The Artisan Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming console command
+| through the kernel, and send the responses back to this console.
+|
+*/
+
+$kernel = $app->make(Kernel::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput(),
+    new Symfony\Component\Console\Output\ConsoleOutput(),
+);
+
+$kernel->terminate($input, $status);
 
 exit($status);
+

@@ -1,6 +1,6 @@
 <nav class="mobile-nav">
     <div class="flex justify-between items-center px-2">
-        <a href="#" class="mobile-nav-item text-primary active">
+        <a href="{{ route('pages.home') }}" class="mobile-nav-item text-primary active">
             <i class="fas fa-home text-lg mb-1"></i>
             <span class="text-xs">Home</span>
         </a>
@@ -22,10 +22,19 @@
         </div>
 
         <!-- Akun Menu for Mobile -->
+        @auth
+        <!-- Jika sudah login, redirect ke admin -->
         <div class="mobile-nav-item text-primary" id="akun-menu-toggle">
+            <i class="fas fa-user-shield text-lg mb-1"></i>
+            <span class="text-xs">Admin</span>
+        </div>
+        @else
+        <!-- Jika belum login, tampilkan login -->
+        <a href="{{ route('login') }}" class="mobile-nav-item text-primary">
             <i class="fas fa-user text-lg mb-1"></i>
             <span class="text-xs">Akun</span>
-        </div>
+        </a>
+        @endauth
     </div>
 
     <!-- Mobile Kitab Menu -->
@@ -57,31 +66,30 @@
     <!-- Mobile Akun Menu -->
     <div class="hidden bg-white border-t border-gray-200 pt-3 pb-2 px-4" id="akun-menu">
         <div class="space-y-2">
-            <a href="/profile"
+            @auth
+            <!-- Jika sudah login -->
+            <a href="{{ route('admin.dashboard') }}"
                 class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-user-edit mr-3"></i>
-                <span>Profil Saya</span>
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                <span>Dashboard</span>
             </a>
-            <a href="/donations"
+
+            <form action="{{ route('logout') }}" method="POST" class="w-full">
+                @csrf
+                <button type="submit"
+                    class="flex items-center p-3 rounded-lg bg-red-50 hover:bg-red-500 hover:text-white transition-colors text-sm text-red-600 w-full text-left">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Keluar</span>
+                </button>
+            </form>
+            @else
+            <!-- Jika belum login -->
+            <a href="{{ route('login') }}"
                 class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-history mr-3"></i>
-                <span>Riwayat Donasi</span>
+                <i class="fas fa-sign-in-alt mr-3"></i>
+                <span>Login Admin</span>
             </a>
-            <a href="/bookmarks"
-                class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-bookmark mr-3"></i>
-                <span>Program Tersimpan</span>
-            </a>
-            <a href="/settings"
-                class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-cog mr-3"></i>
-                <span>Pengaturan</span>
-            </a>
-            <a href="/logout"
-                class="flex items-center p-3 rounded-lg bg-red-50 hover:bg-red-500 hover:text-white transition-colors text-sm text-red-600">
-                <i class="fas fa-sign-out-alt mr-3"></i>
-                <span>Keluar</span>
-            </a>
+            @endauth
         </div>
     </div>
 </nav>

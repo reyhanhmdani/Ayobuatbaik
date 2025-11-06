@@ -56,244 +56,205 @@
     </div>
 
     <!-- Programs List -->
-    <div class="p-4">
-        <!-- Program 1 -->
-        <div class="program-card bg-white shadow-md mb-4" data-category="pendidikan">
-            <div class="relative">
+    <div class="p-4 pb-24">
+        <!-- Program: Pendidikan -->
+        <a href="/program/beasiswa-santri-selfa"
+            class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28 mb-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+            data-category="pendidikan">
+            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
                 <img src="{{ asset('assets/img/beasiswaashabi.jpeg') }}" alt="Beasiswa Santri Selfa"
-                    class="w-full h-auto object-cover" loading="lazy">
-
-                <div class="category-badge">Pendidikan</div>
+                    class="w-full h-full object-cover" loading="lazy">
             </div>
-            <div class="p-4">
-                <h3 class="font-bold text-lg mb-2">Beasiswa Santri Selfa</h3>
-                <p class="text-gray-600 text-sm mb-3">Bantu pendidikan santri berprestasi dari keluarga kurang mampu</p>
-
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs text-gray-800 mb-1">
+            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                <div>
+                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">Beasiswa Santri Selfa</h3>
+                    <p class="text-gray-600 text-[10px] mt-0.5">
+                        Bantu pendidikan santri berprestasi dari keluarga kurang mampu
+                    </p>
+                </div>
+                <div class="mt-1">
+                    <div class="flex justify-between text-[10px] text-gray-800 mb-0.5">
                         <span class="font-semibold">Terkumpul: Rp 119.373.780</span>
-                        <span class="text-gray-500">85%</span>
+                        <span class="text-gray-500">Sisa hari: ∞</span>
                     </div>
-                    <div class="progress-bar-simple bg-gray-200">
-                        <div class="progress-fill-simple bg-secondary" style="width: 85%"></div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-secondary h-1.5 rounded-full" style="width: 85%"></div>
                     </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Target: Rp 140.000.000</span>
-                        <span>∞ hari lagi</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center text-xs text-gray-600">
-                        <i class="fas fa-users text-secondary mr-1"></i>
-                        <span>1.245 donatur</span>
-                    </div>
-                    <button
-                        class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
-                        Donasi
-                    </button>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <!-- Program 2 -->
-        <div class="program-card bg-white shadow-md mb-4" data-category="kemanusiaan">
-            <div class="relative">
+        <!-- Program: Kemanusiaan -->
+        <a href="/program/si-jum"
+            class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28 mb-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+            data-category="kemanusiaan">
+            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
                 <img src="{{ asset('assets/img/ontheroad.jpg') }}" alt="Si Jum On The Road"
-                    class="w-full h-auto object-cover" loading="lazy">
-                <div class="category-badge">Kemanusiaan</div>
+                    class="w-full h-full object-cover" loading="lazy">
             </div>
-            <div class="p-4">
-                <h3 class="font-bold text-lg mb-2">Si Jum On The Road</h3>
-                <p class="text-gray-600 text-sm mb-3">Program bakti sosial keliling membantu masyarakat kurang mampu</p>
-
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs text-gray-800 mb-1">
+            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                <div>
+                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">Si Jum On The Road</h3>
+                    <p class="text-gray-600 text-[10px] mt-0.5">
+                        Program bakti sosial keliling membantu masyarakat kurang mampu
+                    </p>
+                </div>
+                <div class="mt-1">
+                    <div class="flex justify-between text-[10px] text-gray-800 mb-0.5">
                         <span class="font-semibold">Terkumpul: Rp 48.060.534</span>
-                        <span class="text-gray-500">60%</span>
+                        <span class="text-gray-500">Sisa hari: ∞</span>
                     </div>
-                    <div class="progress-bar-simple bg-gray-200">
-                        <div class="progress-fill-simple bg-secondary" style="width: 60%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Target: Rp 80.000.000</span>
-                        <span>∞ hari lagi</span>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-secondary h-1.5 rounded-full" style="width: 60%"></div>
                     </div>
                 </div>
+            </div>
+        </a>
 
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center text-xs text-gray-600">
-                        <i class="fas fa-users text-secondary mr-1"></i>
-                        <span>892 donatur</span>
-                    </div>
-                    <button
-                        class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
-                        Donasi
-                    </button>
+        <!-- Program: Wakaf -->
+        <a href="/program/wakaf-lahan"
+            class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28 mb-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+            data-category="wakaf">
+            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
+                <img src="{{ asset('assets/img/wakaf.jpeg') }}" alt="Wakaf Produktif" class="w-full h-full object-cover"
+                    loading="lazy">
+            </div>
+            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                <div>
+                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">
+                        Wakaf Produktif Perluasan Lahan
+                    </h3>
+                    <p class="text-gray-600 text-[10px] mt-0.5">
+                        Wakaf untuk pengembangan lahan produktif masyarakat
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Program 3 -->
-        <div class="program-card bg-white shadow-md mb-4" data-category="wakaf">
-            <div class="relative">
-                <img src="{{ asset('assets/img/wakaf.jpeg') }}" alt="Wakaf Produktif Perluasan Lahan"
-                    class="w-full h-auto object-cover" loading="lazy">
-                <div class="category-badge">Wakaf</div>
-            </div>
-            <div class="p-4">
-                <h3 class="font-bold text-lg mb-2">Wakaf Produktif Perluasan Lahan</h3>
-                <p class="text-gray-600 text-sm mb-3">Wakaf untuk pengembangan lahan produktif masyarakat</p>
-
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs text-gray-800 mb-1">
+                <div class="mt-1">
+                    <div class="flex justify-between text-[10px] text-gray-800 mb-0.5">
                         <span class="font-semibold">Terkumpul: Rp 175.500.000</span>
-                        <span class="text-gray-500">70%</span>
+                        <span class="text-gray-500">Sisa hari: ∞</span>
                     </div>
-                    <div class="progress-bar-simple bg-gray-200">
-                        <div class="progress-fill-simple bg-secondary" style="width: 70%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Target: Rp 250.000.000</span>
-                        <span>∞ hari lagi</span>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-secondary h-1.5 rounded-full" style="width: 70%"></div>
                     </div>
                 </div>
+            </div>
+        </a>
 
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center text-xs text-gray-600">
-                        <i class="fas fa-users text-secondary mr-1"></i>
-                        <span>2.134 donatur</span>
-                    </div>
-                    <button
-                        class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
-                        Donasi
-                    </button>
+        <!-- Program: Kesehatan -->
+        <a href="/program/bantuan-kesehatan"
+            class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28 mb-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+            data-category="kesehatan">
+            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=1170&q=80"
+                    alt="Bantuan Kesehatan" class="w-full h-full object-cover">
+            </div>
+            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                <div>
+                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">Bantuan Operasi Katarak</h3>
+                    <p class="text-gray-600 text-[10px] mt-0.5">
+                        Bantu operasi katarak gratis untuk lansia tidak mampu
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Program 4 -->
-        <div class="program-card bg-white shadow-md mb-4" data-category="kesehatan">
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-                    alt="Bantuan Kesehatan" class="w-full h-48 object-cover">
-                <div class="category-badge">Kesehatan</div>
-            </div>
-            <div class="p-4">
-                <h3 class="font-bold text-lg mb-2">Bantuan Operasi Katarak</h3>
-                <p class="text-gray-600 text-sm mb-3">Bantu operasi katarak gratis untuk lansia tidak mampu</p>
-
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs text-gray-800 mb-1">
+                <div class="mt-1">
+                    <div class="flex justify-between text-[10px] text-gray-800 mb-0.5">
                         <span class="font-semibold">Terkumpul: Rp 89.250.000</span>
-                        <span class="text-gray-500">45%</span>
+                        <span class="text-gray-500">Sisa hari: 45</span>
                     </div>
-                    <div class="progress-bar-simple bg-gray-200">
-                        <div class="progress-fill-simple bg-secondary" style="width: 45%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Target: Rp 200.000.000</span>
-                        <span>45 hari lagi</span>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-secondary h-1.5 rounded-full" style="width: 45%"></div>
                     </div>
                 </div>
+            </div>
+        </a>
 
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center text-xs text-gray-600">
-                        <i class="fas fa-users text-secondary mr-1"></i>
-                        <span>567 donatur</span>
-                    </div>
-                    <button
-                        class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
-                        Donasi
-                    </button>
+        <!-- Program: Bencana Alam -->
+        <a href="/program/bantuan-bencana"
+            class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28 mb-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+            data-category="bencana">
+            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1583324113626-70b8f5d2d6ae?auto=format&fit=crop&w=1170&q=80"
+                    alt="Bantuan Bencana" class="w-full h-full object-cover">
+            </div>
+            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                <div>
+                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">
+                        Bantuan Korban Gempa Lombok
+                    </h3>
+                    <p class="text-gray-600 text-[10px] mt-0.5">Bantuan darurat untuk korban gempa di Lombok</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Program 5 -->
-        <div class="program-card bg-white shadow-md mb-4" data-category="bencana">
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1583324113626-70b8f5d2d6ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-                    alt="Bantuan Bencana" class="w-full h-48 object-cover">
-                <div class="category-badge">Bencana Alam</div>
-            </div>
-            <div class="p-4">
-                <h3 class="font-bold text-lg mb-2">Bantuan Korban Gempa Lombok</h3>
-                <p class="text-gray-600 text-sm mb-3">Bantuan darurat untuk korban gempa di Lombok</p>
-
-                <div class="mb-3">
-                    <div class="flex justify-between text-xs text-gray-800 mb-1">
+                <div class="mt-1">
+                    <div class="flex justify-between text-[10px] text-gray-800 mb-0.5">
                         <span class="font-semibold">Terkumpul: Rp 325.780.000</span>
-                        <span class="text-gray-500">92%</span>
+                        <span class="text-gray-500">Sisa hari: 15</span>
                     </div>
-                    <div class="progress-bar-simple bg-gray-200">
-                        <div class="progress-fill-simple bg-secondary" style="width: 92%"></div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-secondary h-1.5 rounded-full" style="width: 92%"></div>
                     </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Target: Rp 350.000.000</span>
-                        <span>15 hari lagi</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center text-xs text-gray-600">
-                        <i class="fas fa-users text-secondary mr-1"></i>
-                        <span>3.421 donatur</span>
-                    </div>
-                    <button
-                        class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
-                        Donasi
-                    </button>
                 </div>
             </div>
-        </div>
+        </a>
+
     </div>
+
+
 </div>
 @endsection
 
 
 @section('scripts')
+<script src="//unpkg.com/alpinejs" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    // Filter functionality
     const filterButtons = document.querySelectorAll(".filter-option");
     const programCards = document.querySelectorAll(".program-card");
-
-    filterButtons.forEach(button => {
-        button.addEventListener("click", function() {
-            const filter = this.getAttribute("data-filter");
-
-            // Update active filter button
-            filterButtons.forEach(btn => btn.classList.remove("active"));
-            this.classList.add("active");
-
-            // Filter programs
-            programCards.forEach(card => {
-                if (filter === "all" || card.getAttribute("data-category") === filter) {
-                    card.style.display = "block";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-        });
-    });
-
-    // Search functionality
     const searchInput = document.querySelector('input[type="text"]');
-    searchInput.addEventListener("input", function() {
-        const searchTerm = this.value.toLowerCase();
+
+    let activeFilter = "all"; // menyimpan filter aktif
+
+    // Fungsi untuk update tampilan card
+    function updateCards() {
+        const searchTerm = searchInput.value.toLowerCase();
 
         programCards.forEach(card => {
+            const matchesFilter =
+                activeFilter === "all" ||
+                card.getAttribute("data-category") === activeFilter;
             const title = card.querySelector("h3").textContent.toLowerCase();
             const description = card.querySelector("p").textContent.toLowerCase();
+            const matchesSearch =
+                title.includes(searchTerm) || description.includes(searchTerm);
 
-            if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                card.style.display = "block";
+            if (matchesFilter && matchesSearch) {
+                card.classList.remove("hidden");
+                card.classList.add("flex");
             } else {
-                card.style.display = "none";
+                card.classList.add("hidden");
+                card.classList.remove("flex");
             }
         });
+    }
+
+    // Klik tombol kategori
+    filterButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            activeFilter = this.getAttribute("data-filter");
+
+            // update tombol aktif
+            filterButtons.forEach(btn => btn.classList.remove("active", "bg-primary", "text-white"));
+            this.classList.add("active", "bg-primary", "text-white");
+
+            updateCards();
+        });
     });
+
+    // Input pencarian
+    if (searchInput) {
+        searchInput.addEventListener("input", updateCards);
+    }
+
+    // Inisialisasi awal (tampilkan semua)
+    updateCards();
 });
 </script>
+
 @endsection
