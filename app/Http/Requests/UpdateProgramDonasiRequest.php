@@ -19,7 +19,7 @@ class UpdateProgramDonasiRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
 
-            'slug' => ['required', 'string', Rule::unique('program_donasi', 'slug')->ignore($programId)],
+            'slug' => ['nullable', 'string', Rule::unique('program_donasi', 'slug')->ignore($programId)],
 
             'kategori_id' => 'required|exists:kategori_donasi,id',
             'penggalang_id' => 'required|exists:penggalang_dana,id',

@@ -22,7 +22,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.programs.update', $programs->id) }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('admin.programs.update', $program->id) }}" method="POST" enctype="multipart/form-data"
                 class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -30,7 +30,7 @@
                 <!-- Judul -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Judul Program</label>
-                    <input type="text" name="title" value="{{ old('title', $programs->title) }}"
+                    <input type="text" name="title" value="{{ old('title', $program->title) }}"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0"
                         placeholder="Masukkan judul program">
                 </div>
@@ -42,7 +42,7 @@
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0">
                         @foreach ($kategories as $kategori)
                             <option value="{{ $kategori->id }}"
-                                {{ $programs->kategori_id == $kategori->id ? 'selected' : '' }}>
+                                {{ $program->kategori_id == $kategori->id ? 'selected' : '' }}>
                                 {{ $kategori->name }}
                             </option>
                         @endforeach
@@ -56,7 +56,7 @@
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0">
                         @foreach ($penggalangs as $penggalang)
                             <option value="{{ $penggalang->id }}"
-                                {{ $programs->penggalang_id == $penggalang->id ? 'selected' : '' }}>
+                                {{ $program->penggalang_id == $penggalang->id ? 'selected' : '' }}>
                                 {{ $penggalang->nama }}
                             </option>
                         @endforeach
@@ -66,7 +66,7 @@
                 <!-- Target -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Target Donasi (Rp)</label>
-                    <input type="number" name="target_amount" value="{{ old('target_amount', $programs->target_amount) }}"
+                    <input type="number" name="target_amount" value="{{ old('target_amount', $program->target_amount) }}"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0" min="0">
                 </div>
 
@@ -74,29 +74,29 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Terkumpul (Rp)</label>
                     <input type="number" name="collected_amount"
-                        value="{{ old('collected_amount', $programs->collected_amount) }}"
+                        value="{{ old('collected_amount', $program->collected_amount) }}"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0" readonly>
                 </div>
 
                 <!-- Start Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                    <input type="date" name="start_date" value="{{ old('start_date', $programs->start_date) }}"
+                    <input type="date" name="start_date" value="{{ old('start_date', $program->start_date) }}"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0">
                 </div>
 
                 <!-- End Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Berakhir (opsional)</label>
-                    <input type="date" name="end_date" value="{{ old('end_date', $programs->end_date) }}"
+                    <input type="date" name="end_date" value="{{ old('end_date', $program->end_date) }}"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0">
                 </div>
 
                 <!-- Gambar -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Gambar Program</label>
-                    @if ($programs->gambar)
-                        <img src="{{ asset('storage/' . $programs->gambar) }}"
+                    @if ($program->gambar)
+                        <img src="{{ asset('storage/' . $program->gambar) }}"
                             class="w-32 h-20 object-cover mb-2 rounded-md">
                     @endif
                     <input type="file" name="gambar" accept="image/*"
@@ -107,7 +107,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
                     <input type="text" name="short_description"
-                        value="{{ old('short_description', $programs->short_description) }}"
+                        value="{{ old('short_description', $program->short_description) }}"
                         class="w-full border rounded px-3 py-2" placeholder="Tuliskan ringkasan singkat program">
                 </div>
 
@@ -116,11 +116,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status"
                         class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0">
-                        <option value="active" {{ old('status', $programs->status) == 'active' ? 'selected' : '' }}>Aktif
+                        <option value="active" {{ old('status', $program->status) == 'active' ? 'selected' : '' }}>Aktif
                         </option>
-                        <option value="closed" {{ old('status', $programs->status) == 'closed' ? 'selected' : '' }}>
+                        <option value="closed" {{ old('status', $program->status) == 'closed' ? 'selected' : '' }}>
                             Nonaktif</option>
-                        <option value="archived" {{ old('status', $programs->status) == 'archived' ? 'selected' : '' }}>
+                        <option value="draft" {{ old('status', $program->status) == 'draft' ? 'selected' : '' }}>
                             Draft</option>
                     </select>
                 </div>
@@ -129,7 +129,7 @@
                 <div>
                     <label class="inline-flex items-center space-x-2">
                         <input type="checkbox" name="verified" value="1"
-                            {{ old('verified', $programs->verified) ? 'checked' : '' }}
+                            {{ old('verified', $program->verified) ? 'checked' : '' }}
                             class="rounded text-primary focus:ring-primary">
                         <span class="text-sm text-gray-700">Terverifikasi</span>
                     </label>
@@ -139,7 +139,7 @@
                 <div>
                     <label class="inline-flex items-center space-x-2">
                         <input type="checkbox" name="featured" value="1"
-                            {{ old('featured', $programs->featured) ? 'checked' : '' }}
+                            {{ old('featured', $program->featured) ? 'checked' : '' }}
                             class="rounded text-primary focus:ring-primary">
                         <span class="text-sm text-gray-700">Program Pilihan</span>
                     </label>
@@ -148,7 +148,7 @@
                 <!-- Deskripsi -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Lengkap</label>
-                    <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi', $programs->deskripsi) }}</textarea>
+                    <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi', $program->deskripsi) }}</textarea>
                 </div>
 
 

@@ -113,35 +113,42 @@ class ProgramDonasiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Slider $slider)
+    public function edit(ProgramDonasi $program)
     {
-        return view('admin.sliders.edit', compact('slider'));
+        $kategories = KategoriDonasi::all();
+        $penggalangs = PenggalangDana::all();
+
+        return view('pages.admin.programs.edit', compact('program', 'kategories', 'penggalangs'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProgramDonasiRequest $request, string $id)
+    public function update(UpdateProgramDonasiRequest $request, ProgramDonasi $program)
     {
-        $program = ProgramDonasi::findOrFail($id);
         $validated = $request->validated();
 
-        // Update slug otomatis jika title berubah
+        // Slug otomatis dari title
         $validated['slug'] = Str::slug($validated['title']);
 
-        // Checkbox harus pakai has()
+        // Checkbox
         $validated['verified'] = $request->has('verified');
         $validated['featured'] = $request->has('featured');
 
+        // Status default
         $validated['status'] = $validated['status'] ?? $program->status;
+
+        // Collected amount harus mempertahankan value lama
         $validated['collected_amount'] = $program->collected_amount;
 
+        // Upload gambar baru
         if ($request->hasFile('gambar')) {
+            // Hapus gambar lama
             if ($program->gambar && Storage::disk('public')->exists($program->gambar)) {
                 Storage::disk('public')->delete($program->gambar);
             }
-            $path = $request->file('gambar')->store('programs', 'public');
-            $validated['gambar'] = $path;
+
+            $validated['gambar'] = $request->file('gambar')->store('programs', 'public');
         }
 
         $program->update($validated);
