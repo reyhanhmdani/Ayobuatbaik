@@ -4,8 +4,9 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PenggalangDanaRequest;
+use App\Http\Requests\StorePenggalangRequest;
+use App\Http\Requests\UpdatePenggalangRequest;
 use App\Models\PenggalangDana;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PenggalangDanaController extends Controller
@@ -16,6 +17,7 @@ class PenggalangDanaController extends Controller
     public function index()
     {
         $penggalangs = PenggalangDana::latest()->paginate(10);
+
         return view('pages.admin.penggalang_dana.index', compact('penggalangs'));
     }
 
@@ -30,7 +32,7 @@ class PenggalangDanaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PenggalangDanaRequest $request)
+    public function store(StorePenggalangRequest $request)
     {
         $validated = $request->validated();
 
@@ -59,13 +61,14 @@ class PenggalangDanaController extends Controller
     public function edit(string $id)
     {
         $penggalang = PenggalangDana::findOrFail($id);
+
         return view('pages.admin.penggalang_dana.edit', compact('penggalang'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PenggalangDanaRequest $request, string $id)
+    public function update(UpdatePenggalangRequest $request, string $id)
     {
         $penggalang = PenggalangDana::findOrFail($id);
         $validated = $request->validated();

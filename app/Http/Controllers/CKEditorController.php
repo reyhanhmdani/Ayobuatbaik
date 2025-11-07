@@ -10,9 +10,9 @@ class CKEditorController extends Controller
     {
         if ($request->hasFile('upload')) {
             $file = $request->file('upload');
-            $fileName = time() . '_' . $file->getClientOriginalName();
+            $fileName = time().'_'.$file->getClientOriginalName();
             $file->storeAs('ckeditor', $fileName, 'public');
-            $url = asset('storage/ckeditor/' . $fileName);
+            $url = asset('storage/ckeditor/'.$fileName);
 
             return response()->json([
                 'uploaded' => 1,

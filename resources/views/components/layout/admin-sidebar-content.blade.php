@@ -21,6 +21,12 @@
         <span>Dashboard</span>
     </a>
 
+    <a href="{{  route('admin.sliders.index') }}"
+        class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.sliders.*') ? 'bg-gray-800' : '' }}">
+        <i class="fas fa-images"></i>
+        <span>Sliders</span>
+    </a>
+
     <a href="{{ route('admin.programs.index') }}"
         class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.programs.*') ? 'bg-gray-800' : '' }}">
         <i class="fas fa-hand-holding-heart w-5"></i>
@@ -29,7 +35,7 @@
 
     <a href="{{ route('admin.kategori_donasi.index') }}"
         class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.kategori_donasi.*') ? 'bg-gray-800' : '' }}">
-        <i class="fas fa-donate w-5"></i>
+        <i class="fas fa-tags w-5"></i>
         <span>Kategori Donasi</span>
     </a>
 

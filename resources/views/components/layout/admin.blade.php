@@ -50,6 +50,14 @@
             background: white;
             min-height: 100vh;
         }
+
+        .truncate-10 {
+            display: inline-block;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 

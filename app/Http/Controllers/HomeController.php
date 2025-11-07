@@ -8,7 +8,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featuredPrograms = ProgramDonasi::where('featured', 1)->where('status', 'published')->orderBy('id', 'desc')->take(3)->get();
+        $featuredPrograms = ProgramDonasi::where('featured', 1)->where('status', 'active')->orderBy('id', 'desc')->take(3)->get();
 
         $otherPrograms = ProgramDonasi::where('featured', 0)->orderBy('id', 'desc')->take(7)->get();
 

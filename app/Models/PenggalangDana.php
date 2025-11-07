@@ -11,11 +11,11 @@ class PenggalangDana extends Model
 
     protected $table = 'penggalang_dana';
 
-    protected $fillable  = [
+    protected $fillable = [
         'nama',
         'tipe',
         'kontak',
-        'foto'
+        'foto',
     ];
 
     public function programDonasi()

@@ -10,15 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('sliders', function (Blueprint $table) {
+        Schema::create("sliders", function (Blueprint $table) {
             $table->id();
-            $table->string('judul')->nullable();
-            $table->string('gambar'); // path gambar slider
-            $table->foreignId('program_id')->nullable()->constrained('program_donasi')->onDelete('set null');
-            $table->string('link')->nullable(); // jika ingin link manual selain program
-            $table->integer('urutan')->default(0); // untuk mengatur posisi slider
-            $table->boolean('is_active')->default(true);
-            $table->string('alt_text')->nullable(); // teks alternatif untuk SEO
+            $table->string("gambar"); // path gambar slider
+            $table->integer("urutan");
+            $table->string("url")->nullable(); // link manual (optional)
+            $table->string("alt_text")->nullable(); // teks alternatif untuk SEO
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('sliders');
+        Schema::dropIfExists("sliders");
     }
 };

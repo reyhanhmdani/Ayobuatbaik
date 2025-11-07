@@ -9,27 +9,27 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view("pages.auth.login");
+        return view('pages.auth.login');
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            "email" => "required|email",
-            "password" => "required:min:6",
+            'email' => 'required|email',
+            'password' => 'required:min:6',
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended("admin/dashboard");
+            return redirect()->intended('admin/dashboard');
         }
 
         return back()
             ->withErrors([
-                "email" => "Email atau password salah.",
+                'email' => 'Email atau password salah.',
             ])
-            ->onlyInput("email");
+            ->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -38,6 +38,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect("/");
+        return redirect('/');
     }
 }

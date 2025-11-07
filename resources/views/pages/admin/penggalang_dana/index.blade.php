@@ -1,73 +1,128 @@
 @extends('components.layout.admin')
 
+@section('title', 'Kelola Penggalang Dana - Ayobuatbaik')
+@section('page-title', 'Kelola Penggalang Dana')
+
 @section('content')
-    <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-bold">Daftar Penggalang Dana</h1>
-            <a href="{{ route('admin.penggalang_dana.create') }}"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                + Tambah Penggalang
-            </a>
+    @php use Illuminate\Support\Str; @endphp
+
+    <div class="max-w-7xl mx-auto mt-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h3 class="text-base font-semibold text-gray-900">Daftar Penggalang Dana</h3>
+
+                <a href="{{ route('admin.penggalang_dana.create') }}"
+                    class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-plus"></i> Tambah Penggalang
+                </a>
+            </div>
         </div>
 
-        @if (session('success'))
-            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
+        <!-- Desktop Table -->
+        <div class="mt-4 hidden md:block bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="text-gray-600 bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Nama</th>
+                            <th class="px-4 py-3 text-left">Tipe</th>
+                            <th class="px-4 py-3 text-left">Kontak</th>
+                            <th class="px-4 py-3 text-left">Foto</th>
+                            <th class="px-4 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
 
-        <div class="overflow-x-auto bg-white shadow rounded">
-            <table class="min-w-full text-left text-gray-700">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">Nama</th>
-                        <th class="px-4 py-3">Tipe</th>
-                        <th class="px-4 py-3">Kontak</th>
-                        <th class="px-4 py-3">Foto</th>
-                        <th class="px-4 py-3 text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($penggalangs as $index => $item)
-                        <tr class="border-t">
-                            <td class="px-4 py-3">{{ $penggalangs->firstItem() + $index }}</td>
-                            <td class="px-4 py-3">{{ $item->nama }}</td>
-                            <td class="px-4 py-3 capitalize">{{ $item->tipe }}</td>
-                            <td class="px-4 py-3">{{ $item->kontak ?? '-' }}</td>
-                            <td class="px-4 py-3">
-                                @if ($item->foto)
-                                    <img src="{{ asset('storage/' . $item->foto) }}" alt=""
-                                        class="w-12 h-12 rounded-full object-cover">
-                                @else
-                                    <span class="text-gray-400 italic">Tidak ada</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-right space-x-2">
+                    <tbody class="divide-y">
+                        @forelse ($penggalangs as $item)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 font-medium">{{ $item->nama }}</td>
+                                <td class="px-4 py-3 capitalize">{{ $item->tipe }}</td>
+                                <td class="px-4 py-3">{{ $item->kontak ?? '-' }}</td>
+
+                                <td class="px-4 py-3">
+                                    <div class="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+                                        @if ($item->foto)
+                                            <img src="{{ asset('storage/' . $item->foto) }}"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+
+                                <td class="px-4 py-3 text-right">
+                                    <a href="{{ route('admin.penggalang_dana.edit', $item->id) }}"
+                                        class="text-blue-600 hover:text-blue-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <form action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
+                                        class="inline" onsubmit="return confirm('Hapus penggalang ini?');">
+                                        @csrf @method('DELETE')
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-6 text-gray-500">Belum ada penggalang dana.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                {{ $penggalangs->links() }}
+            </div>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="md:hidden space-y-3 mt-4">
+            @forelse ($penggalangs as $item)
+                <div class="bg-white rounded-lg shadow p-3 border border-gray-100">
+                    <div class="flex items-start gap-3">
+                        <div class="w-14 h-14 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                            @if ($item->foto)
+                                <img src="{{ asset('storage/' . $item->foto) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold">{{ $item->nama }}</div>
+                            <div class="text-xs text-gray-600 capitalize">Tipe: {{ $item->tipe }}</div>
+                            <div class="text-xs text-gray-600">Kontak: {{ $item->kontak ?? '-' }}</div>
+
+                            <div class="flex justify-end items-center gap-3 mt-3 text-sm">
                                 <a href="{{ route('admin.penggalang_dana.edit', $item->id) }}"
-                                    class="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">Edit</a>
+                                    class="text-blue-600"><i class="fas fa-edit"></i></a>
 
                                 <form action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
-                                    class="inline-block" onsubmit="return confirm('Yakin hapus penggalang ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                                        Hapus
-                                    </button>
+                                    onsubmit="return confirm('Hapus penggalang ini?');">
+                                    @csrf @method('DELETE')
+                                    <button class="text-red-600"><i class="fas fa-trash"></i></button>
                                 </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-4 py-3 text-center text-gray-500">Belum ada data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-6 text-gray-500">Belum ada penggalang dana.</div>
+            @endforelse
 
-        <div class="mt-4">
-            {{ $penggalangs->links() }}
+            <div class="mt-4">
+                {{ $penggalangs->links() }}
+            </div>
         </div>
     </div>
 @endsection

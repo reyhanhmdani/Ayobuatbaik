@@ -5,7 +5,6 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KategoriDonasiRequest;
 use App\Models\KategoriDonasi;
-use Illuminate\Http\Request;
 use Str;
 
 class KategoriDonasiController extends Controller
@@ -16,6 +15,7 @@ class KategoriDonasiController extends Controller
     public function index()
     {
         $kategories = KategoriDonasi::latest()->paginate(10);
+
         return view('pages.admin.kategori.index', compact('kategories'));
     }
 
@@ -54,6 +54,7 @@ class KategoriDonasiController extends Controller
     public function edit(string $id)
     {
         $kategori = KategoriDonasi::findOrFail($id);
+
         return view('pages.admin.kategori.edit', compact('kategori'));
     }
 
@@ -77,6 +78,7 @@ class KategoriDonasiController extends Controller
     public function destroy(string $id)
     {
         KategoriDonasi::findOrFail($id)->delete();
+
         return redirect()->route('admin.kategori_donasi.index')->with('success', 'Kategori Donasi berhasil dihapus.');
     }
 }
