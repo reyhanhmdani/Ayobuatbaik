@@ -1,7 +1,11 @@
 {
     "preset": "laravel",
     "rules": {
+        "trailing_comma_in_multiline": {
+            "elements": ["arrays", "arguments", "parameters"]
+        },
+
         "array_indentation": true,
-        "trailing_comma_in_multiline": true
+        "method_chaining_indentation": true
     }
 }

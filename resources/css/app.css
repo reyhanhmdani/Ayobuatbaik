@@ -52,7 +52,7 @@ body {
 }
 
 .slider-dot.active {
-    background-color: #febe10;
+    background-color: #daaf65;
     transform: scale(1.2);
     opacity: 1;
 }
@@ -107,7 +107,7 @@ body {
 }
 
 .mobile-nav-item.active {
-    color: #16a34a;
+    color: #daaf65;
 }
 
 .mobile-nav-item:active {
@@ -133,13 +133,13 @@ body {
 }
 
 .tab-button.active {
-    color: #e5b121;
-    border-bottom: 2px solid #e5b121;
+    color: #daaf65;
+    border-bottom: 2px solid #daaf65;
 }
 
 /* Donation Styles */
 .donation-btn {
-    background: linear-gradient(135deg, #e5b121, #dfd86f, #b8860b);
+    background: linear-gradient(135deg, #daaf65, #dfd86f, #b8860b);
     color: white;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -160,11 +160,11 @@ body {
 }
 
 .amount-option:hover {
-    border-color: #e5b121;
+    border-color: #daaf65;
 }
 
 .amount-option.selected {
-    border-color: #e5b121;
+    border-color: #daaf65;
     background-color: rgba(212, 175, 55, 0.1);
 }
 
@@ -179,9 +179,9 @@ body {
 }
 
 .filter-option.active {
-    background-color: #e5b121;
+    background-color: #daaf65;
     color: white;
-    border-color: #e5b121;
+    border-color: #daaf65;
 }
 
 /* Search Bar */
@@ -203,17 +203,24 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
-.category-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #e5b121;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 500;
+.kategori-btn .icon-wrapper {
+    /* background-color: #fcf8f3; Mengganti bg-white/orange-50 jika diperlukan */
+    border: 1px solid #ddd;
+    color: #6b7280; /* Warna ikon default */
 }
+
+/* Style untuk tombol aktif (Semua) */
+.kategori-btn.active .icon-wrapper {
+    background-color: #065f46 !important; /* Hijau Tua */
+    border-color: #065f46 !important;
+    color: white !important;
+}
+
+/* Kustomisasi untuk tombol 'Semua' agar memiliki warna yang berbeda (Hijau) */
+/* .kategori-btn:first-child .icon-wrapper {
+    border-color: #10b981;
+    color: #10b981;
+} */
 
 /* Modal Styles */
 .donation-modal {
@@ -258,7 +265,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #e5b121;
+    background: #daaf65;
     border-radius: 10px;
 }
 
@@ -330,7 +337,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #e5b121;
+    background: #daaf65;
     border-radius: 10px;
 }
 
@@ -358,4 +365,4 @@ body {
     border-radius: 8px;
 }
 
-/* ADMIN */
+

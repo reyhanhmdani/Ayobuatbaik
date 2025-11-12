@@ -1,16 +1,21 @@
+@php
+    function isActive($pattern) {
+        return request()->is($pattern) ? 'active' : '';
+    }
+@endphp
 <nav class="mobile-nav">
     <div class="flex justify-between items-center px-2">
-        <a href="{{ route('pages.home') }}" class="mobile-nav-item text-primary active">
+        <a href="{{ route('pages.home') }}" class="mobile-nav-item text-primary {{ isActive('/') }}">
             <i class="fas fa-home text-lg mb-1"></i>
             <span class="text-xs">Home</span>
         </a>
 
-        <a href="/programs" class="mobile-nav-item text-primary">
+        <a href="{{  route('home.program') }}" class="mobile-nav-item text-primary {{ isActive('programs') }}">
             <i class="fas fa-hand-holding-heart text-lg mb-1"></i>
             <span class="text-xs">Program</span>
         </a>
 
-        <a href="#berita" class="mobile-nav-item text-primary">
+        <a href="#berita" class="mobile-nav-item text-primary {{ isActive('berita') }}">
             <i class="fas fa-newspaper text-lg mb-1"></i>
             <span class="text-xs">Berita</span>
         </a>
@@ -30,7 +35,7 @@
         </div>
         @else
         <!-- Jika belum login, tampilkan login -->
-        <a href="{{ route('login') }}" class="mobile-nav-item text-primary">
+        <a href="{{ route('login') }}" class="mobile-nav-item text-primary {{ isActive('login') }}">
             <i class="fas fa-user text-lg mb-1"></i>
             <span class="text-xs">Akun</span>
         </a>

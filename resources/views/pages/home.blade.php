@@ -13,53 +13,57 @@
         <div class="">
             <h2 class="text-lg font-bold text-primary mb-3">Program bersama Ustad Andre</h2>
             @forelse ($featuredPrograms as $programPilihan)
-                <div class="grid grid-cols-1 gap-7 mt-4">
-                    <div class="bg-white overflow-hidden shadow-md card-hover-effect flex items-stretch h-28">
-                        <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
-                            <img src="{{ asset('storage/' . $programPilihan->gambar) }}" alt="{{ $programPilihan->title }}"
-                                class="w-full h-full object-cover">
-                        </div>
+                <div class="grid grid-cols-1 gap-1 mt-4">
+                    <a href="{{ route('home.program.show', $programPilihan->slug) }}" class="block">
+                        <div class="bg-white overflow-hidden shadow-md card-hover-effect flex items-stretch h-28">
+                            <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
+                                <img src="{{ asset('storage/' . $programPilihan->gambar) }}"
+                                    alt="{{ $programPilihan->title }}" class="w-full h-full object-cover">
+                            </div>
 
-                        <div class="py-2 px-3 flex flex-col justify-between w-full">
-                            <div>
-                                <h3 class="text-xs font-semibold text-gray-800 flex items-center gap-1p">
-                                    {{ $programPilihan->title }}
-                                    @if ($programPilihan->verified)
-                                        <span class="ml-1 inline-flex items-center">
-                                            {{-- SVG Icon Verifikasi ala Instagram --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                                class="w-4 h-4 text-blue-500">
-                                                <path fill-rule="evenodd"
-                                                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                        </span>
-                                    @endif
-                                </h3>
-                            </div>
-                            <div class="mt-1">
-                                <div class="flex justify-between text-xs text-gray-800 mb-0.5">
-                                    <span class="font-semibold text-[10px]">Terkumpul: Rp
-                                        {{ number_format($programPilihan->collected_amount, 0, ',', '.') }}</span>
-                                    <span class="text-gray-500 text-[10px]">
-                                        Sisa:
-                                        {{ $programPilihan->end_date
-                                            ? floor(max(0, \Carbon\Carbon::now()->diffInDays($programPilihan->end_date, false))) . ' hari'
-                                            : '∞' }}
-                                    </span>
+                            <div class="py-2 px-3 flex flex-col justify-between w-full">
+                                <div>
+                                    <h3 class="text-xs font-semibold text-gray-800 flex items-center gap-1p">
+                                        {{ $programPilihan->title }}
+                                        @if ($programPilihan->verified)
+                                            <span class="ml-1 inline-flex items-center">
+                                                {{-- SVG Icon Verifikasi ala Instagram --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                    fill="currentColor" class="w-4 h-4 text-blue-500">
+                                                    <path fill-rule="evenodd"
+                                                        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </span>
+                                        @endif
+                                    </h3>
                                 </div>
-                                @php
-                                    $progress =
-                                        $programPilihan->target_amount > 0
-                                            ? ($programPilihan->collected_amount / $programPilihan->target_amount) * 100
-                                            : 0;
-                                @endphp
-                                <div class="progress-bar-simple">
-                                    <div class="progress-fill-simple bg-secondary" style="width: {{ $progress }}"></div>
+                                <div class="mt-1">
+                                    <div class="flex justify-between text-xs text-gray-800 mb-0.5">
+                                        <span class="font-semibold text-[10px]">Terkumpul: Rp
+                                            {{ number_format($programPilihan->collected_amount, 0, ',', '.') }}</span>
+                                        <span class="text-gray-500 text-[10px]">
+                                            Sisa:
+                                            {{ $programPilihan->end_date
+                                                ? floor(max(0, \Carbon\Carbon::now()->diffInDays($programPilihan->end_date, false))) . ' hari'
+                                                : '∞' }}
+                                        </span>
+                                    </div>
+                                    @php
+                                        $progress =
+                                            $programPilihan->target_amount > 0
+                                                ? ($programPilihan->collected_amount / $programPilihan->target_amount) *
+                                                    100
+                                                : 0;
+                                    @endphp
+                                    <div class="progress-bar-simple">
+                                        <div class="progress-fill-simple bg-secondary" style="width: {{ $progress }}">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 @empty
                     <p class="text-xs text-gray-500">Belum ada program pilihan.</p>
             @endforelse
@@ -70,195 +74,132 @@
     {{-- Kategori Section --}}
     <section class="px-2 pt-8" id="kategori">
         <div class="text-center mb-10">
-            <h2 class="text-sm font-bold text-gray-800 mb-3">Kategori Program Kebaikan</h2>
-            <p class="text-xs text-gray-500 mt-1">
+            <h2 class="text-xl font-bold text-gray-800 mb-3">Kategori Program Kebaikan</h2>
+            <p class="text-sm text-gray-500 mt-1">
                 Temukan beragam program kebaikan yang direkomendasikan untukmu
             </p>
 
             <div class="grid grid-cols-4 gap-3 mt-6 text-center">
-                <!-- Semua -->
-                <div
-                    class="group flex flex-col items-center text-center space-y-1 cursor-pointer transition-all duration-200">
+
+                <!-- Tombol Semua -->
+                <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1" data-kat="all"
+                    onclick="filterProgram('all', this)">
                     <div
-                        class="w-12 h-12 flex items-center justify-center rounded-full bg-green-700 group-hover:bg-secondary/10 border border-secondary/40 transition-colors">
-                        <i class="fas fa-folder text-white group-hover:text-secondary text-base"></i>
+                        class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                        <i class="fas fa-folder text-xl"></i>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 font-mono">Semua</span>
+                    <span class="text-xs font-medium text-gray-700">Semua</span>
                 </div>
 
-                <!-- Sosial -->
-                <div
-                    class="group flex flex-col items-center text-center space-y-1 cursor-pointer transition-all duration-200">
-                    <div
-                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white group-hover:bg-secondary/10 border border-secondary/40 transition-colors">
-                        <i class="fas fa-hand-holding-heart text-secondary text-base"></i>
+                <!-- Loop 2 kategori -->
+                @foreach ($kategori->take(2) as $kat)
+                    <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1"
+                        data-kat="{{ $kat->slug }}" onclick="filterProgram('{{ $kat->slug }}', this)">
+                        <div
+                            class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                            <i class="fas fa-folder text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium text-gray-700">{{ $kat->name }}</span>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 font-mono">Sosial</span>
+                @endforeach
+
+                <!-- Tombol Lainnya -->
+                <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1"
+                    onclick="openKategoriModal(this)">
+                    <div
+                        class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                        <i class="fas fa-ellipsis-h text-xl"></i>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700">Lainnya</span>
                 </div>
 
-                <!-- Kemanusiaan -->
-                <div
-                    class="group flex flex-col items-center text-center space-y-1 cursor-pointer transition-all duration-200">
-                    <div
-                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white group-hover:bg-secondary/10 border border-secondary/40 transition-colors">
-                        <i class="fas fa-people-carry text-secondary text-base"></i>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-700 font-mono">Kemanusiaan</span>
-                </div>
-
-                <!-- Lainnya -->
-                <div class="group flex flex-col items-center text-center space-y-1 cursor-pointer transition-all duration-200"
-                    onclick="openKategoriModal()">
-                    <div
-                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white group-hover:bg-secondary/10 border border-secondary/40 transition-colors">
-                        <i class="fas fa-ellipsis-h text-secondary text-base"></i>
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-700 font-mono">Lainnya</span>
-                </div>
             </div>
         </div>
     </section>
 
-
     <!-- Program Section -->
     <section class="px-4 pb-8" id="program">
-        <div class="text-center mb-8">
-            <p class="text-gray-600 text-xs font-bold">“Satu klikmu bisa jadi senyum bagi mereka yang membutuhkan.</p>
-            <p class="text-gray-600 text-xs font-bold">Yuk bantu santri, dhuafa, dan sesama lewat Ayobuatbaik.”</p>
-        </div>
-
         <div class="grid grid-cols-1 gap-7">
-            <!-- Card 1 -->
-            <div class="bg-white overflow-hidden shadow-md flex items-stretch h-28">
-                <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
-                    <img src="{{ asset('assets/img/beasiswaashabi.jpeg') }}" alt="Beasiswa Santri Selfa"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="py-2 px-3 flex flex-col justify-between w-full">
-                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">Beasiswa Santri Selfa</h3>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-xs text-gray-800 mb-0.5">
-                            <span class="font-semibold text-[10px]">Terkumpul: Rp 119.373.780</span>
-                            <span class="text-gray-500 text-[10px]">Sisa hari: ∞</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-secondary h-1.5 rounded-full" style="width: 85%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @foreach ($otherPrograms as $program)
+                @php
+                    $terkumpul = $program->collected_amount ?? 0;
+                    $target = $program->target_amount ?? 0;
+                    $progress = $target > 0 ? min(100, ($terkumpul / $target) * 100) : 0;
+                    $sisaHari = $program->end_date
+                        ? floor(max(0, now()->diffInDays($program->end_date, false))) . ' hari'
+                        : '∞';
+                @endphp
 
-            <!-- Card 2 -->
-            <div class="bg-white overflow-hidden shadow-md flex items-stretch h-28">
-                <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
-                    <img src="{{ asset('assets/img/ontheroad.jpg') }}" alt="Si Jum On The Road"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="py-2 px-3 flex flex-col justify-between w-full">
-                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">Si Jum On The Road</h3>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-xs text-gray-800 mb-0.5">
-                            <span class="font-semibold text-[10px]">Terkumpul: Rp 48.060.534</span>
-                            <span class="text-gray-500 text-[10px]">Sisa hari: ∞</span>
+                <a href="{{ route('home.program.show',  $program->slug) }}" class="block">
+                    <div class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28"
+                        data-category="{{ $program->kategori->slug }}">
+                        <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
+                            <img src="{{ asset('storage/' . $program->gambar) }}" alt="{{ $program->title }}"
+                                class="w-full h-full object-cover">
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-secondary h-1.5 rounded-full" style="width: 60%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Card 3 -->
-            <div class="bg-white overflow-hidden shadow-md flex items-stretch h-28">
-                <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
-                    <img src="{{ asset('assets/img/wakaf.jpeg') }}" alt="Wakaf Produktif"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="py-2 px-3 flex flex-col justify-between w-full">
-                    <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">
-                        Wakaf Produktif Perluasan Lahan
-                    </h3>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-xs text-gray-800 mb-0.5">
-                            <span class="font-semibold text-[10px]">Terkumpul: Rp 175.500.000</span>
-                            <span class="text-gray-500 text-[10px]">Sisa hari: ∞</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-secondary h-1.5 rounded-full" style="width: 70%"></div>
+                        <div class="py-2 px-3 flex flex-col justify-between w-full">
+                            <h3 class="text-xs font-bold text-primary leading-snug line-clamp-2">
+                                {{ $program->title }}
+                            </h3>
+
+                            <div class="mt-1">
+                                <div class="flex justify-between text-xs text-gray-800 mb-0.5">
+                                    <span class="font-semibold text-[10px]">
+                                        Terkumpul: Rp {{ number_format($terkumpul, 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-gray-500 text-[10px]">
+                                        Sisa hari: {{ $sisaHari }}
+                                    </span>
+                                </div>
+
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-secondary h-1.5 rounded-full" style="width: {{ $progress }}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </a>
+            @endforeach
         </div>
 
-        <!-- Tombol -->
         <div class="text-center mt-8">
-            <button
+            <a href="{{ route('home.program') }}"
                 class="bg-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-grayDark transition-all flex items-center justify-center mx-auto">
                 <span>Lihat Program Lainnya</span>
                 <i class="fas fa-arrow-right ml-2 text-xs"></i>
-            </button>
+            </a>
         </div>
     </section>
 
     <!-- Modal Popup Kategori -->
     <div id="kategoriModal"
         class="hidden fixed inset-0 bg-black/60 flex items-end justify-center z-[9999] transition-all duration-300">
+
         <div class="bg-white rounded-t-2xl w-full max-w-md p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-sm font-bold text-gray-900">Pilih kategori program</h3>
+                <h3 class="text-base font-bold text-gray-900">Pilih kategori program</h3>
                 <button onclick="closeKategoriModal()">
                     <i class="fas fa-times text-gray-600"></i>
                 </button>
             </div>
 
-            <div class="grid grid-cols-3 gap-6 mt-4">
-                <!-- Sosial -->
-                <div class="flex flex-col items-center cursor-pointer">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-700 text-white">
-                        <i class="fas fa-hand-holding-heart text-base"></i>
-                    </div>
-                    <span class="text-xs text-gray-800 mt-2">Sosial</span>
-                </div>
+            <div class="grid grid-cols-3 gap-4 mt-6 text-center">
 
-                <!-- Kemanusiaan -->
-                <div class="flex flex-col items-center cursor-pointer">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-secondary/20">
-                        <i class="fas fa-people-carry text-secondary text-base"></i>
-                    </div>
-                    <span class="text-xs text-gray-800 mt-2">Kemanusiaan</span>
-                </div>
+                @foreach ($kategori as $kat)
+                    <div class="modal-kategori-btn flex flex-col items-center cursor-pointer space-y-1"
+                        data-kat="{{ $kat->slug }}"
+                        onclick="filterProgram('{{ $kat->slug }}'); closeKategoriModal()">
 
-                <!-- Pendidikan -->
-                <div class="flex flex-col items-center cursor-pointer">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-secondary/20">
-                        <i class="fas fa-graduation-cap text-secondary text-base"></i>
-                    </div>
-                    <span class="text-xs text-gray-800 mt-2">Pendidikan</span>
-                </div>
+                        <div
+                            class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                            <i class="fas fa-folder text-xl"></i>
+                        </div>
 
-                <!-- Masjid -->
-                <div class="flex flex-col items-center cursor-pointer">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-secondary/20">
-                        <i class="fas fa-mosque text-secondary text-base"></i>
+                        <span class="text-xs mt-2 font-medium text-gray-700">{{ $kat->name }}</span>
                     </div>
-                    <span class="text-xs text-gray-800 mt-2">Masjid</span>
-                </div>
+                @endforeach
 
-                <!-- Infrastruktur -->
-                <div class="flex flex-col items-center cursor-pointer">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-secondary/20">
-                        <i class="fas fa-tools text-secondary text-base"></i>
-                    </div>
-                    <span class="text-xs text-gray-800 mt-2">Infrastruktur</span>
-                </div>
-
-                <div class="flex flex-col items-center cursor-pointer text-center">
-                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-secondary/20">
-                        <i class="fas fa-user-tie text-secondary text-base"></i>
-                    </div>
-                    <span class="text-xs text-gray-800 mt-2">Ustadz Andre Official</span>
-                </div>
             </div>
         </div>
     </div>
@@ -398,12 +339,9 @@
 @section('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+
             // --- Modal Kategori ---
             const kategoriModal = document.getElementById("kategoriModal");
-
-            window.openKategoriModal = function() {
-                if (kategoriModal) kategoriModal.classList.remove("hidden");
-            };
 
             window.closeKategoriModal = function() {
                 if (kategoriModal) kategoriModal.classList.add("hidden");
@@ -413,7 +351,7 @@
             const sliderContainer = document.querySelector(".slider-container");
             const sliderDots = document.querySelectorAll(".slider-dot");
             let currentSlide = 0;
-            const totalSlides = sliderDots.length || 3; // fallback 3 kalau belum ada dot
+            const totalSlides = sliderDots.length || 3;
 
             function updateSlider() {
                 if (!sliderContainer) return;
@@ -430,13 +368,11 @@
             }
 
             if (sliderContainer && sliderDots.length > 0) {
-                // Ganti slide setiap 5 detik
                 setInterval(() => {
                     currentSlide = (currentSlide + 1) % totalSlides;
                     updateSlider();
                 }, 5000);
 
-                // Klik dot manual
                 sliderDots.forEach((dot, index) => {
                     dot.addEventListener("click", () => {
                         currentSlide = index;
@@ -444,7 +380,79 @@
                     });
                 });
             }
+
+            // =======================================================
+            // --- FIX: LOGIKA SET ACTIVE HANYA UNTUK TOMBOL UTAMA ---
+            // =======================================================
+
+            function setActiveButton(el) {
+                // Ambil HANYA tombol utama, bukan modal
+                const allButtons = document.querySelectorAll(".kategori-btn:not(.modal-kategori-btn)");
+
+                allButtons.forEach(btn => {
+                    btn.classList.remove("active");
+
+                    const iconWrapper = btn.querySelector(".icon-wrapper");
+                    const isAllButton = btn.dataset.kat === "all";
+
+                    if (iconWrapper) {
+                        // Reset tampilannya
+                        iconWrapper.classList.remove("bg-green-600", "text-white", "border-green-600");
+                        iconWrapper.classList.remove("bg-orange-200");
+                        iconWrapper.classList.add(isAllButton ? "bg-orange-50" : "bg-orange-50");
+                    }
+                });
+
+                // Set active
+                if (el) {
+                    el.classList.add("active");
+
+                    const icon = el.querySelector(".icon-wrapper");
+                    if (icon) {
+                        // Styling tombol yang aktif
+                        icon.classList.remove("bg-orange-50");
+                        icon.classList.add("bg-green-600", "text-white", "border-green-600");
+                    }
+                }
+            }
+
+            // =======================================================
+            // --- FILTER PROGRAM + PERBAIKAN UNTUK MODAL KATEGORI ---
+            // =======================================================
+
+            window.filterProgram = function(filter, el = null) {
+
+                // Cari tombol kategori utama yang matching
+                const mainBtn = document.querySelector(`.kategori-btn[data-kat="${filter}"]`);
+
+                // Kalau dipicu dari modal → gunakan tombol utama sebagai indikator active
+                if (mainBtn) {
+                    setActiveButton(mainBtn);
+                } else if (el) {
+                    // Dipicu dari tombol “Lainnya” (tidak perlu set active)
+                    setActiveButton(el);
+                }
+
+                // FILTER KARTU
+                document.querySelectorAll(".program-card").forEach(card => {
+                    const cat = card.dataset.category;
+
+                    if (filter === "all" || filter === "" || cat === filter) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            };
+
+            // Buka modal
+            window.openKategoriModal = function() {
+                if (kategoriModal) kategoriModal.classList.remove("hidden");
+            };
+
+            // Set tombol "Semua" sebagai default aktif
+            const defaultBtn = document.querySelector(".kategori-btn[data-kat='all']");
+            if (defaultBtn) setActiveButton(defaultBtn);
         });
     </script>
-
 @endsection

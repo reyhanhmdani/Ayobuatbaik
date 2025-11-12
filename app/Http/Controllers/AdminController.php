@@ -2,13 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProgramDonasi;
+
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        $total_amount = 25000;
+        // Hitung total program
+        $total_programs = ProgramDonasi::count();
+
+        // Jumlahkan semua collected_amount
+        $total_amount = ProgramDonasi::sum('collected_amount');
+
+        // Jika tabel donasi belum ada, sementara isi manual dulu
+        // $total_donations = class_exists(Donasi::class) ? Donasi::count() : 0;
+
+        // Hitung total user
+        // $total_users = User::count();
+
         $stats = [
-            'total_programs' => 25,
+            'total_programs' => $total_programs,
             'total_donations' => 1250,
             'total_amount' => $total_amount,
             'total_users' => 3450,
@@ -34,16 +47,11 @@ class AdminController extends Controller
                 'time' => '1 hari lalu',
             ],
         ];
-        $recent_programs = [
-            ['title' => 'Beasiswa Santri Selfa', 'progress_percentage' => 85],
-            ['title' => 'Si Jum On The Road', 'progress_percentage' => 60],
-            ['title' => 'Wakaf Produktif', 'progress_percentage' => 40],
-        ];
-
-        return view(
-            'pages.admin.dashboard',
-            compact('stats', 'recent_donations', 'recent_programs'),
-        );
+        // Ambil 3 program terbaru
+        $recent_programs = ProgramDonasi::latest()
+            ->take(3)
+            ->get(['title', 'collected_amount', 'target_amount', 'gambar']);
+        return view('pages.admin.dashboard', compact('stats', 'recent_donations', 'recent_programs'));
     }
 
     public function programs()

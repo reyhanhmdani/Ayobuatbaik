@@ -74,8 +74,9 @@
 
         </div>
     </div>
+    @endsection
 
-    {{-- Preview Gambar --}}
+    @section('scripts')
     <script>
         document.getElementById('gambarInput').addEventListener('change', function(e) {
             const img = document.querySelector('#preview img');
@@ -90,7 +91,10 @@
                 setTimeout(() => alert.remove(), 300);
             }
         }, 3000);
-    </script>
+        </script>
+
+    @endsection
+    {{-- Preview Gambar --}}
 
     {{-- Fade In Animation --}}
     <style>
@@ -115,4 +119,3 @@
         }
     </style>
 
-@endsection

@@ -130,7 +130,7 @@
                 </div>
 
                 <!-- Deskripsi (CKEditor) -->
-                <div>
+                <div class="prose prose-sm">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Lengkap</label>
                     <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi') }}</textarea>
                 </div>
@@ -180,7 +180,9 @@
                         name: 'tools',
                         items: ['Maximize']
                     }
-                ]
+                ],
+                bodyClass: 'prose prose-sm text-gray-700',
+                width: '100%'
             });
         } catch (e) {
             console.error('CKEditor init error:', e);

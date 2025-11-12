@@ -58,6 +58,49 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+        .prose {
+            max-width: 480px;
+            /* Match .mobile-container di app.css */
+            margin: 0 auto;
+            /* Center jika perlu */
+        }
+
+        .prose-sm {
+            font-size: 0.875rem;
+            line-height: 1.7142857;
+        }
+
+        /* Sisanya sama seperti sebelumnya: h1/h2/p/img/mark */
+        .prose h1,
+        .prose h2,
+        .prose h3 {
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .prose p {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+
+        .prose img {
+            max-width: 100%;
+            height: auto;
+            margin: 1em 0;
+            display: block;
+        }
+
+        .prose mark {
+            background-color: #fef08a;
+            padding: 0.25em 0.5em;
+            border-radius: 0.25em;
+        }
+
+        .prose *:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 

@@ -7,8 +7,8 @@
     {{-- Header / Logo --}}
     <div class="flex items-center justify-between p-4 border-b border-gray-700">
         <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
-                <i class="fas fa-heart text-white text-sm"></i>
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center">
+                <img src="{{ asset('assets/img/icon ABBI.png') }}" alt="">
             </div>
             <span class="text-white font-bold text-lg">
                 <span class="text-secondary">Ayo</span>buatbaik

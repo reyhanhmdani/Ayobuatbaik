@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Deskripsi -->
-                <div>
+                <div class="prose prose-sm text-gray-700">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Lengkap</label>
                     <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi', $program->deskripsi) }}</textarea>
                 </div>
@@ -167,37 +167,43 @@
     <!-- CKEditor -->
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <script>
-        CKEDITOR.replace('deskripsi', {
-            height: 400,
-            filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
-            filebrowserUploadMethod: 'form',
-            toolbar: [{
-                    name: 'basicstyles',
-                    items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']
-                },
-                {
-                    name: 'paragraph',
-                    items: ['NumberedList', 'BulletedList', 'Blockquote', 'JustifyLeft', 'JustifyCenter',
-                        'JustifyRight', 'JustifyBlock'
-                    ]
-                },
-                {
-                    name: 'insert',
-                    items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar']
-                },
-                {
-                    name: 'styles',
-                    items: ['Styles', 'Format', 'Font', 'FontSize']
-                },
-                {
-                    name: 'colors',
-                    items: ['TextColor', 'BGColor']
-                },
-                {
-                    name: 'tools',
-                    items: ['Maximize']
-                }
-            ]
-        });
+        try {
+            CKEDITOR.replace('deskripsi', {
+                height: 400,
+                filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
+                filebrowserUploadMethod: 'form',
+                toolbar: [{
+                        name: 'basicstyles',
+                        items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']
+                    },
+                    {
+                        name: 'paragraph',
+                        items: ['NumberedList', 'BulletedList', 'Blockquote', 'JustifyLeft', 'JustifyCenter',
+                            'JustifyRight', 'JustifyBlock'
+                        ]
+                    },
+                    {
+                        name: 'insert',
+                        items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar']
+                    },
+                    {
+                        name: 'styles',
+                        items: ['Styles', 'Format', 'Font', 'FontSize']
+                    },
+                    {
+                        name: 'colors',
+                        items: ['TextColor', 'BGColor']
+                    },
+                    {
+                        name: 'tools',
+                        items: ['Maximize']
+                    }
+                ],
+                bodyClass: 'prose prose-sm text-gray-700',
+                width: '100%'
+            });
+        } catch (e) {
+            console.error('CKEditor init error:', e);
+        }
     </script>
 @endsection

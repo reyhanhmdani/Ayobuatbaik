@@ -57,7 +57,9 @@
 
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
 document.getElementById('gambarInput').addEventListener('change', function(e) {
     const img = document.querySelector('#preview img');

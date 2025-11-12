@@ -7,7 +7,8 @@ export default {
         extend: {
             colors: {
                 primary: "#242124",
-                secondary: "#E5B121",
+                secondary: "#daaf65",
+                // secondary: "#E5B121",
                 hijau: "#16a34a",
                 goldLight: "#F7EF8A",
                 goldDark: "#B8860B",
@@ -19,5 +20,5 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [require("@tailwindcss/typography")],
 };

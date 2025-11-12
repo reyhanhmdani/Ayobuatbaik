@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriDonasi;
 use App\Models\ProgramDonasi;
+use App\Models\Slider;
+use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends Controller
 {
@@ -10,18 +13,52 @@ class HomeController extends Controller
     {
         $featuredPrograms = ProgramDonasi::where('featured', 1)->where('status', 'active')->orderBy('id', 'desc')->take(3)->get();
 
-        $otherPrograms = ProgramDonasi::where('featured', 0)->orderBy('id', 'desc')->take(7)->get();
+        $otherPrograms = ProgramDonasi::where('featured', 0)->orderBy('id', 'desc')->get();
 
-        return view('pages.home', compact('featuredPrograms', 'otherPrograms'));
+        $kategori = KategoriDonasi::orderBy('name')->get();
+
+        $sliders = Slider::orderBy('urutan', 'asc')->get();
+
+        return view('pages.home', compact('featuredPrograms', 'otherPrograms', 'kategori', 'sliders'));
     }
 
     public function programs()
     {
-        return view('pages.program-donasi.programs');
+        $kategories = KategoriDonasi::select('id', 'name', 'slug')->get();
+
+        $programs = ProgramDonasi::with(['kategori'])
+            ->where('status', 'active')
+            ->latest()
+            ->get();
+
+        return view('pages.program-donasi.programs', compact('kategories', 'programs'));
     }
 
-    public function program()
+    public function program($slug)
     {
-        return view('pages.program-donasi.single-program');
+        $program = ProgramDonasi::where('slug', $slug)->firstOrFail();
+        $relatedPrograms = ProgramDonasi::where('id', '!=', $program->id)->inRandomOrder()->take(3)->get();
+
+        if ($relatedPrograms->count() < 3) {
+            $relatedPrograms = ProgramDonasi::where('id', '!=', $program->id)->get();
+        }
+
+        return view('pages.program-donasi.single-program', compact('program', 'relatedPrograms'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('q');
+
+        $programs = ProgramDonasi::when($keyword, function ($query) use ($keyword) {
+            $query
+                ->where('title', 'like', "%{$keyword}%")
+                ->orWhere('short_description', 'like', "%{$keyword}%")
+                ->orWhere('deskripsi', 'like', "%{$keyword}%");
+        })
+            ->latest()
+            ->paginate(10);
+
+        return view('pages.program-donasi.search', compact('programs', 'keyword'));
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KategoriDonasiRequest;
 use App\Models\KategoriDonasi;
-use Str;
+use Illuminate\Support\Str;
 
 class KategoriDonasiController extends Controller
 {
@@ -51,23 +51,20 @@ class KategoriDonasiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(KategoriDonasi $kategori_donasi)
     {
-        $kategori = KategoriDonasi::findOrFail($id);
-
-        return view('pages.admin.kategori.edit', compact('kategori'));
+        return view('pages.admin.kategori.edit', ['kategori' => $kategori_donasi]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(KategoriDonasiRequest $request, string $id)
+    public function update(KategoriDonasiRequest $request, KategoriDonasi $kategori_donasi)
     {
-        $kategori = KategoriDonasi::findOrFail($id);
         $validated = $request->validated();
         $validated['slug'] = Str::slug($validated['name']);
 
-        $kategori->update($validated);
+        $kategori_donasi->update($validated);
 
         return redirect()->route('admin.kategori_donasi.index')->with('success', 'Kategori Donasi berhasil diperbarui.');
     }

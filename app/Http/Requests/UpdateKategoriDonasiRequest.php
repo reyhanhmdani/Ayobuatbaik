@@ -14,8 +14,9 @@ class UpdateKategoriDonasiRequest extends FormRequest
 
     public function rules(): array
     {
+        $id = $this->kategori_donasi->id;
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('kategori_donasi', 'name')->ignore($this->kategori_donasi)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('kategori_donasi', 'name')->ignore($id)],
             'deskripsi' => 'nullable|string',
         ];
     }

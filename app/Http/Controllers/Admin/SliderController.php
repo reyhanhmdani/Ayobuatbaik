@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\SliderRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSliderRequest;
 use App\Http\Requests\UpdateSliderRequest;
-use App\Models\ProgramDonasi;
 use App\Models\Slider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
