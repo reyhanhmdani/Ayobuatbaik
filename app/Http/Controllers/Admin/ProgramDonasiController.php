@@ -147,7 +147,6 @@ class ProgramDonasiController extends Controller
             if ($program->gambar && Storage::disk('public')->exists($program->gambar)) {
                 Storage::disk('public')->delete($program->gambar);
             }
-
             $validated['gambar'] = $request->file('gambar')->store('programs', 'public');
         }
 

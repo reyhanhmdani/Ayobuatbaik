@@ -5,7 +5,7 @@
 @endphp
 <nav class="mobile-nav">
     <div class="flex justify-between items-center px-2">
-        <a href="{{ route('pages.home') }}" class="mobile-nav-item text-primary {{ isActive('/') }}">
+        <a href="{{ route('home') }}" class="mobile-nav-item text-primary {{ isActive('/') }}">
             <i class="fas fa-home text-lg mb-1"></i>
             <span class="text-xs">Home</span>
         </a>

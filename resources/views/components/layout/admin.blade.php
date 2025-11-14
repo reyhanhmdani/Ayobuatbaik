@@ -133,7 +133,7 @@
                             <i class="fas fa-user-circle"></i>
                             <span>{{ Auth::user()->name }}</span>
                         </div>
-                        <a href="{{ route('pages.home') }}" target="_blank"
+                        <a href="{{ route('home') }}" target="_blank"
                             class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-goldDark transition-colors">
                             <i class="fas fa-external-link-alt mr-2"></i>
                             Lihat Website

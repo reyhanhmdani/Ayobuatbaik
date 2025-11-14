@@ -200,7 +200,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('pages.home') }}" target="_blank"
+                <a href="{{ route('home') }}" target="_blank"
                     class="flex items-center space-x-3 p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
                     <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
                         <i class="fas fa-external-link-alt text-white"></i>

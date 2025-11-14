@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Berita extends Model
+{
+    use HasFactory;
+
+    protected $table = 'berita';
+    protected $fillable = ['judul', 'slug', 'deskripsi_singkat', 'konten', 'gambar', 'tanggal'];
+
+    // Tambahkan ini:
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+}

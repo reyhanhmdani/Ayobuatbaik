@@ -85,8 +85,8 @@
                 <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1" data-kat="all"
                     onclick="filterProgram('all', this)">
                     <div
-                        class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
-                        <i class="fas fa-folder text-xl"></i>
+                        class="icon-wrapper w-10 h-10 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                        <i class="fas fa-folder text-lg"></i>
                     </div>
                     <span class="text-xs font-medium text-gray-700">Semua</span>
                 </div>
@@ -96,8 +96,8 @@
                     <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1"
                         data-kat="{{ $kat->slug }}" onclick="filterProgram('{{ $kat->slug }}', this)">
                         <div
-                            class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
-                            <i class="fas fa-folder text-xl"></i>
+                            class="icon-wrapper w-10 h-10 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                            <i class="fas fa-folder text-lg"></i>
                         </div>
                         <span class="text-xs font-medium text-gray-700">{{ $kat->name }}</span>
                     </div>
@@ -107,8 +107,8 @@
                 <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1"
                     onclick="openKategoriModal(this)">
                     <div
-                        class="icon-wrapper w-14 h-14 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
-                        <i class="fas fa-ellipsis-h text-xl"></i>
+                        class="icon-wrapper w-10 h-10 flex items-center justify-center rounded-full bg-orange-50 text-gray-700 border border-orange-200 transition-colors duration-300">
+                        <i class="fas fa-ellipsis-h text-lg"></i>
                     </div>
                     <span class="text-xs font-medium text-gray-700">Lainnya</span>
                 </div>
@@ -130,7 +130,7 @@
                         : '∞';
                 @endphp
 
-                <a href="{{ route('home.program.show',  $program->slug) }}" class="block">
+                <a href="{{ route('home.program.show', $program->slug) }}" class="block">
                     <div class="program-card bg-white overflow-hidden shadow-md flex items-stretch h-28"
                         data-category="{{ $program->kategori->slug }}">
                         <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
@@ -258,81 +258,37 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Berita 1 -->
-            <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
-                <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
-                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                        alt="Suksesnya Program Beasiswa 2023" class="w-full h-full object-cover" />
+            @forelse ($berita as $item)
+                <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
+                    <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
+                        <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->judul }}"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <span
+                        class="text-xs text-secondary font-medium">{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</span>
+                    <h3 class="text-sm font-bold text-primary mt-1 mb-2 line-clamp-2">{{ $item->judul }}</h3>
+                    <p class="text-gray-600 text-xs line-clamp-2">{{ $item->deskripsi_singkat }}</p>
+                    <a href=""
+                        class="inline-block mt-2 text-secondary text-xs font-medium hover:text-goldDark transition-colors">
+                        Baca selengkapnya
+                    </a>
                 </div>
-                <span class="text-xs text-secondary font-medium">12 Mei 2023</span>
-                <h3 class="text-sm font-bold text-primary mt-1 mb-2 line-clamp-2">Suksesnya Program Beasiswa 2023</h3>
-                <p class="text-gray-600 text-xs line-clamp-2">
-                    Program beasiswa tahun ini telah berhasil membantu 150 anak dari keluarga kurang mampu.
-                </p>
-                <a href="#"
-                    class="inline-block mt-2 text-secondary text-xs font-medium hover:text-goldDark transition-colors">
-                    Baca selengkapnya
-                </a>
-            </div>
-
-            <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
-                <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
-                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                        alt="Suksesnya Program Beasiswa 2023" class="w-full h-full object-cover" />
-                </div>
-                <span class="text-xs text-secondary font-medium">12 Mei 2023</span>
-                <h3 class="text-sm font-bold text-primary mt-1 mb-2 line-clamp-2">Suksesnya Program Beasiswa 2023</h3>
-                <p class="text-gray-600 text-xs line-clamp-2">
-                    Program beasiswa tahun ini telah berhasil membantu 150 anak dari keluarga kurang mampu.
-                </p>
-                <a href="#"
-                    class="inline-block mt-2 text-secondary text-xs font-medium hover:text-goldDark transition-colors">
-                    Baca selengkapnya
-                </a>
-            </div>
-
-            <!-- Berita 2 -->
-            <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
-                <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
-                    <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                        alt="Bantuan untuk Korban Banjir" class="w-full h-full object-cover" />
-                </div>
-                <span class="text-xs text-secondary font-medium">5 April 2023</span>
-                <h3 class="text-sm font-bold text-primary mt-1 mb-2 line-clamp-2">Bantuan untuk Korban Banjir</h3>
-                <p class="text-gray-600 text-xs line-clamp-2">Tim Ayobuatbaik telah menyalurkan bantuan darurat untuk
-                    korban
-                    banjir.</p>
-                <a href="#"
-                    class="inline-block mt-2 text-secondary text-xs font-medium hover:text-goldDark transition-colors">
-                    Baca selengkapnya
-                </a>
-            </div>
-            <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
-                <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
-                    <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                        alt="Bantuan untuk Korban Banjir" class="w-full h-full object-cover" />
-                </div>
-                <span class="text-xs text-secondary font-medium">5 April 2023</span>
-                <h3 class="text-sm font-bold text-primary mt-1 mb-2 line-clamp-2">Bantuan untuk Korban Banjir</h3>
-                <p class="text-gray-600 text-xs line-clamp-2">Tim Ayobuatbaik telah menyalurkan bantuan darurat untuk
-                    korban
-                    banjir.</p>
-                <a href="#"
-                    class="inline-block mt-2 text-secondary text-xs font-medium hover:text-goldDark transition-colors">
-                    Baca selengkapnya
-                </a>
-            </div>
+            @empty
+                <p class="text-sm text-gray-500">Belum ada berita untuk saat ini.</p>
+            @endforelse
         </div>
 
-        <!-- Tombol Lihat Semua -->
         <div class="text-center mt-6">
-            <button
+            <a href="{{ route('admin.berita.index') }}"
                 class="text-secondary font-semibold text-sm hover:text-goldDark transition-colors flex items-center justify-center mx-auto">
                 <span>Lihat Semua Berita</span>
                 <i class="fas fa-arrow-right ml-2 text-xs"></i>
-            </button>
+            </a>
         </div>
     </section>
+
+
+
     @include('components.layout.footer')
 @endsection
 
@@ -340,16 +296,25 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            // --- Modal Kategori ---
+            // =======================================================
+            // 1️⃣ MODAL KATEGORI
+            // =======================================================
             const kategoriModal = document.getElementById("kategoriModal");
+
+            window.openKategoriModal = function() {
+                if (kategoriModal) kategoriModal.classList.remove("hidden");
+            };
 
             window.closeKategoriModal = function() {
                 if (kategoriModal) kategoriModal.classList.add("hidden");
             };
 
-            // --- Slider / Banner Otomatis ---
+            // =======================================================
+            // 2️⃣ SLIDER / BANNER OTOMATIS
+            // =======================================================
             const sliderContainer = document.querySelector(".slider-container");
             const sliderDots = document.querySelectorAll(".slider-dot");
+
             let currentSlide = 0;
             const totalSlides = sliderDots.length || 3;
 
@@ -368,11 +333,13 @@
             }
 
             if (sliderContainer && sliderDots.length > 0) {
+                // Auto-slide tiap 5 detik
                 setInterval(() => {
                     currentSlide = (currentSlide + 1) % totalSlides;
                     updateSlider();
                 }, 5000);
 
+                // Klik dot manual
                 sliderDots.forEach((dot, index) => {
                     dot.addEventListener("click", () => {
                         currentSlide = index;
@@ -382,11 +349,10 @@
             }
 
             // =======================================================
-            // --- FIX: LOGIKA SET ACTIVE HANYA UNTUK TOMBOL UTAMA ---
+            // 3️⃣ FUNGSI SET ACTIVE BUTTON (UTAMA SAJA)
             // =======================================================
-
             function setActiveButton(el) {
-                // Ambil HANYA tombol utama, bukan modal
+                // Ambil hanya tombol kategori utama, bukan yang di modal
                 const allButtons = document.querySelectorAll(".kategori-btn:not(.modal-kategori-btn)");
 
                 allButtons.forEach(btn => {
@@ -396,20 +362,23 @@
                     const isAllButton = btn.dataset.kat === "all";
 
                     if (iconWrapper) {
-                        // Reset tampilannya
-                        iconWrapper.classList.remove("bg-green-600", "text-white", "border-green-600");
-                        iconWrapper.classList.remove("bg-orange-200");
-                        iconWrapper.classList.add(isAllButton ? "bg-orange-50" : "bg-orange-50");
+                        // Reset tampilan icon
+                        iconWrapper.classList.remove(
+                            "bg-green-600",
+                            "text-white",
+                            "border-green-600",
+                            "bg-orange-200"
+                        );
+                        iconWrapper.classList.add("bg-orange-50");
                     }
                 });
 
-                // Set active
+                // Tombol yang diklik → aktif
                 if (el) {
                     el.classList.add("active");
 
                     const icon = el.querySelector(".icon-wrapper");
                     if (icon) {
-                        // Styling tombol yang aktif
                         icon.classList.remove("bg-orange-50");
                         icon.classList.add("bg-green-600", "text-white", "border-green-600");
                     }
@@ -417,27 +386,25 @@
             }
 
             // =======================================================
-            // --- FILTER PROGRAM + PERBAIKAN UNTUK MODAL KATEGORI ---
+            // 4️⃣ FILTER PROGRAM
             // =======================================================
-
             window.filterProgram = function(filter, el = null) {
-
-                // Cari tombol kategori utama yang matching
+                // Temukan tombol kategori utama yang sesuai
                 const mainBtn = document.querySelector(`.kategori-btn[data-kat="${filter}"]`);
 
-                // Kalau dipicu dari modal → gunakan tombol utama sebagai indikator active
                 if (mainBtn) {
+                    // Jika klik dari modal → set active tombol utama
                     setActiveButton(mainBtn);
                 } else if (el) {
-                    // Dipicu dari tombol “Lainnya” (tidak perlu set active)
+                    // Klik dari tombol “Lainnya” (bukan kategori utama)
                     setActiveButton(el);
                 }
 
-                // FILTER KARTU
+                // Filter kartu program
                 document.querySelectorAll(".program-card").forEach(card => {
                     const cat = card.dataset.category;
 
-                    if (filter === "all" || filter === "" || cat === filter) {
+                    if (filter === "all" || !filter || cat === filter) {
                         card.style.display = "flex";
                     } else {
                         card.style.display = "none";
@@ -445,14 +412,13 @@
                 });
             };
 
-            // Buka modal
-            window.openKategoriModal = function() {
-                if (kategoriModal) kategoriModal.classList.remove("hidden");
-            };
-
-            // Set tombol "Semua" sebagai default aktif
+            // =======================================================
+            // 5️⃣ SET DEFAULT (KATEGORI “SEMUA”)
+            // =======================================================
             const defaultBtn = document.querySelector(".kategori-btn[data-kat='all']");
             if (defaultBtn) setActiveButton(defaultBtn);
         });
     </script>
+
+
 @endsection

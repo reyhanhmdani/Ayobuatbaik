@@ -22,6 +22,61 @@ body {
     min-height: 100vh;
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+/* Floating WA Button fixed di viewport, tapi align dengan container */
+.floating-wa {
+    position: fixed; /* Kembali ke fixed agar melayang saat scroll */
+    bottom: calc(6rem + env(safe-area-inset-bottom));
+    right: 1rem; /* Default mobile */
+    z-index: 50;
+    width: 3rem;
+    height: 3rem;
+    background-color: #25d366;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    animation: bounce-slow 3s infinite ease-in-out;
+}
+
+.floating-wa:hover {
+    background-color: #128c7e;
+    transform: scale(1.1);
+    animation: none;
+    -webkit-animation: none;
+}
+/* Adjust untuk desktop (>480px) */
+@media (min-width: 481px) {
+    .floating-wa {
+        right: calc((100vw - 480px) / 2 + 1rem);
+    }
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .navigation {
+        padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    }
+    .floating-wa {
+        bottom: calc(6rem + env(safe-area-inset-bottom)); /* Adjust button atas safe-area */
+    }
+}
+/*
+.floating-wa i {
+font-size: 1.700rem;
+} */
+/* Keyframes untuk bounce slow (lambat dan smooth) */
+@keyframes bounce-slow {
+    0%,
+    100% {
+        transform: translateY(0); /* Mulai dan akhir di posisi normal */
+    }
+    50% {
+        transform: translateY(-10px); /* Bounce ke atas 10px, adjust tinggi bounce jika perlu */
+    }
 }
 
 /* Progress Bar */
@@ -56,6 +111,12 @@ body {
     transform: scale(1.2);
     opacity: 1;
 }
+/* Pastikan snap work di touch */
+@media (hover: none) {
+    .slider-container {
+        scroll-snap-type: x mandatory;
+    }
+}
 
 /* Card Hover Effects */
 .card-hover-effect {
@@ -78,7 +139,7 @@ body {
 
 /* Features Section */
 /* .features-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 } */
 
 /* Mobile Navigation */
@@ -218,8 +279,8 @@ body {
 
 /* Kustomisasi untuk tombol 'Semua' agar memiliki warna yang berbeda (Hijau) */
 /* .kategori-btn:first-child .icon-wrapper {
-    border-color: #10b981;
-    color: #10b981;
+border-color: #10b981;
+color: #10b981;
 } */
 
 /* Modal Styles */
@@ -364,5 +425,3 @@ body {
     object-fit: cover;
     border-radius: 8px;
 }
-
-

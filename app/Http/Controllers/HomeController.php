@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Berita;
 use App\Models\KategoriDonasi;
 use App\Models\ProgramDonasi;
 use App\Models\Slider;
@@ -19,7 +20,10 @@ class HomeController extends Controller
 
         $sliders = Slider::orderBy('urutan', 'asc')->get();
 
-        return view('pages.home', compact('featuredPrograms', 'otherPrograms', 'kategori', 'sliders'));
+        // Ambil 4 berita terbaru
+        $berita = Berita::orderBy('tanggal', 'desc')->take(4)->get();
+
+        return view('pages.home', compact('featuredPrograms', 'otherPrograms', 'kategori', 'sliders', 'berita'));
     }
 
     public function programs()
@@ -60,5 +64,17 @@ class HomeController extends Controller
             ->paginate(10);
 
         return view('pages.program-donasi.search', compact('programs', 'keyword'));
+    }
+
+    public function berita()
+    {
+        $beritas = Berita::latest()->paginate(3);
+        return view('pages.berita.index', compact('beritas'));
+    }
+
+    public function showBerita($slug)
+    {
+        $berita = Berita::where('slug', $slug)->firstOrFail();
+        return view('pages.berita.berita', compact('berita'));
     }
 }

@@ -1,12 +1,11 @@
 <header class="relative text-white overflow-hidden pt-2 pb-8">
-    <div class="absolute top-0 left-0 right-0 z-0 bg-primary" style="height: 140px"></div>
+    <div class="absolute top-0 left-0 right-0 z-0 bg-primary h-24 md:h-28"></div>
 
     <div class="relative w-full z-10">
-        <div class="slider-container flex overflow-x-scroll snap-x snap-mandatory h-[200px] gap-3 px-6">
-
+        <div class="slider-container flex overflow-x-auto snap-x snap-mandatory h-auto gap-3 px-4 scroll-smooth">
             @foreach ($sliders as $slide)
                 <a href="{{ $slide->url ?? '#' }}"
-                   class="min-w-[88%] flex-shrink-0 relative flex items-center justify-center bg-gray-100 snap-center rounded-xl overflow-hidden">
+                   class="min-w-[90%] flex-shrink-0 relative flex items-center justify-center snap-center rounded-xl overflow-hidden aspect-[16/9]"> <!-- Tambah aspect-[16/9] untuk ratio dinamis, min-w-90% agar adjust layar -->
                     <img src="{{ asset('storage/' . $slide->gambar) }}"
                          alt="{{ $slide->alt_text ?? 'Slider Image' }}"
                          class="absolute inset-0 w-full h-full object-cover"

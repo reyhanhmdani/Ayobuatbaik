@@ -8,12 +8,17 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\admin\SliderController;
+use App\Http\Controllers\Admin\BeritaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('pages.home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/programs', [HomeController::class, 'programs'])->name('home.program');
-Route::get("/program/{slug}", [HomeController::class, 'program'])->name('home.program.show');
+Route::get('/program/{slug}', [HomeController::class, 'program'])->name('home.program.show');
+
+Route::get('/berita', [HomeController::class, 'berita'])->name('home.berita');
+Route::get('/berita/{slug}', [HomeController::class, 'showBerita'])->name('home.berita.show');
+
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -37,6 +42,9 @@ Route::middleware(['auth'])
         Route::resource('penggalang-dana', PenggalangDanaController::class)->names('penggalang_dana');
         Route::resource('kategori-donasi', KategoriDonasiController::class)->names('kategori_donasi');
         Route::resource('sliders', SliderController::class)->names('sliders');
+        Route::resource('berita', BeritaController::class)
+            ->parameters(['berita' => 'berita'])
+            ->names('berita');
         Route::post('/sliders/reorder', [SliderController::class, 'reorder'])->name('sliders.reorder');
     });
 
