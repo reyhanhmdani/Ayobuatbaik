@@ -8,4 +8,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        hmr: {
+            host: 'unridiculous-multilaterally-shery.ngrok-free.dev',
+            protocol: 'wss',
+        },
+    },
 });

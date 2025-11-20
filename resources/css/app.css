@@ -27,7 +27,7 @@ body {
 
 /* Floating WA Button fixed di viewport, tapi align dengan container */
 .floating-wa {
-    position: fixed; /* Kembali ke fixed agar melayang saat scroll */
+    position: fixed;
     bottom: calc(6rem + env(safe-area-inset-bottom));
     right: 1rem; /* Default mobile */
     z-index: 50;

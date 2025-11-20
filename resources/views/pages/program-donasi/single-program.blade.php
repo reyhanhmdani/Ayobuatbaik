@@ -6,12 +6,58 @@
     @include('components.layout.header-with-search')
 @endsection
 
+@section('styles')
+    <style>
+        /* Style untuk Tab Aktif */
+        .tab-button.active {
+            color: #2563eb; /* blue-600 */
+            border-bottom: 2px solid #2563eb;
+        }
+
+        /* Style untuk Pilihan Nominal */
+        .amount-option {
+            cursor: pointer;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .amount-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .amount-option.selected {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #eff6ff; /* blue-50 */
+            color: #1d4ed8; /* blue-700 */
+            font-weight: 600;
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="content pb-20">
-        <!-- Campaign Header Image -->
+        
         <div class="relative h-64 overflow-hidden">
-            <img src="{{ asset('storage/' . $program->gambar) }}" alt="{{ $program->title }}"
-                class="w-full h-full object-cover" loading="lazy" />
+            <img src="{{ asset('storage/' . $program->gambar) }}" 
+                 alt="{{ $program->title }}"
+                 class="w-full h-full object-cover" 
+                 loading="lazy" />
             <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end">
                 <div class="p-4 text-white">
                     <h2 class="text-xl font-bold">{{ $program->title }}</h2>
@@ -20,292 +66,145 @@
             </div>
         </div>
 
-        <!-- Campaign Stats -->
         <div class="bg-white p-4 shadow-sm">
             <div class="flex justify-between items-center mb-3">
                 <div>
                     <p class="text-xs text-gray-500">Terkumpul</p>
-                    <p class="text-lg font-bold text-primary">{{ number_format($program->collected_amount, 0, ',', '.') }}
+                    <p class="text-lg font-bold text-primary">
+                        Rp {{ number_format($program->collected_amount, 0, ',', '.') }}
                     </p>
                 </div>
                 <div class="text-right">
                     <p class="text-xs text-gray-500">Target</p>
-                    <p class="text-lg font-bold text-primary">{{ number_format($program->target_amount, 0, ',', '.') }}</p>
+                    <p class="text-lg font-bold text-primary">
+                        Rp {{ number_format($program->target_amount, 0, ',', '.') }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Progress Bar -->
             @php
-                $progress =
-                    $program->target_amount > 0 ? ($program->collected_amount / $program->target_amount) * 100 : 0;
-
+                $progress = $program->target_amount > 0 
+                    ? ($program->collected_amount / $program->target_amount) * 100 
+                    : 0;
                 $progress = min(100, $progress);
+                
+                $daysLeft = $program->end_date 
+                    ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false))) 
+                    : '∞';
             @endphp
+
             <div class="mb-3">
-                <div class="progress-bar-simple bg-gray-200">
-                    <div class="progress-fill-simple bg-secondary" style="width: {{ $progress }}%"></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $progress }}%"></div>
                 </div>
                 <div class="flex justify-between text-xs text-gray-500 mt-1">
                     <span>{{ number_format($progress, 0) }}%</span>
-                    <span>Sisa hari:
-                        {{ $program->end_date ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false))) : '∞' }}
-                    </span>
+                    <span>Sisa hari: {{ $daysLeft }}</span>
                 </div>
             </div>
 
-            <!-- Donors Count -->
             <div class="flex items-center text-sm text-gray-600">
                 <i class="fas fa-users text-secondary mr-2"></i>
                 <span>{{ number_format($program->donors_count ?? 0) }} donatur telah berkontribusi</span>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="bg-white p-4 flex space-x-3 shadow-sm">
-            <button class="flex-1 donation-btn py-3 rounded-lg font-semibold text-center">
+        <div class="bg-white p-4 flex space-x-3 shadow-sm sticky top-0 z-10">
+            <button class="flex-1 donation-btn bg-blue-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-blue-700 transition">
                 <i class="fas fa-heart mr-2"></i>Donasi Sekarang
             </button>
-            <button class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg">
-                <i class="fas fa-share-alt text-gray-600"></i>
+            <button class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
+                <i class="fas fa-share-alt"></i>
             </button>
         </div>
 
-        <!-- Campaign Tabs -->
         <div class="bg-white mt-4">
-            <div class="flex border-b">
+            <div class="flex border-b text-gray-500">
                 <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="deskripsi">
                     Deskripsi
                 </button>
                 <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="donatur">
-                    Donatur{{ number_format($program->donors_count ?? 0) }}
+                    Donatur ({{ number_format($program->donors_count ?? 0) }})
                 </button>
             </div>
 
-            <!-- Tab Content -->
-            <div class="p-4">
-                <!-- Deskripsi Tab (Gabung dengan Update) -->
+            <div class="p-4 min-h-[300px]">
+                
                 <div id="deskripsi-tab" class="tab-content">
-                    <!-- Tentang Program -->
                     <div class="mb-6">
                         <h3 class="font-bold text-lg mb-3">Tentang Program</h3>
-                        <div class="prose prose-sm">
+                        <div class="prose prose-sm text-gray-700">
                             {!! $program->deskripsi !!}
                         </div>
                     </div>
                 </div>
 
-                {{-- <!-- Update Terbaru (Gabung ke Deskripsi) -->
-                                    <div class="mb-6">
-                                        <h3 class="font-bold text-lg mb-3">Update Terbaru</h3>
-                                        <div class="space-y-4">
-                                            <div class="border-l-4 border-secondary pl-4 py-1">
-                                                <p class="text-xs text-gray-500">15 Juni 2023</p>
-                                                <p class="font-medium mt-1">Pendaftaran gelombang kedua telah dibuka</p>
-                                                <p class="text-sm text-gray-700 mt-1">
-                                                    Pendaftaran untuk gelombang kedua beasiswa santri Selfa telah dibuka hingga 30 Juni
-                                                    2023.
-                                                </p>
-                                            </div>
-
-                                            <div class="border-l-4 border-secondary pl-4 py-1">
-                                                <p class="text-xs text-gray-500">1 Juni 2023</p>
-                                                <p class="font-medium mt-1">Seleksi tahap pertama telah selesai</p>
-                                                <p class="text-sm text-gray-700 mt-1">
-                                                    Seleksi tahap pertama untuk 50 calon penerima beasiswa telah selesai. Tahap wawancara
-                                                    akan
-                                                    dimulai minggu depan.
-                                                </p>
-                                            </div>
-
-                                            <div class="border-l-4 border-secondary pl-4 py-1">
-                                                <p class="text-xs text-gray-500">20 Mei 2023</p>
-                                                <p class="font-medium mt-1">Program telah mencapai 70% dari target</p>
-                                                <p class="text-sm text-gray-700 mt-1">
-                                                    Terima kasih kepada semua donatur, program beasiswa santri Selfa telah mencapai 70% dari
-                                                    target pengumpulan dana.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-
-                <!-- Donatur Tab (Full Height untuk Scroll) -->
                 <div id="donatur-tab" class="tab-content hidden">
                     <h3 class="font-bold text-lg mb-4">Daftar Donatur</h3>
                     <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-                        <!-- Sample Donatur Data - Bisa banyak karena scrollable -->
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    A
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Ahmad S.</p>
-                                    <p class="text-xs text-gray-500">2 jam yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 500.000</p>
-                        </div>
+                        {{-- Idealnya di sini meloop data donatur real dari database --}}
+                        
+                        @php
+                            $dummyDonors = [
+                                ['name' => 'Hamba Allah', 'time' => 'Baru saja', 'amount' => 50000, 'initial' => 'H'],
+                                ['name' => 'Ahmad S.', 'time' => '2 jam yang lalu', 'amount' => 500000, 'initial' => 'A'],
+                                ['name' => 'Siti M.', 'time' => '5 jam yang lalu', 'amount' => 250000, 'initial' => 'S'],
+                            ];
+                        @endphp
 
-                        <div class="flex items-center justify-between py-2 border-b">
+                        @foreach($dummyDonors as $donor)
+                        <div class="flex items-center justify-between py-2 border-b last:border-0">
                             <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    S
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mr-3">
+                                    {{ $donor['initial'] }}
                                 </div>
                                 <div>
-                                    <p class="font-medium text-sm">Siti M.</p>
-                                    <p class="text-xs text-gray-500">5 jam yang lalu</p>
+                                    <p class="font-medium text-sm">{{ $donor['name'] }}</p>
+                                    <p class="text-xs text-gray-500">{{ $donor['time'] }}</p>
                                 </div>
                             </div>
-                            <p class="font-bold text-secondary">Rp 250.000</p>
+                            <p class="font-bold text-blue-600 text-sm">Rp {{ number_format($donor['amount'], 0, ',', '.') }}</p>
                         </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    R
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Rina W.</p>
-                                    <p class="text-xs text-gray-500">1 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 100.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    M
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">M. Fajar</p>
-                                    <p class="text-xs text-gray-500">1 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 1.000.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    D
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Doni P.</p>
-                                    <p class="text-xs text-gray-500">2 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 75.000</p>
-                        </div>
-
-                        <!-- Tambahan donatur untuk demo scroll -->
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    B
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Budi H.</p>
-                                    <p class="text-xs text-gray-500">3 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 300.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    L
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Lina K.</p>
-                                    <p class="text-xs text-gray-500">3 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 150.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    F
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Fajar R.</p>
-                                    <p class="text-xs text-gray-500">4 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 2.000.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    N
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Nina S.</p>
-                                    <p class="text-xs text-gray-500">4 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 50.000</p>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold mr-3">
-                                    R
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">Rudi T.</p>
-                                    <p class="text-xs text-gray-500">5 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-secondary">Rp 1.500.000</p>
+                        @endforeach
+                        
+                        <div class="text-center text-xs text-gray-400 mt-4">
+                            -- Menampilkan donatur terbaru --
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Related Campaigns -->
         @if ($relatedPrograms->isNotEmpty())
-            <div class="bg-white mt-4 p-4">
+            <div class="bg-white mt-4 p-4 mb-8">
                 <h3 class="font-bold text-lg mb-3">Program Lainnya</h3>
                 <div class="space-y-4">
                     @foreach ($relatedPrograms as $item)
                         @php
-                            $progress =
-                                $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
-                            $progress = min(100, $progress);
+                            $relProgress = $item->target_amount > 0 
+                                ? ($item->collected_amount / $item->target_amount) * 100 
+                                : 0;
+                            $relProgress = min(100, $relProgress);
+                            
+                            $relDaysLeft = $item->end_date 
+                                ? floor(max(0, \Carbon\Carbon::now()->diffInDays($item->end_date, false))) 
+                                : '∞';
                         @endphp
-                        <a href="{{ route('home.program.show', $item->slug) }}"
-                            class="flex border rounded-lg overflow-hidden">
+                        <a href="{{ route('home.program.show', $item->slug) }}" class="flex border rounded-lg overflow-hidden hover:shadow-md transition">
                             <div class="w-24 h-24 flex-shrink-0">
-                                <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->title }}"
-                                    class="w-full h-full object-cover" loading="lazy" />
+                                <img src="{{ asset('storage/' . $item->gambar) }}" 
+                                     alt="{{ $item->title }}"
+                                     class="w-full h-full object-cover" 
+                                     loading="lazy" />
                             </div>
                             <div class="p-3 flex-1">
-                                <h4 class="font-bold text-sm">{{ $item->title }}</h4>
+                                <h4 class="font-bold text-sm line-clamp-2">{{ $item->title }}</h4>
                                 <div class="flex justify-between text-xs text-gray-500 mt-1">
                                     <span>Terkumpul: {{ number_format($item->collected_amount, 0, ',', '.') }}</span>
-                                    <span>
-                                        Sisa hari:
-                                        {{ $item->end_date ? floor(max(0, \Carbon\Carbon::now()->diffInDays($item->end_date, false))) : '∞' }}
-                                    </span>
+                                    <span>Sisa: {{ $relDaysLeft }} hari</span>
                                 </div>
-                                <div class="progress-bar-simple bg-gray-200 mt-2">
-                                    <div class="progress-fill-simple bg-secondary" style="width: 60%"></div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ $relProgress }}%"></div>
                                 </div>
                             </div>
                         </a>
@@ -315,105 +214,245 @@
         @endif
     </div>
 
-    <!-- Donation Modal (tetap sama) -->
-    <div id="donation-modal" class="donation-modal hidden">
-        <div class="modal-content">
+    <div id="donation-modal" class="donation-modal hidden fixed inset-0 bg-black/50 flex justify-center items-end sm:items-center z-50 transition-opacity">
+        <div class="modal-content bg-white w-full sm:max-w-md sm:rounded-lg rounded-t-2xl shadow-lg transform transition-transform duration-300">
+
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 class="font-bold text-lg">Donasi Sekarang</h3>
-                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
+                <button id="close-modal" class="text-gray-500 hover:text-red-500 transition">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
 
-            <div class="p-4">
-                <div class="mb-4">
-                    <p class="font-medium mb-2">Pilih Nominal Donasi</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="amount-option" data-amount="25000">Rp 25.000</div>
-                        <div class="amount-option" data-amount="50000">Rp 50.000</div>
-                        <div class="amount-option" data-amount="100000">Rp 100.000</div>
-                        <div class="amount-option" data-amount="250000">Rp 250.000</div>
-                        <div class="amount-option" data-amount="500000">Rp 500.000</div>
-                        <div class="amount-option" data-amount="1000000">Rp 1.000.000</div>
-                    </div>
-
-                    <div class="mt-3">
-                        <p class="font-medium mb-2">Atau masukkan nominal lain</p>
-                        <div class="flex border rounded-lg overflow-hidden">
-                            <span class="bg-gray-100 px-3 py-2 text-gray-600">Rp</span>
-                            <input type="number" id="custom-amount" class="flex-1 px-3 py-2 outline-none"
-                                placeholder="Masukkan nominal" />
+            <div class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+                
+                <div>
+                    <p class="font-medium mb-2 text-sm text-gray-700">Data Donatur</p>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Nama Lengkap</label>
+                            <input type="text" id="donor-name" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                   placeholder="Masukkan nama Anda">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Nomor HP / WhatsApp</label>
+                            <input type="tel" id="donor-phone" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                   placeholder="Contoh: 081234567890">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Email (Opsional)</label>
+                            <input type="email" id="donor-email" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                   placeholder="email@contoh.com">
                         </div>
                     </div>
                 </div>
-                <button class="w-full donation-btn py-3 rounded-lg font-semibold text-center">Lanjutkan Pembayaran</button>
+
+                <div class="pt-2 border-t">
+                    <p class="font-medium mb-2 text-sm text-gray-700">Pilih Nominal Donasi</p>
+
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div class="amount-option" data-amount="25000">Rp 25rb</div>
+                        <div class="amount-option" data-amount="50000">Rp 50rb</div>
+                        <div class="amount-option" data-amount="100000">Rp 100rb</div>
+                        <div class="amount-option" data-amount="250000">Rp 250rb</div>
+                        <div class="amount-option" data-amount="500000">Rp 500rb</div>
+                        <div class="amount-option" data-amount="1000000">Rp 1 Juta</div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-gray-500 mb-1">Atau masukkan nominal lain (Min Rp 10.000)</p>
+                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                            <span class="bg-gray-100 px-3 py-2 text-gray-600 text-sm font-bold">Rp</span>
+                            <input type="number" id="custom-amount" 
+                                   class="flex-1 px-3 py-2 outline-none text-sm"
+                                   placeholder="0">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="pay-now-btn" class="w-full py-3 rounded-lg font-bold text-center bg-blue-600 text-white hover:bg-blue-700 transition shadow-md">
+                    Lanjutkan Pembayaran
+                </button>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @section('scripts')
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                console.log("Script loaded");
+@section('scripts')
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
 
-                // Tab functionality - Hanya 2 tab sekarang
-                const tabButtons = document.querySelectorAll(".tab-button");
-                const tabContents = document.querySelectorAll(".tab-content");
+    <script>
+        const programDonasiId = {{ $program->id }};
 
-                tabButtons.forEach((button) => {
-                    button.addEventListener("click", function() {
-                        const tabId = this.getAttribute("data-tab");
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("App Loaded");
 
-                        tabButtons.forEach((btn) => btn.classList.remove("active"));
-                        this.classList.add("active");
+            /* =========================================
+               1. TAB SWITCHING LOGIC (FIXED)
+            ========================================= */
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
 
-                        tabContents.forEach((content) => content.classList.add("hidden"));
-                        document.getElementById(`${tabId}-tab`).classList.remove("hidden");
-                    });
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 1. Hapus class active dari semua tombol
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // 2. Sembunyikan semua konten tab
+                    tabContents.forEach(content => content.classList.add('hidden'));
+
+                    // 3. Tambahkan class active ke tombol yang diklik
+                    button.classList.add('active');
+
+                    // 4. Munculkan konten tab yang sesuai (berdasarkan data-tab)
+                    const targetId = button.getAttribute('data-tab') + '-tab';
+                    const targetContent = document.getElementById(targetId);
+                    if(targetContent) {
+                        targetContent.classList.remove('hidden');
+                    }
                 });
+            });
 
-                // Donation modal functionality
-                const donationBtn = document.querySelector(".donation-btn");
-                const donationModal = document.getElementById("donation-modal");
-                const closeModal = document.getElementById("close-modal");
+            /* =========================================
+               2. MODAL OPEN & CLOSE
+            ========================================= */
+            const donationModal = document.getElementById("donation-modal");
+            const openDonationBtns = document.querySelectorAll(".donation-btn");
+            const closeModalBtn = document.getElementById("close-modal");
 
-                if (donationModal) {
+            function toggleModal(show) {
+                if (show) {
+                    donationModal.classList.remove("hidden");
+                    document.body.style.overflow = 'hidden'; // Prevent background scroll
+                } else {
                     donationModal.classList.add("hidden");
+                    document.body.style.overflow = ''; 
+                }
+            }
+
+            openDonationBtns.forEach(btn => btn.addEventListener("click", () => toggleModal(true)));
+            closeModalBtn.addEventListener("click", () => toggleModal(false));
+
+            // Close modal when clicking outside content
+            donationModal.addEventListener("click", (e) => {
+                if (e.target === donationModal) toggleModal(false);
+            });
+
+            /* =========================================
+               3. DONATION AMOUNT LOGIC
+            ========================================= */
+            const amountOptions = document.querySelectorAll(".amount-option");
+            const customAmountInput = document.getElementById("custom-amount");
+            let selectedAmount = null;
+
+            // Handle klik pilihan nominal
+            amountOptions.forEach(option => {
+                option.addEventListener("click", function() {
+                    // Reset visual
+                    amountOptions.forEach(opt => opt.classList.remove("selected"));
+                    customAmountInput.value = "";
+                    
+                    // Set active
+                    this.classList.add("selected");
+                    selectedAmount = this.getAttribute("data-amount");
+                });
+            });
+
+            // Handle input manual
+            customAmountInput.addEventListener("input", function() {
+                amountOptions.forEach(opt => opt.classList.remove("selected"));
+                selectedAmount = this.value;
+            });
+
+            /* =========================================
+               4. PAYMENT PROCESS
+            ========================================= */
+            const payButton = document.getElementById("pay-now-btn");
+
+            payButton.addEventListener("click", function() {
+                // Disable button to prevent double click
+                const originalText = payButton.innerText;
+                payButton.disabled = true;
+                payButton.innerText = "Memproses...";
+                payButton.classList.add("opacity-70", "cursor-not-allowed");
+
+                const donorName = document.getElementById("donor-name").value.trim();
+                const donorPhone = document.getElementById("donor-phone").value.trim();
+                const donorEmail = document.getElementById("donor-email").value.trim();
+                const finalAmount = customAmountInput.value ? customAmountInput.value : selectedAmount;
+
+                // Validasi Sederhana
+                if (!donorName || !donorPhone) {
+                    alert("Nama dan Nomor HP wajib diisi.");
+                    resetButton();
+                    return;
                 }
 
-                if (donationBtn) {
-                    donationBtn.addEventListener("click", function() {
-                        if (donationModal) {
-                            donationModal.classList.remove("hidden");
+                if (!finalAmount || finalAmount < 10000) {
+                    alert("Minimal donasi adalah Rp 10.000");
+                    resetButton();
+                    return;
+                }
+
+                // Kirim Request
+                fetch(`/api/donation/${programDonasiId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        donor_name: donorName,
+                        donor_phone: donorPhone,
+                        donor_email: donorEmail,
+                        amount: finalAmount,
+                        donation_type: "umum",
+                        note: null
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error("Network response was not ok");
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data.snap_token) {
+                        alert("Gagal mendapatkan token pembayaran.");
+                        resetButton();
+                        return;
+                    }
+
+                    // Trigger Snap Popup
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.href = "/donate/success";
+                        },
+                        onPending: function(result) {
+                            window.location.href = "/donate/pending";
+                        },
+                        onError: function(result) {
+                            alert("Pembayaran gagal atau dibatalkan.");
+                            resetButton();
+                        },
+                        onClose: function() {
+                            resetButton();
                         }
                     });
-                }
-
-                if (closeModal) {
-                    closeModal.addEventListener("click", function() {
-                        if (donationModal) {
-                            donationModal.classList.add("hidden");
-                        }
-                    });
-                }
-
-                // Amount selection
-                const amountOptions = document.querySelectorAll(".amount-option");
-                const customAmountInput = document.getElementById("custom-amount");
-
-                amountOptions.forEach((option) => {
-                    option.addEventListener("click", function() {
-                        amountOptions.forEach((opt) => opt.classList.remove("selected"));
-                        this.classList.add("selected");
-                        if (customAmountInput) customAmountInput.value = "";
-                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Terjadi kesalahan sistem. Silakan coba lagi.");
+                    resetButton();
                 });
 
-                if (customAmountInput) {
-                    customAmountInput.addEventListener("input", function() {
-                        amountOptions.forEach((opt) => opt.classList.remove("selected"));
-                    });
+                function resetButton() {
+                    payButton.disabled = false;
+                    payButton.innerText = originalText;
+                    payButton.classList.remove("opacity-70", "cursor-not-allowed");
                 }
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection
