@@ -35,7 +35,7 @@
             color: #1d4ed8; /* blue-700 */
             font-weight: 600;
         }
-        
+
         /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -52,11 +52,11 @@
 
 @section('content')
     <div class="content pb-20">
-        
+
         <div class="relative h-64 overflow-hidden">
-            <img src="{{ asset('storage/' . $program->gambar) }}" 
+            <img src="{{ asset('storage/' . $program->gambar) }}"
                  alt="{{ $program->title }}"
-                 class="w-full h-full object-cover" 
+                 class="w-full h-full object-cover"
                  loading="lazy" />
             <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end">
                 <div class="p-4 text-white">
@@ -83,13 +83,13 @@
             </div>
 
             @php
-                $progress = $program->target_amount > 0 
-                    ? ($program->collected_amount / $program->target_amount) * 100 
+                $progress = $program->target_amount > 0
+                    ? ($program->collected_amount / $program->target_amount) * 100
                     : 0;
                 $progress = min(100, $progress);
-                
-                $daysLeft = $program->end_date 
-                    ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false))) 
+
+                $daysLeft = $program->end_date
+                    ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false)))
                     : '∞';
             @endphp
 
@@ -129,7 +129,7 @@
             </div>
 
             <div class="p-4 min-h-[300px]">
-                
+
                 <div id="deskripsi-tab" class="tab-content">
                     <div class="mb-6">
                         <h3 class="font-bold text-lg mb-3">Tentang Program</h3>
@@ -143,7 +143,7 @@
                     <h3 class="font-bold text-lg mb-4">Daftar Donatur</h3>
                     <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
                         {{-- Idealnya di sini meloop data donatur real dari database --}}
-                        
+
                         @php
                             $dummyDonors = [
                                 ['name' => 'Hamba Allah', 'time' => 'Baru saja', 'amount' => 50000, 'initial' => 'H'],
@@ -166,7 +166,7 @@
                             <p class="font-bold text-blue-600 text-sm">Rp {{ number_format($donor['amount'], 0, ',', '.') }}</p>
                         </div>
                         @endforeach
-                        
+
                         <div class="text-center text-xs text-gray-400 mt-4">
                             -- Menampilkan donatur terbaru --
                         </div>
@@ -181,20 +181,20 @@
                 <div class="space-y-4">
                     @foreach ($relatedPrograms as $item)
                         @php
-                            $relProgress = $item->target_amount > 0 
-                                ? ($item->collected_amount / $item->target_amount) * 100 
+                            $relProgress = $item->target_amount > 0
+                                ? ($item->collected_amount / $item->target_amount) * 100
                                 : 0;
                             $relProgress = min(100, $relProgress);
-                            
-                            $relDaysLeft = $item->end_date 
-                                ? floor(max(0, \Carbon\Carbon::now()->diffInDays($item->end_date, false))) 
+
+                            $relDaysLeft = $item->end_date
+                                ? floor(max(0, \Carbon\Carbon::now()->diffInDays($item->end_date, false)))
                                 : '∞';
                         @endphp
                         <a href="{{ route('home.program.show', $item->slug) }}" class="flex border rounded-lg overflow-hidden hover:shadow-md transition">
                             <div class="w-24 h-24 flex-shrink-0">
-                                <img src="{{ asset('storage/' . $item->gambar) }}" 
+                                <img src="{{ asset('storage/' . $item->gambar) }}"
                                      alt="{{ $item->title }}"
-                                     class="w-full h-full object-cover" 
+                                     class="w-full h-full object-cover"
                                      loading="lazy" />
                             </div>
                             <div class="p-3 flex-1">
@@ -225,25 +225,25 @@
             </div>
 
             <div class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
-                
+
                 <div>
                     <p class="font-medium mb-2 text-sm text-gray-700">Data Donatur</p>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Nama Lengkap</label>
-                            <input type="text" id="donor-name" 
+                            <input type="text" id="donor-name"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                    placeholder="Masukkan nama Anda">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Nomor HP / WhatsApp</label>
-                            <input type="tel" id="donor-phone" 
+                            <input type="tel" id="donor-phone"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                    placeholder="Contoh: 081234567890">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">Email (Opsional)</label>
-                            <input type="email" id="donor-email" 
+                            <input type="email" id="donor-email"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                    placeholder="email@contoh.com">
                         </div>
@@ -266,7 +266,7 @@
                         <p class="text-xs text-gray-500 mb-1">Atau masukkan nominal lain (Min Rp 10.000)</p>
                         <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                             <span class="bg-gray-100 px-3 py-2 text-gray-600 text-sm font-bold">Rp</span>
-                            <input type="number" id="custom-amount" 
+                            <input type="number" id="custom-amount"
                                    class="flex-1 px-3 py-2 outline-none text-sm"
                                    placeholder="0">
                         </div>
@@ -300,7 +300,7 @@
                 button.addEventListener('click', () => {
                     // 1. Hapus class active dari semua tombol
                     tabButtons.forEach(btn => btn.classList.remove('active'));
-                    
+
                     // 2. Sembunyikan semua konten tab
                     tabContents.forEach(content => content.classList.add('hidden'));
 
@@ -329,7 +329,7 @@
                     document.body.style.overflow = 'hidden'; // Prevent background scroll
                 } else {
                     donationModal.classList.add("hidden");
-                    document.body.style.overflow = ''; 
+                    document.body.style.overflow = '';
                 }
             }
 
@@ -354,7 +354,7 @@
                     // Reset visual
                     amountOptions.forEach(opt => opt.classList.remove("selected"));
                     customAmountInput.value = "";
-                    
+
                     // Set active
                     this.classList.add("selected");
                     selectedAmount = this.getAttribute("data-amount");
@@ -418,26 +418,29 @@
                     return res.json();
                 })
                 .then(data => {
-                    if (!data.snap_token) {
+                    if (!data.snap_token || !data.donation_code) {
                         alert("Gagal mendapatkan token pembayaran.");
                         resetButton();
                         return;
                     }
 
+                    const donationCode = data.donation_code;
+
                     // Trigger Snap Popup
                     snap.pay(data.snap_token, {
                         onSuccess: function(result) {
-                            window.location.href = "/donate/success";
+                            window.location.href = `/donate/status/${donationCode}`;
                         },
                         onPending: function(result) {
-                            window.location.href = "/donate/pending";
+                            window.location.href = `/donate/status/${donationCode}`;
                         },
                         onError: function(result) {
                             alert("Pembayaran gagal atau dibatalkan.");
                             resetButton();
                         },
                         onClose: function() {
-                            resetButton();
+                            // resetButton();
+                            window.location.href = `/donate/status/${donationCode}`;
                         }
                     });
                 })

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('snap_token')->nullable();
             $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
+            $table->timestamp('status_change_at')->nullable();
             $table->timestamps();
 
             $table->foreign('program_donasi_id')->references('id')->on('program_donasi')->onDelete('cascade');

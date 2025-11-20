@@ -33,6 +33,12 @@
         <span>Program Donasi</span>
     </a>
 
+    <a href="{{ route('admin.donasi.index') }}"
+        class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.donasi.*') ? 'bg-gray-800' : '' }}">
+        <i class="fas fa-receipt w-5"></i>
+        <span>Transaksi Donasi</span>
+    </a>
+
     <a href="{{ route('admin.berita.index') }}"
         class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.berita.*') ? 'bg-gray-800' : '' }}">
         <i class="fas fa-newspaper w-5"></i>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Donation;
 use App\Models\ProgramDonasi;
 
 class AdminController extends Controller
@@ -61,9 +62,11 @@ class AdminController extends Controller
         return view('pages.admin.programs');
     }
 
-    public function donations()
+    public function donasi()
     {
-        return view('pages.admin.donations');
+        $donations = Donation::with('program')->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('pages.admin.donasi.index', compact('donations'));
     }
 
     public function users()
