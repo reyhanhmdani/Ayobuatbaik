@@ -27,4 +27,9 @@ class ProgramDonasi extends Model
     {
         return $this->hasMany(Slider::class, 'program_id');
     }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class, 'program_donasi_id');
+    }
 }

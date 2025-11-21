@@ -139,42 +139,42 @@ class DonasiController extends Controller
         return view("pages.donasi.status", compact("donation", "recentDonation", "isDeletable"));
     }
 
-    public function index(Request $request)
-    {
-        // 1. Ambil filter dari request
-        $filterType = $request->get("type", "all");
-        $perPage = 15;
+    // public function index(Request $request)
+    // {
+    //     // 1. Ambil filter dari request
+    //     $filterType = $request->get("type", "all");
+    //     $perPage = 15;
 
-        // 2. Query Donasi
-        $donationsQuery = Donation::with("program") // Eager load ProgramDonasi terkait
-            ->latest(); // Urutkan dari yang terbaru
+    //     // 2. Query Donasi
+    //     $donationsQuery = Donation::with("program") // Eager load ProgramDonasi terkait
+    //         ->latest(); // Urutkan dari yang terbaru
 
-        // 3. Terapkan filter berdasarkan Tipe Pembayaran (donation_type)
-        if ($filterType !== "all") {
-            $allowedTypes = ["Qris"];
+    //     // 3. Terapkan filter berdasarkan Tipe Pembayaran (donation_type)
+    //     if ($filterType !== "all") {
+    //         $allowedTypes = ["Qris"];
 
-            if (in_array($filterType, $allowedTypes)) {
-                $donationsQuery->where("donation_type", $filterType);
-            }
-            // Tambahkan logika jika ingin memfilter Status, misal:
-            // if ($filterType === 'success') { $donationsQuery->where('status', 'success'); }
-        }
+    //         if (in_array($filterType, $allowedTypes)) {
+    //             $donationsQuery->where("donation_type", $filterType);
+    //         }
+    //         // Tambahkan logika jika ingin memfilter Status, misal:
+    //         // if ($filterType === 'success') { $donationsQuery->where('status', 'success'); }
+    //     }
 
-        $donations = $donationsQuery->paginate($perPage);
+    //     $donations = $donationsQuery->paginate($perPage);
 
-        // 4. Hitung Statistik untuk Tab
-        $stats = [
-            "all" => Donation::count(),
-            "Qris" => Donation::where("donation_type", "Qris")->count(),
-            "Transfer" => Donation::where("donation_type", "Transfer")->count(),
-            "Tersebar" => Donation::where("donation_type", "Tersebar")->count(),
-        ];
+    //     // 4. Hitung Statistik untuk Tab
+    //     $stats = [
+    //         "all" => Donation::count(),
+    //         "Qris" => Donation::where("donation_type", "Qris")->count(),
+    //         "Transfer" => Donation::where("donation_type", "Transfer")->count(),
+    //         "Tersebar" => Donation::where("donation_type", "Tersebar")->count(),
+    //     ];
 
-        // 5. Kembalikan view
-        return view("admin.donations.index", [
-            "donations" => $donations,
-            "stats" => $stats,
-            "currentType" => $filterType,
-        ]);
-    }
+    //     // 5. Kembalikan view
+    //     return view("admin.donations.index", [
+    //         "donations" => $donations,
+    //         "stats" => $stats,
+    //         "currentType" => $filterType,
+    //     ]);
+    // }
 }

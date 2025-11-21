@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use App\Models\ProgramDonasi;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -62,11 +63,42 @@ class AdminController extends Controller
         return view('pages.admin.programs');
     }
 
-    public function donasi()
+    public function donasi(Request $request)
     {
-        $donations = Donation::with('program')->orderBy('created_at', 'desc')->paginate(15);
+        // 1. Ambil data Program Donasi (untuk dropdown filter)
+        $programs = ProgramDonasi::orderBy('title', 'asc')->get(['id', 'title']);
 
-        return view('pages.admin.donasi.index', compact('donations'));
+        // 2. Mendapatkan parameter dari request
+        $search = $request->get('search');
+        $status = $request->get('status');
+        $programId = $request->get('program_id'); // Parameter BARU
+        $perPage = $request->get('perPage', 15);
+
+        $donations = Donation::with('program')
+            ->orderBy('created_at', 'desc')
+            ->when($search, function ($query, $search) {
+                // Filter berdasarkan kode donasi, nama donatur, atau email
+                $query->where('donation_code', 'like', '%' . $search . '%')
+                      ->orWhere('donor_name', 'like', '%' . $search . '%')
+                      ->orWhere('donor_email', 'like', '%' . $search . '%');
+            })
+            ->when($status, function ($query, $status) {
+                if ($status === 'failed') {
+                    // Mengelompokkan status gagal, expired, dan cancel
+                    $query->whereIn('status', ['failed', 'expire', 'cancel']);
+                } else {
+                    // Filter status spesifik
+                    $query->where('status', $status);
+                }
+            })
+            // 3. Filter BERDASARKAN PROGRAM (BARU)
+            ->when($programId, function ($query, $programId) {
+                $query->where('program_donasi_id', $programId);
+            })
+            ->paginate($perPage)
+            ->withQueryString(); // Memastikan parameter filter tetap ada di link pagination
+
+        return view('pages.admin.donasi.index', compact('donations', 'programs'));
     }
 
     public function users()

@@ -72,8 +72,8 @@
                                 <th class="px-4 py-3 text-left">Title</th>
                                 <th class="px-4 py-3 text-left">Penggalang</th>
                                 <th class="px-4 py-3 text-left">Target</th>
-                                <th class="px-4 py-3 text-left">Dibuat</th>
-                                <th class="px-4 py-3 text-left">Berakhir</th>
+                                {{-- GABUNGKAN DIBUAT DAN BERAKHIR JADI PERIODE --}}
+                                <th class="px-4 py-3 text-left">Periode</th>
                                 <th class="px-4 py-3 text-left">Status</th>
                                 <th class="px-4 py-3 text-left">Verified</th>
                                 <th class="px-4 py-3 text-right">Aksi</th>
@@ -97,7 +97,7 @@
                                             </div>
                                             <div>
                                                 <div class="font-semibold">
-                                                    {{ Str::limit($program->title, 10, '...') }}
+                                                    {{ Str::limit($program->title, 40) }} {{-- Menambah limit agar lebih jelas --}}
                                                 </div>
                                                 <div class="text-xs text-gray-500">
                                                     {{ $program->short_description ? Str::limit($program->short_description, 30) : '' }}
@@ -108,15 +108,17 @@
 
                                     <td class="px-4 py-3">{{ $program->penggalang->nama ?? '-' }}</td>
                                     <td class="px-4 py-3">Rp {{ number_format($program->target_amount, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-3">{{ optional($program->created_at)->format('d M Y') }}</td>
-                                    <td class="px-4 py-3">
-                                        {{ $program->end_date ? \Carbon\Carbon::parse($program->end_date)->format('d M Y') : '—' }}
+
+                                    {{-- KOLOM PERIODE BARU --}}
+                                    <td class="px-4 py-3 text-xs text-gray-700 whitespace-nowrap">
+                                        {{ optional($program->created_at)->format('d/m/Y') }} s/d <br>
+                                        {{ $program->end_date ? \Carbon\Carbon::parse($program->end_date)->format('d/m/Y') : '—' }}
                                     </td>
 
                                     <td class="px-4 py-3">
                                         <span
                                             class="px-2 py-1 rounded-lg text-xs
-                                    {{ $program->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
+                                        {{ $program->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
                                             {{ ucfirst($program->status) }}
                                         </span>
                                     </td>
@@ -137,21 +139,26 @@
                                         @endif
                                     </td>
 
-                                    <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.programs.edit', $program->id) }}"
-                                            class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></a>
+                                    {{-- KOLOM AKSI (EDIT -> DETAIL) --}}
+                                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                                        <a href="{{ route('admin.programs.show', $program->id) }}"
+                                            class="inline-flex items-center gap-1 text-white bg-blue-600 px-2 py-1 rounded-md hover:bg-blue-700 mr-2 text-xs">
+                                            <i class="fas fa-eye"></i> Show
+                                        </a>
 
                                         <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST"
                                             class="inline" onsubmit="return confirm('Hapus program ini?');">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800"><i
-                                                    class="fas fa-trash"></i></button>
+                                            <button type="submit"
+                                                class="text-red-600 hover:text-red-800 text-xs inline-flex items-center gap-1">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-6 text-gray-500">Belum ada program donasi.
+                                    <td colspan="7" class="text-center py-6 text-gray-500">Belum ada program donasi.
                                     </td>
                                 </tr>
                             @endforelse
@@ -180,28 +187,37 @@
                             </div>
                             <div class="flex-1">
                                 <div class="flex justify-between items-start">
-                                    <div class="font-semibold text-sm">{{ Str::limit($program->title, 10, '...') }}</div>
-                                    <div class="text-xs text-gray-500">
-                                        {{ $program->created_at ? $program->created_at->format('d M Y') : '' }}</div>
+                                    {{-- TITLE DIBUAT AGAK PANJANG --}}
+                                    <div class="font-semibold text-sm">{{ Str::limit($program->title, 40) }}</div>
                                 </div>
                                 <div class="text-xs text-gray-600 mt-1">Penggalang:
                                     {{ $program->penggalang->nama ?? '-' }}</div>
                                 <div class="text-xs text-gray-600">Target: Rp
                                     {{ number_format($program->target_amount, 0, ',', '.') }}</div>
+
+                                {{-- PERIODE BARU DI MOBILE --}}
+                                <div class="text-xs text-gray-500 mt-1">Periode:
+                                    {{ optional($program->created_at)->format('d/m/Y') }} s/d
+                                    {{ $program->end_date ? \Carbon\Carbon::parse($program->end_date)->format('d/m/Y') : '—' }}
+                                </div>
+
                                 <div class="flex items-center justify-between mt-2 text-xs">
-                                    <div>
-                                        <span class="px-2 py-1 rounded bg-gray-100">{{ ucfirst($program->status) }}</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2"> {{-- Membungkus Status dan Verified --}}
+                                        <span
+                                            class="px-2 py-1 rounded bg-gray-100 text-gray-700 text-xs">{{ ucfirst($program->status) }}</span>
                                         @if ($program->verified)
                                             <span class="text-blue-600 text-xs">Terverifikasi</span>
                                         @endif
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        {{-- Ganti Edit ke Detail/Show --}}
                                         <a href="{{ route('admin.programs.edit', $program->id) }}"
-                                            class="text-blue-600"><i class="fas fa-edit"></i></a>
+                                            class="text-blue-600 text-sm hover:text-blue-800"><i
+                                                class="fas fa-eye"></i></a>
                                         <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST"
                                             class="inline" onsubmit="return confirm('Hapus program ini?');">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600"><i
+                                            <button type="submit" class="text-red-600 text-sm hover:text-red-800"><i
                                                     class="fas fa-trash"></i></button>
                                         </form>
                                     </div>

@@ -105,9 +105,30 @@ class ProgramDonasiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, $id)
     {
-        //
+        $program = ProgramDonasi::with('penggalang')->findOrFail($id);
+
+        $total_amount = $program->donations()->where('status', 'success')->sum('amount');
+
+        $donors_count = $program->donations()->where('status', 'success')->count();
+
+        $query = $program->donations()->latest();
+
+        if ($request->filled('donor_search')) {
+            $search = $request->donor_search;
+            $query->whereHas('donor', function ($q) use ($search) {
+                $q->where('donor_name', 'like', "%{$search}%")
+                    ->orWhere('donor_email', 'like', "%{$search}%")
+                    ->orWhere('donor_phone', 'like', "%{$search}%");
+            });
+        }
+
+        $query->where('status', 'success');
+
+        $donations = $query->paginate(10)->withQueryString();
+
+        return view('pages.admin.programs.show', compact('program', 'total_amount', 'donors_count', 'donations'));
     }
 
     /**

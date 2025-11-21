@@ -5,62 +5,92 @@
 
 @section('content')
     <div class="max-w-full mx-auto mt-8">
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 mb-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {{-- FILTER & EKSPOR CONTAINER --}}
+        <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100 mb-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
                 {{-- JUDUL DAN TOMBOL EKSPOR --}}
-                <div class="flex items-center gap-3">
-                    <h3 class="text-lg font-semibold text-gray-900">Daftar Transaksi Donasi</h3>
+                <div class="flex items-center gap-2">
+                    <h3 class="text-base md:text-lg font-semibold text-gray-900">Data Transaksi
+                        ({{ $donations->total() ?? 0 }})</h3>
 
-                    {{-- TOMBOL EKSPOR BARU --}}
+                    {{-- TOMBOL EKSPOR DENGAN QUERY FILTER --}}
+                    {{-- PASTIKAN ROUTE 'admin.donations.export' SUDAH DITENTUKAN --}}
                     <a href=""
-                        class="ml-2 inline-flex items-center gap-2 bg-blue-600 text-white px-3 py-2 text-xs rounded-lg hover:bg-blue-700 transition">
+                        class="ml-1 inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 text-xs rounded-lg hover:bg-blue-700 transition">
                         <i class="fas fa-download"></i>
-                        <span>Ekspor(CSV)</span>
+                        <span>Ekspor CSV</span>
                     </a>
                 </div>
 
-                <form id="controlsForm" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                <form id="controlsForm" method="GET"
+                    class="flex flex-col gap-2 items-stretch md:flex-row md:items-center text-sm">
 
-                    {{-- SEARCH (Nama/Kode) --}}
-                    <input type="text" name="search" placeholder="Cari kode/nama donatur..." value="{{ request('search') }}"
-                        class="w-full sm:w-64 border px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-secondary" />
+                    {{-- SEARCH (Ambil lebar penuh di mobile) --}}
+                    <input type="text" name="search" placeholder="Kode/nama donatur..." value="{{ request('search') }}"
+                        class="w-full md:w-48 border px-2 py-1 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
 
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm text-gray-600">Status</label>
-                        <select name="status" id="status" class="border rounded px-2 py-2 text-sm">
-                            <option value="">Semua</option>
-                            <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
-                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed/Cancel</option>
-                            <option value="expire" {{ request('status') == 'expire' ? 'selected' : '' }}>Expired</option>
-                        </select>
-                    </div>
+                    {{-- GROUP DROP DOWN DI SATU BARIS (Hanya berlaku di Mobile) --}}
+                    <div class="flex w-full gap-2 justify-between md:w-auto">
 
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm text-gray-600">Show</label>
-                        <select name="perPage" id="perPage" class="border rounded px-2 py-2 text-sm">
-                            @foreach ([15, 30, 50] as $size)
-                                <option value="{{ $size }}" {{ request('perPage', 15) == $size ? 'selected' : '' }}>
-                                    {{ $size }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                        {{-- FILTER PROGRAM DONASI --}}
+                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
+                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Program</label>
+                            <select name="program_id" id="program_id" class="border rounded px-1 py-1 text-xs w-full">
+                                <option value="">Program</option>
+                                @foreach ($programs as $program)
+                                    <option value="{{ $program->id }}"
+                                        {{ request('program_id') == $program->id ? 'selected' : '' }}>
+                                        {{ Str::limit($program->title, 10) }} {{-- Dibatasi lebih pendek --}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- FILTER STATUS --}}
+                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
+                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Status</label>
+                            <select name="status" id="status" class="border rounded px-1 py-1 text-xs w-full">
+                                <option value="">Status</option>
+                                <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success
+                                </option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
+                                <option value="expire" {{ request('status') == 'expire' ? 'selected' : '' }}>Expired
+                                </option>
+                            </select>
+                        </div>
+
+                        {{-- FILTER PER PAGE --}}
+                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
+                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Tampil</label>
+                            <select name="perPage" id="perPage" class="border rounded px-1 py-1 text-xs w-full">
+                                @foreach ([15, 30, 50] as $size)
+                                    <option value="{{ $size }}"
+                                        {{ request('perPage', 15) == $size ? 'selected' : '' }}>
+                                        {{ $size }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div> {{-- END GROUP DROP DOWN --}}
+
 
                     <button type="submit"
-                        class="bg-secondary text-white px-3 py-2 text-sm rounded-md hover:opacity-95 transition">Terapkan</button>
+                        class="bg-secondary text-white px-2 py-1 text-xs rounded-md hover:opacity-95 transition md:w-auto">Terapkan</button>
                 </form>
             </div>
         </div>
 
         <div class="mt-4">
-            {{-- DESKTOP TABLE (Minimalis) --}}
+
+            {{-- DESKTOP TABLE --}}
             <div class="hidden md:block bg-white rounded-xl shadow-sm p-4 border border-gray-100">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-xs"> {{-- Text size dikecilkan --}}
+                    <table class="min-w-full divide-y divide-gray-200 text-xs">
                         <thead class="text-gray-600 bg-gray-50">
                             <tr>
-                                <th class="px-3 py-2 text-left">Kode</th> {{-- Padding dikecilkan --}}
+                                <th class="px-3 py-2 text-left">Kode</th>
                                 <th class="px-3 py-2 text-left">Donatur (Nama, Email, HP)</th>
                                 <th class="px-3 py-2 text-left">Program</th>
                                 <th class="px-3 py-2 text-right">Nominal</th>
@@ -71,22 +101,23 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($donations as $donation)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-3 py-2 font-medium text-gray-900">
+                                    <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">
                                         {{ $donation->donation_code }}
                                     </td>
                                     <td class="px-3 py-2">
                                         <p class="font-medium text-gray-900">{{ $donation->donor_name }}</p>
-                                        {{-- Ukuran text lebih kecil --}}
-                                        <p class="text-xs text-gray-500">{{ $donation->donor_email }} | {{ $donation->donor_phone }}</p>
+                                        <p class="text-xs text-gray-500">{{ $donation->donor_email }} |
+                                            {{ $donation->donor_phone }}</p>
                                     </td>
-                                    <td class="px-3 py-2 text-gray-700 max-w-xs truncate"> {{-- Tambah truncate untuk nama program yang panjang --}}
+                                    <td class="px-3 py-2 text-gray-700 max-w-xs truncate">
                                         {{ $donation->program->title ?? 'Program Dihapus' }}
                                     </td>
-                                    <td class="px-3 py-2 font-bold text-right text-green-600">
+                                    <td class="px-3 py-2 font-bold text-right text-green-600 whitespace-nowrap">
                                         Rp {{ number_format($donation->amount, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-3 py-2 text-center">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    <td class="px-3 py-2 text-center whitespace-nowrap">
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                             {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
                                             {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                             {{ in_array($donation->status, ['failed', 'expire', 'cancel']) ? 'bg-red-100 text-red-800' : '' }}
@@ -94,13 +125,14 @@
                                             {{ ucfirst($donation->status) }}
                                         </span>
                                     </td>
-                                    <td class="px-3 py-2 text-xs text-gray-500">
+                                    <td class="px-3 py-2 text-xs text-gray-500 whitespace-nowrap">
                                         {{ $donation->created_at->format('d M Y H:i') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-6 text-gray-500">Belum ada data donasi yang tercatat.</td>
+                                    <td colspan="6" class="text-center py-6 text-gray-500">Belum ada data donasi yang
+                                        tercatat.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -108,37 +140,19 @@
                 </div>
             </div>
 
-            {{-- MOBILE CARDS (Tetap sama) --}}
+            {{-- MOBILE CARDS (Optimalisasi) --}}
             <div class="md:hidden space-y-3">
                 @forelse($donations as $donation)
-                    <div class="bg-white rounded-xl shadow p-4 border border-gray-100 space-y-2 text-sm">
-                        <div class="flex justify-between items-center border-b pb-2">
-                            <span class="text-xs text-gray-500">Kode:</span>
-                            <span class="text-sm font-medium text-gray-900">{{ $donation->donation_code }}</span>
-                        </div>
+                    <div class="bg-white rounded-xl shadow p-3 border border-gray-100 space-y-2 text-sm">
 
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">Donatur:</span>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900 text-right">{{ $donation->donor_name }}</p>
-                                <p class="text-xs text-gray-500 text-right">{{ $donation->donor_phone }}</p>
-                                <p class="text-xs text-gray-500 text-right">{{ $donation->donor_email }}</p>
+                        <div class="flex justify-between items-start pb-2 border-b">
+                            <div class="space-y-0.5">
+                                <span class="text-xs font-medium text-gray-500">Kode: {{ $donation->donation_code }}</span>
+                                <p class="text-xs text-gray-700">Program: **{{ $donation->program->title ?? 'Dihapus' }}**
+                                </p>
                             </div>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">Program:</span>
-                            <span class="text-sm text-gray-700 text-right">{{ $donation->program->title ?? 'Program Dihapus' }}</span>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">Nominal:</span>
-                            <span class="text-sm font-bold text-green-600">Rp {{ number_format($donation->amount, 0, ',', '.') }}</span>
-                        </div>
-
-                        <div class="flex justify-between items-center pt-2 border-t">
-                            <span class="text-xs text-gray-500">Status:</span>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            <span
+                                class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
                                 {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
                                 {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                 {{ in_array($donation->status, ['failed', 'expire', 'cancel']) ? 'bg-red-100 text-red-800' : '' }}
@@ -146,8 +160,23 @@
                                 {{ ucfirst($donation->status) }}
                             </span>
                         </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Nominal:</span>
+                            <span class="text-base font-bold text-green-600">
+                                Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <div class="pt-2 border-t">
+                            <span class="text-xs text-gray-500 block">Donatur:</span>
+                            <p class="text-sm font-medium text-gray-900">{{ $donation->donor_name }}</p>
+                            <p class="text-xs text-gray-500">{{ $donation->donor_email }} | {{ $donation->donor_phone }}
+                            </p>
+                        </div>
+
                         <div class="text-xs text-gray-500 text-right mt-1">
-                            {{ $donation->created_at->format('d M Y H:i') }}
+                            Donasi pada: {{ $donation->created_at->format('d M Y H:i') }}
                         </div>
                     </div>
                 @empty
@@ -166,10 +195,11 @@
     @section('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Submit form ketika nilai perPage atau Status diubah
-                ['perPage', 'status'].forEach(id => {
+                // Submit form ketika nilai perPage, Status, atau Program diubah
+                ['perPage', 'status', 'program_id'].forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.addEventListener('change', () => document.getElementById('controlsForm').submit());
+                    if (el) el.addEventListener('change', () => document.getElementById('controlsForm')
+                        .submit());
                 });
             });
         </script>
