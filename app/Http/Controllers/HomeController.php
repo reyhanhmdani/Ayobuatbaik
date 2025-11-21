@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
+use App\Models\Donation;
 use App\Models\KategoriDonasi;
 use App\Models\ProgramDonasi;
 use App\Models\Slider;
@@ -41,13 +42,22 @@ class HomeController extends Controller
     public function program($slug)
     {
         $program = ProgramDonasi::where('slug', $slug)->firstOrFail();
+        // 1. Ambil daftar donasi sukses (maksimal 20 atau lebih, disarankan dibatasi)
+        // Diurutkan berdasarkan yang terbaru (created_at atau status_change_at)
+        $donations = Donation::where('program_donasi_id', $program->id)
+            ->where('status', 'success')
+            ->latest()
+            ->limit(20) // Batasi jumlah yang ditampilkan di tab Donatur
+            ->get();
+
+        $donorsCount = $program->donations()->where('status', 'success')->count();
         $relatedPrograms = ProgramDonasi::where('id', '!=', $program->id)->inRandomOrder()->take(3)->get();
 
         if ($relatedPrograms->count() < 3) {
             $relatedPrograms = ProgramDonasi::where('id', '!=', $program->id)->get();
         }
 
-        return view('pages.program-donasi.single-program', compact('program', 'relatedPrograms'));
+        return view('pages.program-donasi.single-program', compact('program', 'relatedPrograms', 'donations', 'donorsCount'));
     }
 
     public function search(Request $request)
@@ -68,13 +78,23 @@ class HomeController extends Controller
 
     public function berita()
     {
-        $beritas = Berita::latest()->paginate(3);
+        $beritas = Berita::latest()->paginate(7);
         return view('pages.berita.index', compact('beritas'));
     }
 
     public function showBerita($slug)
     {
         $berita = Berita::where('slug', $slug)->firstOrFail();
-        return view('pages.berita.berita', compact('berita'));
+
+        // Ambil 3 berita terkait/terbaru lainnya secara acak (kecuali berita saat ini)
+        $relatedBeritas = Berita::where('id', '!=', $berita->id)
+                                ->inRandomOrder()
+                                ->limit(3)
+                                ->get();
+
+        // Opsional: Hitung view/baca berita (jika ada kolom views di tabel Berita)
+        // $berita->increment('views');
+
+        return view('pages.berita.berita', compact('berita', 'relatedBeritas'));
     }
 }

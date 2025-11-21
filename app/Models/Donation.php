@@ -45,4 +45,16 @@ class Donation extends Model
         $this->attributes['status_change_at'] = now(); // Update timestamp
         $this->save();
     }
+
+
+    // helper
+    public function getDonorInitialAttribute()
+{
+    // Ambil karakter pertama dari nama donatur
+    if (!empty($this->donor_name)) {
+        // Ambil huruf pertama dan ubah ke huruf kapital
+        return strtoupper(substr($this->donor_name, 0, 1));
+    }
+    return 'D'; // Default inisial jika nama kosong
+}
 }

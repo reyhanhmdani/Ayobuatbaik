@@ -15,16 +15,16 @@
             <span class="text-xs">Program</span>
         </a>
 
-        <a href="#berita" class="mobile-nav-item text-primary {{ isActive('berita') }}">
+        <a href="{{  route('home.berita') }}" class="mobile-nav-item text-primary {{ isActive('berita') }}">
             <i class="fas fa-newspaper text-lg mb-1"></i>
             <span class="text-xs">Berita</span>
         </a>
 
         <!-- Kitab Menu for Mobile -->
-        <div class="mobile-nav-item text-primary" id="kitab-menu-toggle">
+        {{-- <div class="mobile-nav-item text-primary" id="kitab-menu-toggle">
             <i class="fas fa-book text-lg mb-1"></i>
             <span class="text-xs">Kebutuhan</span>
-        </div>
+        </div> --}}
 
         <!-- Akun Menu for Mobile -->
         @auth

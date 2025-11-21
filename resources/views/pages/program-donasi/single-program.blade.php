@@ -119,61 +119,67 @@
         </div>
 
         <div class="bg-white mt-4">
-            <div class="flex border-b text-gray-500">
-                <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="deskripsi">
-                    Deskripsi
-                </button>
-                <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="donatur">
-                    Donatur ({{ number_format($program->donors_count ?? 0) }})
-                </button>
-            </div>
+    <div class="flex border-b text-gray-500">
+        <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="deskripsi">
+            Deskripsi
+        </button>
+        {{-- Ganti $program->donors_count dengan $donorsCount dari controller --}}
+        <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="donatur">
+            Donatur ({{ number_format($donorsCount) }})
+        </button>
+    </div>
 
-            <div class="p-4 min-h-[300px]">
+    <div class="p-4 min-h-[300px]">
 
-                <div id="deskripsi-tab" class="tab-content">
-                    <div class="mb-6">
-                        <h3 class="font-bold text-lg mb-3">Tentang Program</h3>
-                        <div class="prose prose-sm text-gray-700">
-                            {!! $program->deskripsi !!}
-                        </div>
-                    </div>
-                </div>
-
-                <div id="donatur-tab" class="tab-content hidden">
-                    <h3 class="font-bold text-lg mb-4">Daftar Donatur</h3>
-                    <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
-                        {{-- Idealnya di sini meloop data donatur real dari database --}}
-
-                        @php
-                            $dummyDonors = [
-                                ['name' => 'Hamba Allah', 'time' => 'Baru saja', 'amount' => 50000, 'initial' => 'H'],
-                                ['name' => 'Ahmad S.', 'time' => '2 jam yang lalu', 'amount' => 500000, 'initial' => 'A'],
-                                ['name' => 'Siti M.', 'time' => '5 jam yang lalu', 'amount' => 250000, 'initial' => 'S'],
-                            ];
-                        @endphp
-
-                        @foreach($dummyDonors as $donor)
-                        <div class="flex items-center justify-between py-2 border-b last:border-0">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mr-3">
-                                    {{ $donor['initial'] }}
-                                </div>
-                                <div>
-                                    <p class="font-medium text-sm">{{ $donor['name'] }}</p>
-                                    <p class="text-xs text-gray-500">{{ $donor['time'] }}</p>
-                                </div>
-                            </div>
-                            <p class="font-bold text-blue-600 text-sm">Rp {{ number_format($donor['amount'], 0, ',', '.') }}</p>
-                        </div>
-                        @endforeach
-
-                        <div class="text-center text-xs text-gray-400 mt-4">
-                            -- Menampilkan donatur terbaru --
-                        </div>
-                    </div>
+        <div id="deskripsi-tab" class="tab-content">
+            {{-- Bagian Deskripsi tidak berubah --}}
+            <div class="mb-6">
+                <h3 class="font-bold text-lg mb-3">Tentang Program</h3>
+                <div class="prose prose-sm text-gray-700">
+                    {!! $program->deskripsi !!}
                 </div>
             </div>
         </div>
+
+        <div id="donatur-tab" class="tab-content hidden">
+            <h3 class="font-bold text-lg mb-4">Daftar Donatur</h3>
+            <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+
+                {{-- 🚀 UBAH DARI DUMMY KE DATA REAL 🚀 --}}
+                @forelse($donations as $donation)
+                <div class="flex items-center justify-between py-2 border-b last:border-0">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mr-3">
+                            {{-- Menggunakan Accessor getDonorInitialAttribute --}}
+                            {{ $donation->donor_initial }}
+                        </div>
+                        <div>
+                            {{-- Menampilkan nama donatur --}}
+                            <p class="font-medium text-sm">{{ $donation->donor_name }}</p>
+                            {{-- Menampilkan waktu donasi yang lalu --}}
+                            <p class="text-xs text-gray-500">{{ $donation->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                    {{-- Menampilkan nominal donasi --}}
+                    <p class="font-bold text-blue-600 text-sm">Rp {{ number_format($donation->amount, 0, ',', '.') }}</p>
+                </div>
+                @empty
+                    <div class="text-center py-10 text-gray-500">
+                        <i class="fas fa-hand-holding-heart text-3xl mb-2 text-gray-300"></i>
+                        <p class="text-sm">Belum ada donatur yang tercatat untuk program ini.</p>
+                    </div>
+                @endforelse
+
+                @if($donations->count() > 0)
+                <div class="text-center text-xs text-gray-400 mt-4">
+                    -- Menampilkan {{ $donations->count() }} donatur terbaru --
+                </div>
+                @endif
+
+            </div>
+        </div>
+    </div>
+</div>
 
         @if ($relatedPrograms->isNotEmpty())
             <div class="bg-white mt-4 p-4 mb-8">

@@ -11,7 +11,7 @@
     <!-- Pilihan Section -->
     <section class="px-4 py-8">
         <div class="">
-            <h2 class="text-lg font-bold text-primary mb-3">Program bersama Ustad Andre</h2>
+            <h2 class="text-lg font-bold text-primary mb-3">Ayo Berbuat Baik</h2>
             @forelse ($featuredPrograms as $programPilihan)
                 <div class="grid grid-cols-1 gap-1 mt-4">
                     <a href="{{ route('home.program.show', $programPilihan->slug) }}" class="block">
@@ -72,7 +72,7 @@
     </section>
 
     {{-- Kategori Section --}}
-    <section class="px-2 pt-8" id="kategori">
+    {{-- <section class="px-2 pt-8" id="kategori">
         <div class="text-center mb-10">
             <h2 class="text-xl font-bold text-gray-800 mb-3">Kategori Program Kebaikan</h2>
             <p class="text-sm text-gray-500 mt-1">
@@ -115,7 +115,7 @@
 
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Program Section -->
     <section class="px-4 pb-8" id="program">
@@ -206,7 +206,7 @@
 
 
     <!-- Features Section -->
-    <section class="features-section py-8 rounded-2xl px-4">
+    {{-- <section class="features-section py-8 rounded-2xl px-4">
         <div class="text-center mb-6">
             <h2 class="text-xl font-bold text-primary mb-2">Fitur Lainnya ABBI</h2>
             <p class="text-gray-500 text-xs">
@@ -248,7 +248,7 @@
                 <span class="text-[11px] font-medium text-gray-700">Webtoon</span>
             </a>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Berita Section -->
     <section class="px-4 py-8 mb-12" id="berita">

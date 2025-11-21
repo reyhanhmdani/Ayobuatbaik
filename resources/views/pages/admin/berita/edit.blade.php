@@ -65,7 +65,7 @@
                         class="w-full border rounded px-3 py-2">
                 </div>
 
-                <!-- Konten -->: RedirectResponse
+                <!-- Konten -->
                 <div class="prose prose-sm">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Konten Berita</label>
                     <textarea name="konten" id="konten" class="w-full">{{ old('konten', $berita->konten) }}</textarea>
