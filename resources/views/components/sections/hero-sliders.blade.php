@@ -4,14 +4,26 @@
     <div class="relative w-full z-10">
         <div class="slider-container flex overflow-x-auto snap-x snap-mandatory h-auto gap-3 px-4 scroll-smooth">
             @foreach ($sliders as $slide)
-                <a href="{{ $slide->url ?? '#' }}"
-                   class="min-w-[90%] flex-shrink-0 relative flex items-center justify-center snap-center rounded-xl overflow-hidden aspect-[16/9]"> <!-- Tambah aspect-[16/9] untuk ratio dinamis, min-w-90% agar adjust layar -->
-                    <img src="{{ asset('storage/' . $slide->gambar) }}"
-                         alt="{{ $slide->alt_text ?? 'Slider Image' }}"
-                         class="absolute inset-0 w-full h-full object-cover"
-                         loading="lazy">
-                </a>
-            @endforeach
+            @php
+                $fallbackImageUrl = 'https://placehold.co/1600x900/4CAF50/FFFFFF?text=Ayobuatbaik+Slider';
+
+                $imageUrl = $slide->gambar
+                            ? asset('storage/' . $slide->gambar)
+                            : $fallbackImageUrl;
+            @endphp
+
+            <a href="{{ $slide->url ?? '#' }}"
+               class="min-w-[90%] flex-shrink-0 relative flex items-center justify-center snap-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200">
+                <img src="{{ $imageUrl }}"
+                     alt="{{ $slide->alt_text ?? 'Slider Image' }}"
+                     class="absolute inset-0 w-full h-full object-cover"
+                     loading="lazy"
+
+                     {{-- Opsi: Tambahkan fallback error handling JS jika gambar gagal dimuat --}}
+                     onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';"
+                     >
+            </a>
+        @endforeach
 
         </div>
     </div>

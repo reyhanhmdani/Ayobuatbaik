@@ -15,17 +15,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@gmail.com',
-            'password' => bcrypt('12345'),
-        ]);
-
+        User::firstOrCreate(
+            ['email' => 'test@gmail.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('12345'),
+            ]
+        );
         $this->call([
             KategoriDonasiSeeder::class,
             PenggalangDanaSeeder::class,
             ProgramDonasiSeeder::class,
             BeritaSeeder::class,
+            SliderSeeder::class,
         ]);
     }
 }

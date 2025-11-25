@@ -19,7 +19,7 @@ class BeritaSeeder extends Seeder
                 'slug' => Str::slug($judul),
                 'deskripsi_singkat' => 'Kegiatan sosial ke-' . $i . ' yang dilakukan oleh komunitas Ayobuatbaik untuk membantu masyarakat sekitar.',
                 'konten' => '<p>Ini adalah konten lengkap dari kegiatan sosial ke-' . $i . ' yang diadakan oleh Ayobuatbaik.</p><p>Tujuan kegiatan ini adalah untuk memberikan dampak positif bagi masyarakat.</p>',
-                'gambar' => 'default/berita-sample.jpg', // bisa nanti diganti gambar asli di storage
+                'gambar' => 'default/berita-sample.jpg',
                 'tanggal' => now()->subDays($i)->format('Y-m-d'),
             ]);
         }
