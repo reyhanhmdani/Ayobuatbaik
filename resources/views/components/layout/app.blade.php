@@ -51,7 +51,7 @@
         <!-- Floating WhatsApp Button -->
         @php
             $waNumber = '6282133337058';
-            $waMessage = 'Assalamualaikum ayobuatbaik, saya ingin berdonasi';
+            $waMessage = 'Assalamualaikum ayobuatbaik, saya ingin berbuat baik';
         @endphp
 
         <a href="https://wa.me/{{ $waNumber }}?text={{ urlencode($waMessage) }}" target="_blank"
