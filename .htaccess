@@ -1,0 +1,53 @@
+<IfModule mod_rewrite.c>
+    # Pastikan modul mod_negotiation sudah terpasang sebelum menggunakan Options ini
+    <IfModule mod_negotiation.c>
+        # Menonaktifkan MultiViews dan Indexes untuk keamanan dan konsistensi URL
+        # -MultiViews: Menonaktifkan content negotiation (penting untuk routing aplikasi)
+        # -Indexes: Mencegah penjelajahan direktori jika tidak ada index file
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    # Aktifkan RewriteEngine
+    RewriteEngine On
+
+    # --- Bagian 1: Penanganan Header HTTP Penting ---
+
+    # 1. Penanganan Header Otorisasi (Contoh: Bearer token untuk API)
+    # Ini diperlukan agar Apache meneruskan header 'Authorization' ke PHP/aplikasi
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # 2. Penanganan Header X-XSRF-Token
+    # Meneruskan token XSRF (Cross-Site Request Forgery) jika ada
+    RewriteCond %{HTTP:X-XSRF-TOKEN} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-TOKEN}]
+
+    # --- Bagian 2: Normalisasi URL ---
+
+    # 3. Menghilangkan Garis Miring di Akhir (Trailing Slash)
+    # Mengalihkan (redirect 301) dari /path/ke/halaman/ menjadi /path/ke/halaman
+    # Kecuali jika /path/ke/halaman/ adalah direktori yang sebenarnya
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # --- Bagian 3: Aturan Fallback (Inti Routing) ---
+
+    # 4. Aturan Pengecualian
+    # Jika permintaan mengarah ke FILE (-f) atau FOLDER (-d) yang sudah ada,
+    # HENTIKAN proses rewrite. Ini memungkinkan akses ke aset statis (CSS, JS, gambar).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # 5. Aturan Pengalihan (Fallback) ke public/
+    # ATURAN LARAVEL/FRONT CONTROLLER: Mengarahkan SEMUA permintaan yang belum tertangani
+    # (setelah melewati pengecualian file/folder di atas) ke public/
+
+    # Pengecualian tambahan: Pastikan kita TIDAK mengulang pengalihan jika URL sudah mengandung /public
+    RewriteCond %{REQUEST_URI} !/public
+
+    # Aksi utama: Arahkan setiap request (.*) ke public/$1
+    # [L]: Last rule, hentikan pemrosesan
+    RewriteRule ^(.*)$ public/$1 [L]
+
+</IfModule>

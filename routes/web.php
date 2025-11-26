@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\admin\KategoriDonasiController;
-use App\Http\Controllers\admin\PenggalangDanaController;
+use App\Http\Controllers\Admin\KategoriDonasiController;
+use App\Http\Controllers\Admin\PenggalangDanaController;
 use App\Http\Controllers\Admin\ProgramDonasiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProgramController;
-use App\Http\Controllers\admin\SliderController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\DonasiController;
 use Illuminate\Support\Facades\Route;
