@@ -41,7 +41,8 @@
                             <option value="created_at" {{ $sort == 'created_at' ? 'selected' : '' }}>Created At</option>
                             <option value="title" {{ $sort == 'title' ? 'selected' : '' }}>Title</option>
                             <option value="penggalang" {{ $sort == 'penggalang' ? 'selected' : '' }}>Penggalang</option>
-                            <option value="target_amount" {{ $sort == 'target_amount' ? 'selected' : '' }}>Target</option>
+                            <option value="collected_amount" {{ $sort == 'collected_amount' ? 'selected' : '' }}>Collected
+                                Amount</option>
                             <option value="end_date" {{ $sort == 'end_date' ? 'selected' : '' }}>End Date</option>
                             <option value="status" {{ $sort == 'status' ? 'selected' : '' }}>Status</option>
                             <option value="verified" {{ $sort == 'verified' ? 'selected' : '' }}>Verified</option>
@@ -71,7 +72,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left">Title</th>
                                 <th class="px-4 py-3 text-left">Penggalang</th>
-                                <th class="px-4 py-3 text-left">Target</th>
+                                <th class="px-4 py-3 text-left">Terkumpul</th>
                                 {{-- GABUNGKAN DIBUAT DAN BERAKHIR JADI PERIODE --}}
                                 <th class="px-4 py-3 text-left">Periode</th>
                                 <th class="px-4 py-3 text-left">Status</th>
@@ -107,7 +108,7 @@
                                     </td>
 
                                     <td class="px-4 py-3">{{ $program->penggalang->nama ?? '-' }}</td>
-                                    <td class="px-4 py-3">Rp {{ number_format($program->target_amount, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-3">Rp {{ number_format($program->collected_amount, 0, ',', '.') }}</td>
 
                                     {{-- KOLOM PERIODE BARU --}}
                                     <td class="px-4 py-3 text-xs text-gray-700 whitespace-nowrap">

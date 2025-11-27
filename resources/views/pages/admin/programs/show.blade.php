@@ -16,7 +16,7 @@
                 <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
                     <i class="fas fa-eye text-lg"></i>
                 </div>
-                <div>
+            <div>
                     <p class="text-xs text-gray-500 font-medium uppercase">Total Dilihat</p>
                     <p class="text-xl font-bold text-gray-900">{{ number_format($program->views ?? 0, 0, ',', '.') }}</p>
                 </div>

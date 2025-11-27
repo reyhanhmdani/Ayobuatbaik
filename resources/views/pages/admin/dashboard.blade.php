@@ -95,11 +95,13 @@
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
                                     <span class="text-white text-xs font-bold">
-                                        {{ strtoupper(substr($donation['name'], 0, 1)) }}
+                                        {{ isset($donation['donor_name']) && !empty($donation['donor_name'])
+                                            ? strtoupper(substr($donation['donor_name'], 0, 1))
+                                            : '?' }}
                                     </span>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">{{ $donation['name'] }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $donation['donor_name'] }}</p>
                                     <p class="text-xs text-gray-500">{{ $donation['program'] }}</p>
                                 </div>
                             </div>

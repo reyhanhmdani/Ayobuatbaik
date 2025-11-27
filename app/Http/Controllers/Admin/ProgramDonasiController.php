@@ -109,7 +109,8 @@ class ProgramDonasiController extends Controller
     {
         $program = ProgramDonasi::with('penggalang')->findOrFail($id);
 
-        $total_amount = $program->donations()->where('status', 'success')->sum('amount');
+        // $total_amount = $program->donations()->where('status', 'success')->sum('amount');
+        $total_amount = $program->collected_amount;
 
         $donors_count = $program->donations()->where('status', 'success')->count();
 

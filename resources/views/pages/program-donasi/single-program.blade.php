@@ -374,7 +374,7 @@
             });
 
             /* =========================================
-               4. PAYMENT PROCESS
+            4. PAYMENT PROCESS
             ========================================= */
             const payButton = document.getElementById("pay-now-btn");
 
@@ -397,8 +397,8 @@
                     return;
                 }
 
-                if (!finalAmount || finalAmount < 10000) {
-                    alert("Minimal donasi adalah Rp 10.000");
+                if (!finalAmount || finalAmount < 1000) {
+                    alert("Minimal donasi adalah Rp 1.000");
                     resetButton();
                     return;
                 }
