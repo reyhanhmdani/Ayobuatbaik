@@ -320,12 +320,9 @@
 @endsection
 
 @section('scripts')
-    {{-- <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"> --}}
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
-
-    <script>
-        const programDonasiId = {{ $program->id }};
+    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
+        < script >
+            const programDonasiId = {{ $program->id }};
 
         document.addEventListener("DOMContentLoaded", function() {
             console.log("App Loaded");
