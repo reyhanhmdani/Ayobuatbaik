@@ -279,7 +279,7 @@
         </div>
 
         <div class="text-center mt-6">
-            <a href="{{ route('admin.berita.index') }}"
+            <a href="{{ route('home.berita') }}"
                 class="text-secondary font-semibold text-sm hover:text-goldDark transition-colors flex items-center justify-center mx-auto">
                 <span>Lihat Semua Berita</span>
                 <i class="fas fa-arrow-right ml-2 text-xs"></i>

@@ -125,7 +125,7 @@
                     <label class="inline-flex items-center space-x-2">
                         <input type="checkbox" name="featured" value="1" {{ old('featured') ? 'checked' : '' }}
                             class="rounded text-primary focus:ring-primary">
-                        <span class="text-sm text-gray-700">Terverifikasi</span>
+                        <span class="text-sm text-gray-700">Program Pilihan</span>
                     </label>
                 </div>
 
