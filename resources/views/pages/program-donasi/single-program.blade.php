@@ -321,8 +321,10 @@
 
 @section('scripts')
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
-        < script >
-            const programDonasiId = {{ $program->id }};
+    </script>
+
+    <script>
+        const programDonasiId = {{ $program->id }};
 
         document.addEventListener("DOMContentLoaded", function() {
             console.log("App Loaded");

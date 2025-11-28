@@ -23,3 +23,4 @@ yarn-error.log
 /.zed
 /config/services.php
 .htaccess
+/config/services.php
