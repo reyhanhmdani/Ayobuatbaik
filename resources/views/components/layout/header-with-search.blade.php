@@ -1,7 +1,6 @@
 <nav class="mobile-top-bar bg-primary">
     <div class="flex items-center justify-between h-full px-2 py-2">
 
-        <!-- Logo di kiri jadi link -->
         <a href="{{ route('home') }}" class="flex-shrink-0 mr-4">
             <h1 class="text-base font-bold text-white">
                 <span class="text-secondary">Ayo</span>buatbaik
