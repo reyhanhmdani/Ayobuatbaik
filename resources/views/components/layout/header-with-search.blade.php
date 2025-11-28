@@ -1,9 +1,14 @@
 <nav class="mobile-top-bar bg-primary">
     <div class="flex items-center justify-between h-full px-2 py-2">
-        <!-- Logo di kiri -->
-        <h1 class="text-base font-bold text-white flex-shrink-0 mr-4"><span class="text-secondary">Ayo</span>buatbaik</h1>
 
-        <!-- Search Bar seperti di screenshot -->
+        <!-- Logo di kiri jadi link -->
+        <a href="{{ route('home') }}" class="flex-shrink-0 mr-4">
+            <h1 class="text-base font-bold text-white">
+                <span class="text-secondary">Ayo</span>buatbaik
+            </h1>
+        </a>
+
+        <!-- Search Bar -->
         <div class="flex-1 relative">
             <form action="{{ route('home.search') }}" method="get"
                 class="flex items-center bg-white bg-opacity-20 rounded-lg px-3 py-2">
