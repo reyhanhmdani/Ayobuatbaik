@@ -53,61 +53,76 @@
 @section('content')
     <div class="content pb-20">
 
-        <div class="relative h-64 overflow-hidden">
-            <img src="{{ asset('storage/' . $program->gambar) }}"
-                 alt="{{ $program->title }}"
-                 class="w-full h-full object-cover"
-                 loading="lazy" />
-            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end">
-                <div class="p-4 text-white">
-                    <h2 class="text-xl font-bold">{{ $program->title }}</h2>
-                    <p class="text-sm mt-1">{{ $program->short_description ?? 'Deskripsi Belum tersedia.' }}</p>
-                </div>
+        <!-- Hero Image -->
+    <div class="relative h-64 overflow-hidden">
+        <img src="{{ asset('storage/' . $program->gambar) }}"
+             alt="{{ $program->title }}"
+             class="w-full h-full object-cover"
+             loading="lazy" />
+
+        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+    </div>
+
+    <!-- Title & Short Description -->
+    <div class="bg-white px-4 py-5 shadow-sm border-b">
+        <h1 class="text-xl font-extrabold text-gray-900 leading-snug">
+            {{ $program->title }}
+        </h1>
+        <p class="text-sm text-gray-600 mt-2">
+            {{ $program->short_description ?? 'Deskripsi Belum tersedia.' }}
+        </p>
+    </div>
+
+    <!-- Donation Stats -->
+    <div class="bg-white p-4 shadow-sm">
+
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <p class="text-xs text-gray-500">Terkumpul</p>
+                <p class="text-lg md:text-xl font-extrabold text-primary">
+                    Rp {{ number_format($program->collected_amount, 0, ',', '.') }}
+                </p>
+            </div>
+
+            <div class="text-right">
+                <p class="text-xs text-gray-500">Target</p>
+                <p class="text-lg md:text-xl font-extrabold text-primary">
+                    Rp {{ number_format($program->target_amount, 0, ',', '.') }}
+                </p>
             </div>
         </div>
 
-        <div class="bg-white p-4 shadow-sm">
-            <div class="flex justify-between items-center mb-3">
-                <div>
-                    <p class="text-xs text-gray-500">Terkumpul</p>
-                    <p class="text-lg font-bold text-primary">
-                        Rp {{ number_format($program->collected_amount, 0, ',', '.') }}
-                    </p>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">Target</p>
-                    <p class="text-lg font-bold text-primary">
-                        Rp {{ number_format($program->target_amount, 0, ',', '.') }}
-                    </p>
-                </div>
-            </div>
+        @php
+            $progress = $program->target_amount > 0
+                ? ($program->collected_amount / $program->target_amount) * 100
+                : 0;
+            $progress = min(100, $progress);
 
-            @php
-                $progress = $program->target_amount > 0
-                    ? ($program->collected_amount / $program->target_amount) * 100
-                    : 0;
-                $progress = min(100, $progress);
+            $daysLeft = $program->end_date
+                ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false)))
+                : '∞';
+        @endphp
 
-                $daysLeft = $program->end_date
-                    ? floor(max(0, \Carbon\Carbon::now()->diffInDays($program->end_date, false)))
-                    : '∞';
-            @endphp
-
-            <div class="mb-3">
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $progress }}%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>{{ number_format($progress, 0) }}%</span>
-                    <span>Sisa hari: {{ $daysLeft }}</span>
+        <!-- Progress Bar -->
+        <div class="mb-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-primary h-2.5 rounded-full transition-all duration-500"
+                     style="width: {{ $progress }}%;">
                 </div>
             </div>
 
-            <div class="flex items-center text-sm text-gray-600">
-                <i class="fas fa-users text-secondary mr-2"></i>
-                <span>{{ number_format($program->donors_count ?? 0) }} donatur telah berkontribusi</span>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span class="font-medium">{{ number_format($progress, 0) }}%</span>
+                <span>Sisa hari: {{ $daysLeft }}</span>
             </div>
         </div>
+
+        <!-- Donor Count -->
+        <div class="flex items-center text-sm text-gray-600">
+            <i class="fas fa-users text-secondary mr-2"></i>
+            <span>{{ number_format($program->donors_count ?? 0) }} donatur telah berkontribusi</span>
+        </div>
+    </div>
 
         <div class="bg-white p-4 flex space-x-3 shadow-sm sticky top-0 z-10">
             <button class="flex-1 donation-btn bg-blue-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-blue-700 transition">
