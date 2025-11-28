@@ -5,7 +5,9 @@ use App\Http\Controllers\Admin\PenggalangDanaController;
 use App\Http\Controllers\Admin\ProgramDonasiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OauthController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\BeritaController;
@@ -25,6 +27,9 @@ Route::get('/donate/status/{code}', [DonasiController::class, 'showStatus'])->na
 
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 
+Route::get('oauth/google', [OauthController::class, 'redirectToProvider'])->name('oauth.google');  
+Route::get('oauth/google/callback', [OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -41,7 +46,7 @@ Route::middleware(['auth'])
         // CRUD Program Donasi
         Route::resource('programs', ProgramDonasiController::class)->names('programs');
         // routes/web.php
-        Route::post('ckeditor/upload', [App\Http\Controllers\CKEditorController::class, 'upload'])->name('ckeditor.upload');
+        Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
 
         Route::resource('penggalang-dana', PenggalangDanaController::class)->names('penggalang_dana');
         Route::resource('kategori-donasi', KategoriDonasiController::class)->names('kategori_donasi');

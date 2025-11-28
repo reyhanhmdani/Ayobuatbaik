@@ -51,6 +51,15 @@
                     </div>
                 </div>
 
+                {{-- Login with Google --}}
+                <a href="{{ route('oauth.google') }}"
+                    class="w-full mt-3 flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5"
+                        alt="Google logo">
+                    Login dengan Google
+                </a>
+
+
                 {{-- Submit Button --}}
                 <button type="submit"
                     class="w-full bg-secondary text-white py-2.5 px-4 rounded-lg font-semibold

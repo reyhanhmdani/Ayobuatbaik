@@ -15,7 +15,7 @@ class StoreProgramDonasiRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:program_donasi,slug',
+            'slug' => 'string|unique:program_donasi,slug',
 
             'kategori_id' => 'required|exists:kategori_donasi,id',
             'penggalang_id' => 'required|exists:penggalang_dana,id',

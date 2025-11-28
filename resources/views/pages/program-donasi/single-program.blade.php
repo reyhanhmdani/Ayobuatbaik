@@ -288,7 +288,7 @@
 @endsection
 
 @section('scripts')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
 
     <script>
         const programDonasiId = {{ $program->id }};
