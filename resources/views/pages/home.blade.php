@@ -310,43 +310,180 @@
             };
 
             // =======================================================
-            // 2️⃣ SLIDER / BANNER OTOMATIS
+            // 2️⃣ INFINITE SLIDER / BANNER (Alpine.js Style) - FIXED CENTER
             // =======================================================
-            const sliderContainer = document.querySelector(".slider-container");
+            const sliderTrack = document.querySelector(".slider-track");
             const sliderDots = document.querySelectorAll(".slider-dot");
+            const sliderItems = document.querySelectorAll(".slider-item");
 
-            let currentSlide = 0;
-            const totalSlides = sliderDots.length || 3;
+            if (sliderTrack && sliderItems.length > 0) {
+                const totalSlides = sliderItems.length;
+                let currentSlide = 0;
+                let internalIndex = totalSlides;
+                let useTransition = true;
+                let autoSlideInterval;
+                let isTransitioning = false;
 
-            function updateSlider() {
-                if (!sliderContainer) return;
+                // 🔥 Hitung lebar slide + gap dengan benar
+                function getSlideWidth() {
+                    const slide = sliderItems[0];
+                    const trackStyle = getComputedStyle(sliderTrack);
+                    const gap = parseFloat(trackStyle.gap) || 0;
 
-                sliderContainer.scrollTo({
-                    left: currentSlide * sliderContainer.offsetWidth,
-                    behavior: "smooth",
-                });
+                    return slide.offsetWidth + gap;
+                }
 
-                sliderDots.forEach((dot, index) => {
-                    dot.classList.toggle("active", index === currentSlide);
-                    dot.classList.toggle("opacity-50", index !== currentSlide);
-                });
-            }
+                // 🔥 Hitung offset untuk centering (kompensasi padding kiri)
+                function getCenterOffset() {
+                    const trackStyle = getComputedStyle(sliderTrack);
+                    const paddingLeft = parseFloat(trackStyle.paddingLeft) || 0;
+                    const paddingRight = parseFloat(trackStyle.paddingRight) || 0;
 
-            if (sliderContainer && sliderDots.length > 0) {
-                // Auto-slide tiap 5 detik
-                setInterval(() => {
+                    // Offset = padding kiri - setengah gap (agar slide benar-benar center)
+                    return (paddingLeft + paddingRight) / 2;
+                }
+
+                // Update posisi track dengan centering
+                function updateTrackPosition(withTransition = true) {
+                    useTransition = withTransition;
+                    const slideWidth = getSlideWidth();
+                    const centerOffset = getCenterOffset();
+
+                    // Hitung translateX dengan kompensasi center offset
+                    const translateX = -(internalIndex * slideWidth) + centerOffset;
+
+                    sliderTrack.style.transition = useTransition ? 'transform 0.5s ease-in-out' : 'none';
+                    sliderTrack.style.transform = `translateX(${translateX}px)`;
+                }
+
+                // Update dots indicator
+                function updateDots() {
+                    sliderDots.forEach((dot, index) => {
+                        dot.classList.toggle("active", index === currentSlide);
+                        dot.classList.toggle("opacity-50", index !== currentSlide);
+                    });
+                }
+
+                // Handle transition end untuk infinite loop jump
+                function onTransitionEnd() {
+                    if (!useTransition || isTransitioning) return;
+
+                    isTransitioning = true;
+
+                    // Jika melewati clone terakhir (tail) → jump ke awal yang asli
+                    if (internalIndex >= totalSlides * 2) {
+                        internalIndex = totalSlides;
+                        updateTrackPosition(false);
+                    }
+                    // Jika melewati clone pertama (head) → jump ke akhir yang asli
+                    else if (internalIndex < totalSlides) {
+                        internalIndex = totalSlides * 2 - 1;
+                        updateTrackPosition(false);
+                    }
+
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 50);
+                }
+
+                // Next slide
+                function nextSlide() {
+                    if (isTransitioning) return;
+
                     currentSlide = (currentSlide + 1) % totalSlides;
-                    updateSlider();
-                }, 5000);
+                    internalIndex += 1;
 
-                // Klik dot manual
+                    updateTrackPosition(true);
+                    updateDots();
+                }
+
+                // Previous slide
+                function prevSlide() {
+                    if (isTransitioning) return;
+
+                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    internalIndex -= 1;
+
+                    updateTrackPosition(true);
+                    updateDots();
+                }
+
+                // Go to specific slide (untuk dots)
+                function goToSlide(index) {
+                    if (isTransitioning) return;
+
+                    currentSlide = index;
+                    internalIndex = totalSlides + index;
+
+                    updateTrackPosition(true);
+                    updateDots();
+                }
+
+                // Auto slide
+                function startAutoSlide() {
+                    autoSlideInterval = setInterval(() => {
+                        if (!isTransitioning) {
+                            nextSlide();
+                        }
+                    }, 5000);
+                }
+
+                function stopAutoSlide() {
+                    clearInterval(autoSlideInterval);
+                }
+
+                // Initialize
+                updateTrackPosition(false);
+                updateDots();
+
+                // Event listeners
+                sliderTrack.addEventListener('transitionend', onTransitionEnd);
+
                 sliderDots.forEach((dot, index) => {
                     dot.addEventListener("click", () => {
-                        currentSlide = index;
-                        updateSlider();
+                        stopAutoSlide();
+                        goToSlide(index);
+                        startAutoSlide();
                     });
                 });
+
+                // Touch/Swipe support
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                sliderTrack.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    stopAutoSlide();
+                });
+
+                sliderTrack.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                    startAutoSlide();
+                });
+
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    if (touchStartX - touchEndX > swipeThreshold) {
+                        nextSlide();
+                    } else if (touchEndX - touchStartX > swipeThreshold) {
+                        prevSlide();
+                    }
+                }
+
+                // Pause on hover
+                sliderTrack.addEventListener('mouseenter', stopAutoSlide);
+                sliderTrack.addEventListener('mouseleave', startAutoSlide);
+
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    updateTrackPosition(false);
+                });
+
+                // Start auto slide
+                startAutoSlide();
             }
+
 
             // =======================================================
             // 3️⃣ FUNGSI SET ACTIVE BUTTON (UTAMA SAJA)

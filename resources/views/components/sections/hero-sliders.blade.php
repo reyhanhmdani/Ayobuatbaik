@@ -1,36 +1,54 @@
 <header class="relative text-white overflow-hidden pt-2 pb-8">
     <div class="absolute top-0 left-0 right-0 z-0 bg-primary h-24 md:h-28"></div>
-
-    <div class="relative w-full z-10">
-        <div class="slider-container flex overflow-x-auto snap-x snap-mandatory h-auto gap-3 px-4 scroll-smooth">
+    <div class="relative w-full z-10 overflow-hidden">
+        <div class="slider-track flex h-auto gap-3 px-4" style="transition: transform 0.5s ease-in-out;"> {{-- ✅ Kembali ke px-4 --}}
+            {{-- Clone slides terakhir di awal --}}
             @foreach ($sliders as $slide)
-            @php
-                $fallbackImageUrl = 'https://placehold.co/1600x900/4CAF50/FFFFFF?text=Ayobuatbaik+Slider';
+                @php
+                    $fallbackImageUrl = 'https://placehold.co/1600x900/4CAF50/FFFFFF?text=Ayobuatbaik+Slider';
+                    $imageUrl = $slide->gambar ? asset('storage/' . $slide->gambar) : $fallbackImageUrl;
+                @endphp
+                <a href="{{ $slide->url ?? '#' }}" data-slide-clone="head"
+                    class="slider-clone min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
+                    <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
+                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
+                </a>
+            @endforeach
 
-                $imageUrl = $slide->gambar
-                            ? asset('storage/' . $slide->gambar)
-                            : $fallbackImageUrl;
-            @endphp
+            {{-- Slides asli --}}
+            @foreach ($sliders as $slide)
+                @php
+                    $fallbackImageUrl = 'https://placehold.co/1600x900/4CAF50/FFFFFF?text=Ayobuatbaik+Slider';
+                    $imageUrl = $slide->gambar ? asset('storage/' . $slide->gambar) : $fallbackImageUrl;
+                @endphp
+                <a href="{{ $slide->url ?? '#' }}" data-slide-index="{{ $loop->index }}"
+                    class="slider-item min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
+                    <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
+                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
+                </a>
+            @endforeach
 
-            <a href="{{ $slide->url ?? '#' }}"
-               class="min-w-[90%] flex-shrink-0 relative flex items-center justify-center snap-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200">
-                <img src="{{ $imageUrl }}"
-                     alt="{{ $slide->alt_text ?? 'Slider Image' }}"
-                     class="absolute inset-0 w-full h-full object-cover"
-                     loading="lazy"
-
-                     {{-- Opsi: Tambahkan fallback error handling JS jika gambar gagal dimuat --}}
-                     onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';"
-                     >
-            </a>
-        @endforeach
-
+            {{-- Clone slides pertama di akhir --}}
+            @foreach ($sliders as $slide)
+                @php
+                    $fallbackImageUrl = 'https://placehold.co/1600x900/4CAF50/FFFFFF?text=Ayobuatbaik+Slider';
+                    $imageUrl = $slide->gambar ? asset('storage/' . $slide->gambar) : $fallbackImageUrl;
+                @endphp
+                <a href="{{ $slide->url ?? '#' }}" data-slide-clone="tail"
+                    class="slider-clone min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
+                    <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
+                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
+                </a>
+            @endforeach
         </div>
     </div>
 </header>
+
 <div class="flex justify-center space-x-2 z-30 mt-1 relative px-4">
     @foreach ($sliders as $index => $slide)
         <button class="slider-dot w-3 h-3 rounded-full bg-gray-400 opacity-50 {{ $index === 0 ? 'active' : '' }}"></button>
     @endforeach
 </div>
-
