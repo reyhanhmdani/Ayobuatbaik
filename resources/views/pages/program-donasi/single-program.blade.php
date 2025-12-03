@@ -320,8 +320,15 @@
 @endsection
 
 @section('scripts')
-    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
-    </script>
+    @if (config('services.midtrans.is_production'))
+        {{-- Script Production --}}
+        <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
+        </script>
+    @else
+        {{-- Script Sandbox --}}
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    @endif
 
     <script>
         const programDonasiId = {{ $program->id }};
