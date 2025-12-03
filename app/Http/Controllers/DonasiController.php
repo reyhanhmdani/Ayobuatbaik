@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Fonnte;
+use App\Jobs\AutoExpireDonationJob;
+use App\Jobs\SendPendingDonationReminder;
 use App\Models\Donation;
 use App\Models\ProgramDonasi;
 use Exception;
@@ -17,10 +19,10 @@ class DonasiController extends Controller
 {
     public function __construct()
     {
-        Config::$serverKey = config("services.midtrans.serverKey");
-        Config::$isProduction = config("services.midtrans.is_production");
-        Config::$isSanitized = config("services.midtrans.is_sanitized");
-        Config::$is3ds = config("services.midtrans.is_3ds");
+        Config::$serverKey = config('services.midtrans.serverKey');
+        Config::$isProduction = config('services.midtrans.is_production');
+        Config::$isSanitized = config('services.midtrans.is_sanitized');
+        Config::$is3ds = config('services.midtrans.is_3ds');
     }
 
     public function store(Request $request, $programDonasiId)
@@ -34,34 +36,36 @@ class DonasiController extends Controller
             DB::transaction(function () use ($request, $programDonasi, &$snapToken, &$donation) {
                 // 1. CREATE DONATION
                 $donation = Donation::create([
-                    "donation_code" => "DON-" . date("YmdHis") . "-" . rand(1000, 9999),
-                    "program_donasi_id" => $programDonasi->id,
-                    "donor_name" => $request->donor_name,
-                    "donor_phone" => $request->donor_phone,
-                    "donor_email" => $request->donor_email,
-                    "donation_type" => $request->donation_type,
-                    "amount" => $request->amount,
-                    "note" => $request->note,
-                    "status" => "unpaid",
+                    'donation_code' => 'DON-' . date('YmdHis') . '-' . rand(1000, 9999),
+                    'program_donasi_id' => $programDonasi->id,
+                    'donor_name' => $request->donor_name,
+                    'donor_phone' => $request->donor_phone,
+                    'donor_email' => $request->donor_email,
+                    'donation_type' => $request->donation_type,
+                    'amount' => $request->amount,
+                    'note' => $request->note,
+                    'status' => 'unpaid',
                 ]);
+
+                AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addMinutes(1));
 
                 // 2. MIDTRANS PAYLOAD
                 $payload = [
-                    "transaction_details" => [
-                        "order_id" => $donation->donation_code,
-                        "gross_amount" => $donation->amount,
+                    'transaction_details' => [
+                        'order_id' => $donation->donation_code,
+                        'gross_amount' => $donation->amount,
                     ],
-                    "customer_details" => [
-                        "first_name" => $donation->donor_name,
-                        "email" => $donation->donor_email,
-                        "phone" => $donation->donor_phone,
+                    'customer_details' => [
+                        'first_name' => $donation->donor_name,
+                        'email' => $donation->donor_email,
+                        'phone' => $donation->donor_phone,
                     ],
-                    "item_details" => [
+                    'item_details' => [
                         [
-                            "id" => $donation->id,
-                            "price" => $donation->amount,
-                            "quantity" => 1,
-                            "name" => ucwords(str_replace("_", " ", $donation->donation_type)),
+                            'id' => $donation->id,
+                            'price' => $donation->amount,
+                            'quantity' => 1,
+                            'name' => ucwords(str_replace('_', ' ', $donation->donation_type)),
                         ],
                     ],
                 ];
@@ -70,26 +74,30 @@ class DonasiController extends Controller
                 try {
                     $snapToken = Snap::getSnapToken($payload);
                 } catch (Exception $e) {
-                    Log::error("MIDTRANS ERROR: " . $e->getMessage());
-                    throw new Exception("Gagal membuat snap token. Transaksi dibatalkan.");
+                    Log::error('MIDTRANS ERROR: ' . $e->getMessage());
+                    throw new Exception('Gagal membuat snap token. Transaksi dibatalkan.');
                 }
-                $donation->update(["snap_token" => $snapToken]);
+                $donation->update(['snap_token' => $snapToken]);
             });
 
             // 4. CEK KEBERHASILAN ASIGNMENT
             if ($donation === null) {
-                throw new Exception("Gagal membuat data donasi. Transaksi dibatalkan.");
+                throw new Exception('Gagal membuat data donasi. Transaksi dibatalkan.');
             }
 
+            // 🔥 DISPATCH JOBS
+            SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addSeconds(10));
+            AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addSeconds(60));
+
             return response()->json([
-                "snap_token" => $snapToken,
-                "donation_code" => $donation->donation_code,
+                'snap_token' => $snapToken,
+                'donation_code' => $donation->donation_code,
             ]);
         } catch (Exception $e) {
             return response()->json(
                 [
-                    "message" => "Gagal memproses donasi. Silakan coba lagi.",
-                    "error_detail" => $e->getMessage(), // Hapus ini di mode production
+                    'message' => 'Gagal memproses donasi. Silakan coba lagi.',
+                    'error_detail' => $e->getMessage(),
                 ],
                 500,
             );
@@ -98,36 +106,36 @@ class DonasiController extends Controller
 
     public function notification(Request $request)
     {
-        Log::info("CALLBACK MIDTRANS MASUK:", $request->all());
+        Log::info('CALLBACK MIDTRANS MASUK:', $request->all());
         $notif = $request->all();
 
         DB::transaction(function () use ($notif) {
-            $status = $notif["transaction_status"];
-            $orderId = $notif["order_id"];
+            $status = $notif['transaction_status'];
+            $orderId = $notif['order_id'];
 
             // extract original order_id (remove -R suffix if exist)
-            $originalOrderId = explode("-R", $orderId)[0];
+            $originalOrderId = explode('-R', $orderId)[0];
 
-            $donation = Donation::where("donation_code", $orderId)
-                ->orWhere("donation_code", "LIKE", $originalOrderId . "%")
+            $donation = Donation::where('donation_code', $orderId)
+                ->orWhere('donation_code', 'LIKE', $originalOrderId . '%')
                 ->firstOrFail();
 
             // 🔥 CEK STATUS LAMA
             $oldStatus = $donation->status;
             Log::info("Order {$orderId}: Status LAMA = {$oldStatus}, Status BARU = {$status}");
 
-            $phone = preg_replace("/^0/", "62", $donation->donor_phone);
+            $phone = preg_replace('/^0/', '62', $donation->donor_phone);
             $programName = $donation->program->title;
-            $amount = number_format($donation->amount, 0, ",", ".");
+            $amount = number_format($donation->amount, 0, ',', '.');
 
             // ==============================
             // STATUS: SUCCESS / SETTLEMENT
             // ==============================
-            if ($status === "capture" || $status === "settlement") {
+            if ($status === 'capture' || $status === 'settlement') {
                 // HANYA KIRIM JIKA STATUS BERUBAH
-                if ($oldStatus !== "success") {
+                if ($oldStatus !== 'success') {
                     $donation->setStatusSuccess();
-                    $donation->program->increment("collected_amount", $donation->amount);
+                    $donation->program->increment('collected_amount', $donation->amount);
 
                     $message = "Assalamualaikum 🙏
 Terima kasih *{$donation->donor_name}* atas donasi Anda.
@@ -143,109 +151,97 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
             // ==============================
             // STATUS: PENDING
             // ==============================
-            elseif ($status === "pending") {
+            elseif ($status === 'pending') {
                 // 🔥 HANYA KIRIM JIKA STATUS BERUBAH
-                if ($oldStatus !== "pending") {
+                if ($oldStatus !== 'pending') {
                     $donation->setStatusPending();
 
-                    $url = route("donation.pay", $orderId);
-                    $message = "Assalamualaikum 🙏
-Donasi Anda *belum diselesaikan*.
-📌 *Program:* {$programName}
-📌 *Nominal:* Rp {$amount}
-Silakan lanjutkan pembayaran untuk menyempurnakan donasi Anda 🤲
-{$url}
-Terima kasih 🙏";
-                    Log::info("Mengirim WA PENDING ke {$phone}");
-                    Fonnte::send($phone, $message);
+                    // SCHEDULE reminder 30 menit
+                    SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addSeconds(10));
+
+                    Log::info("Scheduled WA pending reminder for donation {$donation->id}");
                 } else {
-                    Log::info("Skip WA PENDING - status sudah pending sebelumnya");
+                    Log::info('Skip WA PENDING - status sudah pending sebelumnya');
                 }
             }
 
-            // ==============================
-            // STATUS: EXPIRE
-            // ==============================
-            elseif ($status === "expire") {
-                // 🔥 HANYA KIRIM JIKA STATUS BERUBAH
-                if ($oldStatus !== "expired") {
-                    $donation->setStatusExpired();
-
-                    $url = route("donation.pay", $orderId);
-                    $message = "Assalamualaikum 🙏
-Pembayaran donasi Anda *gagal/kadaluarsa*.
-Anda dapat melanjutkan pembayaran di link berikut:
-{$url}
-Semoga Allah mudahkan urusan Anda 🤲";
-
-                    Fonnte::send($phone, $message);
-                }
-            }
-
-            // ==============================
-            // STATUS: CANCEL / DENY
-            // ==============================
-            elseif ($status === "deny" || $status === "cancel") {
-                // 🔥 HANYA KIRIM JIKA STATUS BERUBAH
-                if ($oldStatus !== "failed") {
+            // =========================================
+            // 3) EXPIRE / CANCEL / DENY
+            // (TIDAK KIRIM WA APA PUN)
+            // =========================================
+            elseif (in_array($status, ['expire', 'cancel', 'deny'])) {
+                if ($oldStatus !== 'failed' && $status !== 'expire') {
                     $donation->setStatusFailed();
-
-                    $url = route("donation.pay", $orderId);
-                    $message = "Assalamualaikum 🙏
-Pembayaran donasi Anda *gagal*.
-Silakan lanjutkan pembayaran di link berikut:
-{$url}
-Semoga Allah mudahkan urusan Anda 🤲";
-
-                    Fonnte::send($phone, $message);
                 }
+
+                if ($status === 'expire' && $oldStatus !== 'expired') {
+                    $donation->setStatusExpired();
+                }
+
+                Log::info("Status {$orderId} berubah jadi {$status}, TANPA mengirim WA.");
             }
         });
 
-        return response()->json(["message" => "OK"]);
+        return response()->json(['message' => 'OK']);
     }
 
     public function showStatus($donationCode)
     {
-        $donation = Donation::with("program")->where("donation_code", $donationCode)->first();
+        $donation = Donation::with('program')->where('donation_code', $donationCode)->first();
 
         if (!$donation) {
-            return response()->json(["message" => "Donation not found"], 404);
+            abort(404, 'Donasi tidak ditemukan.');
         }
 
-        $recentDonation = Donation::where("program_donasi_id", $donation->program_donasi_id)
-            ->whereIn("status", ["success", "pending", "failed", "expired"]) // Tampilkan semua status seperti permintaan Anda
-            ->where("id", "!=", $donation->id)
-            ->orderBy("status_change_at", "desc")
+        $recentDonation = Donation::where('program_donasi_id', $donation->program_donasi_id)
+            ->whereIn('status', ['success', 'pending', 'failed', 'expired'])
+            ->where('id', '!=', $donation->id)
+            ->orderBy('status_change_at', 'desc')
             ->limit(10)
             ->get();
 
-        // Cek apakah donasi sudah lebih dari 24 jam (hanya untuk status gagal/expired)
         $isDeletable = false;
-        if (in_array($donation->status, ["failed", "expired"]) && $donation->status_change_at) {
-            $isDeletable = $donation->status_change_at->addHours(24)->isPast();
+        if (in_array($donation->status, ['failed', 'expired']) && $donation->status_change_at) {
+            $isDeletable = $donation->status_change_at->addMinutes(1)->isPast();
         }
-        return view("pages.donasi.status", compact("donation", "recentDonation", "isDeletable"));
+
+        $snapToken = null;
+        if (in_array($donation->status, ['unpaid', 'pending', 'failed']) && !empty($donation->snap_token)) {
+            $snapToken = $donation->snap_token;
+        }
+
+        return view('pages.donasi.status', compact('donation', 'recentDonation', 'isDeletable', 'snapToken'));
     }
 
     public function pay($donationCode)
     {
-        $donation = Donation::where("donation_code", $donationCode)->firstOrFail();
+        // Ambil termasuk data yang sudah terhapus (karena auto-expire delete)
+        $donation = Donation::withTrashed()->where('donation_code', $donationCode)->first();
 
-        // Hanya bisa bayar ulang kalau PENDING, FAILED, EXPIRED
-        if (!in_array($donation->status, ["unpaid", "pending", "failed", "expired"])) {
-            return redirect()->route("donation.status", $donationCode)->with("error", "Donasi ini sudah berhasil atau tidak bisa diproses.");
+        // Jika tidak ditemukan → tampilkan halaman expired
+        if (!$donation) {
+            return redirect()->route('donation.expired');
+        }
+
+        // Jika statusnya EXPIRED → arahkan ke halaman expired
+        if (!$donation) {
+            return redirect()->route('donation.expired', ['orderId' => $donationCode]);
+        }
+
+        // Hanya bisa bayar ulang jika unpaid, pending, failed
+        if (!in_array($donation->status, ['unpaid', 'pending', 'failed'])) {
+            return redirect()->route('donation.status', $donationCode)->with('error', 'Donasi ini tidak bisa diproses.');
         }
 
         // Gunakan Snap Token yang ada
         $snapToken = $donation->snap_token;
 
-        // jika snap token kosong. redirect
+        // Jika snap token kosong → redirect ke halaman status
         if (empty($snapToken)) {
-            return redirect()->route("donation.status", $donationCode)->with("error", "Snap token tidak ditemukan.");
+            return redirect()->route('donation.status', $donationCode)->with('error', 'Token pembayaran tidak ditemukan.');
         }
 
-        return view("pages.donasi.pay", compact("donation", "snapToken"));
+        return view('pages.donasi.pay', compact('donation', 'snapToken'));
     }
 
     // public function index(Request $request)

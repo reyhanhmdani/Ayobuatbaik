@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Donation extends Model
 {
+    use SoftDeletes; 
+    protected $dates = ['deleted_at']; 
+
     protected $guarded = [];
 
     // Tambahkan properti untuk menangani tanggal
@@ -34,7 +38,7 @@ class Donation extends Model
         $this->status_change_at = now();
         $this->save();
     }
-    
+
     public function setStatusSuccess()
     {
         $this->attributes['status'] = 'success';
