@@ -67,7 +67,12 @@ class DonasiController extends Controller
                 ];
 
                 // 3. GET SNAP TOKEN
-                $snapToken = Snap::getSnapToken($payload);
+                try {
+                    $snapToken = Snap::getSnapToken($payload);
+                } catch (Exception $e) {
+                    Log::error("MIDTRANS ERROR: " . $e->getMessage());
+                    throw new Exception("Gagal membuat snap token. Transaksi dibatalkan.");
+                }
                 $donation->update(["snap_token" => $snapToken]);
             });
 
