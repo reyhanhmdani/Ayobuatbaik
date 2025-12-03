@@ -78,8 +78,8 @@ class AdminController extends Controller
             })
             ->when($status, function ($query, $status) {
                 if ($status === "failed") {
-                    // Mengelompokkan status gagal, expired, dan cancel
-                    $query->whereIn("status", ["failed", "expire", "cancel"]);
+                    // Mengelompokkan status gagal, expired, dan unpaid
+                    $query->whereIn("status", ["failed", "expire", "unpaid"]);
                 } else {
                     // Filter status spesifik
                     $query->where("status", $status);

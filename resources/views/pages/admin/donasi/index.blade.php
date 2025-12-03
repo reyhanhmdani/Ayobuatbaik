@@ -5,17 +5,14 @@
 
 @section('content')
     <div class="max-w-full mx-auto mt-8">
-        {{-- FILTER & EKSPOR CONTAINER --}}
         <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100 mb-4">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
-                {{-- JUDUL DAN TOMBOL EKSPOR --}}
                 <div class="flex items-center gap-2">
                     <h3 class="text-base md:text-lg font-semibold text-gray-900">Data Transaksi
                         ({{ $donations->total() ?? 0 }})</h3>
 
                     {{-- TOMBOL EKSPOR DENGAN QUERY FILTER --}}
-                    {{-- PASTIKAN ROUTE 'admin.donations.export' SUDAH DITENTUKAN --}}
                     <a href=""
                         class="ml-1 inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 text-xs rounded-lg hover:bg-blue-700 transition">
                         <i class="fas fa-download"></i>
@@ -26,34 +23,33 @@
                 <form id="controlsForm" method="GET"
                     class="flex flex-col gap-2 items-stretch md:flex-row md:items-center text-sm">
 
-                    {{-- SEARCH (Ambil lebar penuh di mobile) --}}
                     <input type="text" name="search" placeholder="Kode/nama donatur..." value="{{ request('search') }}"
                         class="w-full md:w-48 border px-2 py-1 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
 
-                    {{-- GROUP DROP DOWN DI SATU BARIS (Hanya berlaku di Mobile) --}}
-                    <div class="flex w-full gap-2 justify-between md:w-auto">
+                    <div class="flex w-full gap-2 md:w-auto">
 
                         {{-- FILTER PROGRAM DONASI --}}
-                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
+                        <div class="flex items-center gap-1 w-full md:w-40">
                             <label class="text-xs text-gray-600 hidden sm:block md:hidden">Program</label>
-                            <select name="program_id" id="program_id" class="border rounded px-1 py-1 text-xs w-full">
+                            <select name="program_id" id="program_id" class="border rounded px-2 py-1 text-xs w-full">
                                 <option value="">Program</option>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}"
                                         {{ request('program_id') == $program->id ? 'selected' : '' }}>
-                                        {{ Str::limit($program->title, 10) }} {{-- Dibatasi lebih pendek --}}
+                                        {{ Str::limit($program->title, 15) }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
                         {{-- FILTER STATUS --}}
-                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
+                        <div class="flex items-center gap-1 w-full md:w-28">
                             <label class="text-xs text-gray-600 hidden sm:block md:hidden">Status</label>
-                            <select name="status" id="status" class="border rounded px-1 py-1 text-xs w-full">
+                            <select name="status" id="status" class="border rounded px-2 py-1 text-xs w-full">
                                 <option value="">Status</option>
                                 <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success
                                 </option>
+                                <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
                                 </option>
                                 <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
@@ -62,10 +58,9 @@
                             </select>
                         </div>
 
-                        {{-- FILTER PER PAGE --}}
-                        <div class="flex items-center gap-1 w-1/3 min-w-0"> {{-- Tambah w-1/3 --}}
-                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Tampil</label>
-                            <select name="perPage" id="perPage" class="border rounded px-1 py-1 text-xs w-full">
+                        {{-- FILTER PER PAGE (kecil) --}}
+                        <div class="w-16">
+                            <select name="perPage" id="perPage" class="border rounded px-2 py-1 text-xs w-full">
                                 @foreach ([15, 30, 50] as $size)
                                     <option value="{{ $size }}"
                                         {{ request('perPage', 15) == $size ? 'selected' : '' }}>
@@ -73,122 +68,124 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div> {{-- END GROUP DROP DOWN --}}
+                    </div>
+
+            </div> {{-- END GROUP DROP DOWN --}}
 
 
-                    <button type="submit"
-                        class="bg-secondary text-white px-2 py-1 text-xs rounded-md hover:opacity-95 transition md:w-auto">Terapkan</button>
-                </form>
-            </div>
+            <button type="submit"
+                class="bg-secondary text-white px-2 py-1 text-xs rounded-md hover:opacity-95 transition md:w-auto">Terapkan</button>
+            </form>
         </div>
+    </div>
 
-        <div class="mt-4">
+    <div class="mt-4">
 
-            {{-- DESKTOP TABLE --}}
-            <div class="hidden md:block bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-xs">
-                        <thead class="text-gray-600 bg-gray-50">
-                            <tr>
-                                <th class="px-3 py-2 text-left">Kode</th>
-                                <th class="px-3 py-2 text-left">Donatur (Nama, Email, HP)</th>
-                                <th class="px-3 py-2 text-left">Program</th>
-                                <th class="px-3 py-2 text-right">Nominal</th>
-                                <th class="px-3 py-2 text-center">Status</th>
-                                <th class="px-3 py-2 text-left">Waktu Donasi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse ($donations as $donation)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $donation->donation_code }}
-                                    </td>
-                                    <td class="px-3 py-2">
-                                        <p class="font-medium text-gray-900">{{ $donation->donor_name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $donation->donor_email }} |
-                                            {{ $donation->donor_phone }}</p>
-                                    </td>
-                                    <td class="px-3 py-2 text-gray-700 max-w-xs truncate">
-                                        {{ $donation->program->title ?? 'Program Dihapus' }}
-                                    </td>
-                                    <td class="px-3 py-2 font-bold text-right text-green-600 whitespace-nowrap">
-                                        Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                                    </td>
-                                    <td class="px-3 py-2 text-center whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+        {{-- DESKTOP TABLE --}}
+        <div class="hidden md:block bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-xs">
+                    <thead class="text-gray-600 bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left">Kode</th>
+                            <th class="px-3 py-2 text-left">Donatur (Nama, Email, HP)</th>
+                            <th class="px-3 py-2 text-left">Program</th>
+                            <th class="px-3 py-2 text-right">Nominal</th>
+                            <th class="px-3 py-2 text-center">Status</th>
+                            <th class="px-3 py-2 text-left">Waktu Donasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse ($donations as $donation)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $donation->donation_code }}
+                                </td>
+                                <td class="px-3 py-2">
+                                    <p class="font-medium text-gray-900">{{ $donation->donor_name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $donation->donor_email }} |
+                                        {{ $donation->donor_phone }}</p>
+                                </td>
+                                <td class="px-3 py-2 text-gray-700 max-w-xs truncate">
+                                    {{ $donation->program->title ?? 'Program Dihapus' }}
+                                </td>
+                                <td class="px-3 py-2 font-bold text-right text-green-600 whitespace-nowrap">
+                                    Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                                </td>
+                                <td class="px-3 py-2 text-center whitespace-nowrap">
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                             {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
                                             {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                            {{ in_array($donation->status, ['failed', 'expire', 'cancel']) ? 'bg-red-100 text-red-800' : '' }}
+                                            {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-800' : '' }}
                                             {{ $donation->status === 'refund' ? 'bg-blue-100 text-blue-800' : '' }}">
-                                            {{ ucfirst($donation->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-3 py-2 text-xs text-gray-500 whitespace-nowrap">
-                                        {{ $donation->created_at->format('d M Y H:i') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center py-6 text-gray-500">Belum ada data donasi yang
-                                        tercatat.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                                        {{ ucfirst($donation->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2 text-xs text-gray-500 whitespace-nowrap">
+                                    {{ $donation->created_at->format('d M Y H:i') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-6 text-gray-500">Belum ada data donasi yang
+                                    tercatat.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            {{-- MOBILE CARDS (Optimalisasi) --}}
-            <div class="md:hidden space-y-3">
-                @forelse($donations as $donation)
-                    <div class="bg-white rounded-xl shadow p-3 border border-gray-100 space-y-2 text-sm">
+        {{-- MOBILE CARDS (Optimalisasi) --}}
+        <div class="md:hidden space-y-3">
+            @forelse($donations as $donation)
+                <div class="bg-white rounded-xl shadow p-3 border border-gray-100 space-y-2 text-sm">
 
-                        <div class="flex justify-between items-start pb-2 border-b">
-                            <div class="space-y-0.5">
-                                <span class="text-xs font-medium text-gray-500">Kode: {{ $donation->donation_code }}</span>
-                                <p class="text-xs text-gray-700">Program: **{{ $donation->program->title ?? 'Dihapus' }}**
-                                </p>
-                            </div>
-                            <span
-                                class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
-                                {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ in_array($donation->status, ['failed', 'expire', 'cancel']) ? 'bg-red-100 text-red-800' : '' }}
-                                {{ $donation->status === 'refund' ? 'bg-blue-100 text-blue-800' : '' }}">
-                                {{ ucfirst($donation->status) }}
-                            </span>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">Nominal:</span>
-                            <span class="text-base font-bold text-green-600">
-                                Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                            </span>
-                        </div>
-
-                        <div class="pt-2 border-t">
-                            <span class="text-xs text-gray-500 block">Donatur:</span>
-                            <p class="text-sm font-medium text-gray-900">{{ $donation->donor_name }}</p>
-                            <p class="text-xs text-gray-500">{{ $donation->donor_email }} | {{ $donation->donor_phone }}
+                    <div class="flex justify-between items-start pb-2 border-b">
+                        <div class="space-y-0.5">
+                            <span class="text-xs font-medium text-gray-500">Kode: {{ $donation->donation_code }}</span>
+                            <p class="text-xs text-gray-700">Program: **{{ $donation->program->title ?? 'Dihapus' }}**
                             </p>
                         </div>
-
-                        <div class="text-xs text-gray-500 text-right mt-1">
-                            Donasi pada: {{ $donation->created_at->format('d M Y H:i') }}
-                        </div>
+                        <span
+                            class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
+                                {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $donation->status === 'refund' ? 'bg-blue-100 text-blue-800' : '' }}">
+                            {{ ucfirst($donation->status) }}
+                        </span>
                     </div>
-                @empty
-                    <div class="text-center py-6 text-gray-500">Belum ada data donasi yang tercatat.</div>
-                @endforelse
-            </div>
-        </div>
 
-        {{-- Pagination Links --}}
-        <div class="mt-4">
-            {{ $donations->links() }}
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-500">Nominal:</span>
+                        <span class="text-base font-bold text-green-600">
+                            Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                        </span>
+                    </div>
+
+                    <div class="pt-2 border-t">
+                        <span class="text-xs text-gray-500 block">Donatur:</span>
+                        <p class="text-sm font-medium text-gray-900">{{ $donation->donor_name }}</p>
+                        <p class="text-xs text-gray-500">{{ $donation->donor_email }} | {{ $donation->donor_phone }}
+                        </p>
+                    </div>
+
+                    <div class="text-xs text-gray-500 text-right mt-1">
+                        Donasi pada: {{ $donation->created_at->format('d M Y H:i') }}
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-6 text-gray-500">Belum ada data donasi yang tercatat.</div>
+            @endforelse
         </div>
+    </div>
+
+    {{-- Pagination Links --}}
+    <div class="mt-4">
+        {{ $donations->links() }}
+    </div>
     </div>
 
     {{-- Script untuk Auto-Submit Form --}}

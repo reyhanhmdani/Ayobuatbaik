@@ -24,6 +24,7 @@ Route::get('/berita/{slug}', [HomeController::class, 'showBerita'])->name('home.
 
 // donasi
 Route::get('/donate/status/{code}', [DonasiController::class, 'showStatus'])->name('donation.status');
+Route::get('/donate/pay/{code}', [DonasiController::class, 'pay'])->name('donation.pay');
 
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 
@@ -33,6 +34,7 @@ Route::get('oauth/google/callback', [OauthController::class, 'handleProviderCall
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 // Admin Routes dengan middleware
 Route::middleware(['auth'])
@@ -59,6 +61,9 @@ Route::middleware(['auth'])
         // Route untuk Donasi (Donations)
         Route::get('donasi', [AdminController::class, 'donasi'])->name('donasi.index');
     });
+
+
+
 
 // Route::get('/programs', [ProgramController::class, 'index'])->name('program.index');
 // Route::get('/single-program', [ProgramController::class, 'show'])->name('program.show');

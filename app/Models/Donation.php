@@ -21,12 +21,20 @@ class Donation extends Model
         return $this->belongsTo(ProgramDonasi::class, 'program_donasi_id');
     }
 
-    public function setStatusPending()
+    public function setStatusUnpaid()
     {
-        $this->attributes['status'] = 'pending';
+        $this->attributes['status'] = 'unpaid';
         $this->attributes['status_change_at'] = now(); // Update timestamp
         $this->save();
     }
+
+    public function setStatusPending()
+    {
+        $this->status = 'pending';
+        $this->status_change_at = now();
+        $this->save();
+    }
+    
     public function setStatusSuccess()
     {
         $this->attributes['status'] = 'success';
