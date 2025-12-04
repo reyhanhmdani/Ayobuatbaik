@@ -84,7 +84,7 @@ class DonasiController extends Controller
             }
 
             // 🔥 DISPATCH JOBS
-            AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addSeconds(60));
+            AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addHours(24));
 
             return response()->json([
                 'snap_token' => $snapToken,
@@ -159,7 +159,7 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
                     $donation->setStatusPending();
 
                     // SCHEDULE reminder 30 menit
-                    SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addSeconds(10));
+                    SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addMinutes(10));
 
                     Log::info("Scheduled WA pending reminder for donation {$donation->id}");
                 } else {
@@ -211,74 +211,4 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
 
         return view('pages.donasi.status', compact('donation', 'recentDonation', 'isDeletable', 'snapToken'));
     }
-
-    public function pay($donationCode)
-    {
-        // Ambil termasuk data yang sudah terhapus (karena auto-expire delete)
-        $donation = Donation::withTrashed()->where('donation_code', $donationCode)->first();
-
-        // Jika tidak ditemukan → tampilkan halaman expired
-        if (!$donation) {
-            return redirect()->route('donation.expired');
-        }
-
-        // Jika statusnya EXPIRED → arahkan ke halaman expired
-        if (!$donation) {
-            return redirect()->route('donation.expired', ['orderId' => $donationCode]);
-        }
-
-        // Hanya bisa bayar ulang jika unpaid, pending, failed
-        if (!in_array($donation->status, ['unpaid', 'pending', 'failed'])) {
-            return redirect()->route('donation.status', $donationCode)->with('error', 'Donasi ini tidak bisa diproses.');
-        }
-
-        // Gunakan Snap Token yang ada
-        $snapToken = $donation->snap_token;
-
-        // Jika snap token kosong → redirect ke halaman status
-        if (empty($snapToken)) {
-            return redirect()->route('donation.status', $donationCode)->with('error', 'Token pembayaran tidak ditemukan.');
-        }
-
-        return view('pages.donasi.pay', compact('donation', 'snapToken'));
-    }
-
-    // public function index(Request $request)
-    // {
-    //     // 1. Ambil filter dari request
-    //     $filterType = $request->get("type", "all");
-    //     $perPage = 15;
-
-    //     // 2. Query Donasi
-    //     $donationsQuery = Donation::with("program") // Eager load ProgramDonasi terkait
-    //         ->latest(); // Urutkan dari yang terbaru
-
-    //     // 3. Terapkan filter berdasarkan Tipe Pembayaran (donation_type)
-    //     if ($filterType !== "all") {
-    //         $allowedTypes = ["Qris"];
-
-    //         if (in_array($filterType, $allowedTypes)) {
-    //             $donationsQuery->where("donation_type", $filterType);
-    //         }
-    //         // Tambahkan logika jika ingin memfilter Status, misal:
-    //         // if ($filterType === 'success') { $donationsQuery->where('status', 'success'); }
-    //     }
-
-    //     $donations = $donationsQuery->paginate($perPage);
-
-    //     // 4. Hitung Statistik untuk Tab
-    //     $stats = [
-    //         "all" => Donation::count(),
-    //         "Qris" => Donation::where("donation_type", "Qris")->count(),
-    //         "Transfer" => Donation::where("donation_type", "Transfer")->count(),
-    //         "Tersebar" => Donation::where("donation_type", "Tersebar")->count(),
-    //     ];
-
-    //     // 5. Kembalikan view
-    //     return view("admin.donations.index", [
-    //         "donations" => $donations,
-    //         "stats" => $stats,
-    //         "currentType" => $filterType,
-    //     ]);
-    // }
 }
