@@ -24,7 +24,7 @@
                             <div class="py-2 px-3 flex flex-col justify-between w-full">
                                 <div>
                                     <h3 class="text-xs font-semibold text-gray-800 flex items-center gap-1p">
-                                        {{ strlen($programPilihan->title) > 50 ? substr($programPilihan->title, 0, 50) . '...' : $programPilihan->title }}
+                                        {{ strlen($programPilihan->title) > 37 ? substr($programPilihan->title, 0, 37) . '...' : $programPilihan->title }}
                                         @if ($programPilihan->verified)
                                             <span class="ml-1 inline-flex items-center">
                                                 {{-- SVG Icon Verifikasi ala Instagram --}}
@@ -140,7 +140,7 @@
 
                         <div class="py-2 px-3 flex flex-col justify-between w-full">
                             <h3 class="text-xs font-semibold text-gray-800 flex items-center gap-1">
-                                {{ strlen($program->title) > 46 ? substr($program->title, 0, 46) . '...' : $program->title }}
+                                {{ strlen($program->title) > 37 ? substr($program->title, 0, 37) . '...' : $program->title }}
                                 @if ($program->verified)
                                     <span class="ml-1 inline-flex items-center">
                                         {{-- SVG Icon Verifikasi ala Instagram --}}
