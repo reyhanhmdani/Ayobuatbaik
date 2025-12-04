@@ -47,8 +47,6 @@ class DonasiController extends Controller
                     'status' => 'unpaid',
                 ]);
 
-                AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addMinutes(1));
-
                 // 2. MIDTRANS PAYLOAD
                 $payload = [
                     'transaction_details' => [
@@ -74,7 +72,7 @@ class DonasiController extends Controller
                 try {
                     $snapToken = Snap::getSnapToken($payload);
                 } catch (Exception $e) {
-                    Log::error('MIDTRANS ERROR: ' . $e->getMessage());
+                    // Log::error('MIDTRANS ERROR: ' . $e->getMessage());
                     throw new Exception('Gagal membuat snap token. Transaksi dibatalkan.');
                 }
                 $donation->update(['snap_token' => $snapToken]);
@@ -86,7 +84,6 @@ class DonasiController extends Controller
             }
 
             // 🔥 DISPATCH JOBS
-            SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addSeconds(10));
             AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addSeconds(60));
 
             return response()->json([
@@ -120,9 +117,14 @@ class DonasiController extends Controller
                 ->orWhere('donation_code', 'LIKE', $originalOrderId . '%')
                 ->firstOrFail();
 
+            if ($donation->status === $status) {
+                // Log::info("Skip Callback status {$status} sudah pernah diproses");
+                return;
+            }
+
             // 🔥 CEK STATUS LAMA
             $oldStatus = $donation->status;
-            Log::info("Order {$orderId}: Status LAMA = {$oldStatus}, Status BARU = {$status}");
+            // Log::info("Order {$orderId}: Status LAMA = {$oldStatus}, Status BARU = {$status}");
 
             $phone = preg_replace('/^0/', '62', $donation->donor_phone);
             $programName = $donation->program->title;
@@ -167,17 +169,14 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
 
             // =========================================
             // 3) EXPIRE / CANCEL / DENY
-            // (TIDAK KIRIM WA APA PUN)
             // =========================================
             elseif (in_array($status, ['expire', 'cancel', 'deny'])) {
-                if ($oldStatus !== 'failed' && $status !== 'expire') {
-                    $donation->setStatusFailed();
-                }
-
+                // ubah status tapi TIDAK mengirim WA
                 if ($status === 'expire' && $oldStatus !== 'expired') {
                     $donation->setStatusExpired();
+                } elseif ($oldStatus !== 'failed' && $status !== 'expire') {
+                    $donation->setStatusFailed();
                 }
-
                 Log::info("Status {$orderId} berubah jadi {$status}, TANPA mengirim WA.");
             }
         });

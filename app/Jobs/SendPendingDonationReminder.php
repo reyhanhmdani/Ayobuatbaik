@@ -15,6 +15,11 @@ class SendPendingDonationReminder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function uniqueId()
+    {
+        return $this->donationId;
+    }
+
     public $donationId;
 
     public function __construct($donationId)
