@@ -124,7 +124,7 @@
             <!-- Donor Count -->
             <div class="flex items-center text-sm text-gray-600">
                 <i class="fas fa-users text-secondary mr-2"></i>
-                <span>{{ number_format($program->donors_count ?? 0) }} donatur telah berkontribusi</span>
+                <span>{{ number_format($donorsCount ?? 0) }} donatur telah berkontribusi</span>
             </div>
         </div>
 
@@ -177,7 +177,11 @@
                                     </div>
                                     <div>
                                         {{-- Menampilkan nama donatur --}}
-                                        <p class="font-medium text-sm">{{ $donation->donor_name }}</p>
+                                        <p class="font-medium text-sm">
+                                            {{ $donation->donor_name && strtolower($donation->donor_name) !== 'null'
+                                                ? $donation->donor_name
+                                                : 'Hamba Allah' }}
+                                        </p>
                                         {{-- Menampilkan waktu donasi yang lalu --}}
                                         <p class="text-xs text-gray-500">{{ $donation->created_at->diffForHumans() }}</p>
                                     </div>

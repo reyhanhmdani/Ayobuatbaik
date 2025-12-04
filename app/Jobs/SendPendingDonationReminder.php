@@ -38,28 +38,29 @@ class SendPendingDonationReminder implements ShouldQueue
 
         if (!in_array($donation->status, ['pending'])) {
             Log::info("Reminder Job: Donation {$donation->donation_code} sudah {$donation->status}, skip reminder");
-            return; 
+            return;
         }
 
-        $phone = preg_replace("/^0/", "62", $donation->donor_phone);
+        $phone = preg_replace('/^0/', '62', $donation->donor_phone);
         $programName = $donation->program->title;
-        $amount = number_format($donation->amount, 0, ",", ".");
+        $amount = number_format($donation->amount, 0, ',', '.');
 
-        $url = route("donation.status", $donation->donation_code);
+        $url = route('donation.status', $donation->donation_code);
 
-        $message = "Assalamualaikum 🙏
-Donasi Anda masih *menunggu pembayaran*.
-📌 Program: {$programName}
-📌 Nominal: Rp {$amount}
-Silakan lanjutkan pembayaran:
-{$url}
-Terima kasih 🙏";
+        $message = "Assalamualaikum Warahmatullahi Wabarakatuh
+Yth. Bapak/Ibu Dermawan,
+Terima kasih atas niat baik Anda untuk berdonasi. Berikut ini adalah instruksi pembayaran donasi Anda:
+Mohon lakukan transfer sesuai nominal berikut :
+📌 Nominal: Rp {$amount} Silakan transfer ke rekening yang telah kami sediakan pada link berikut: {$url}
+Pembayaran dapat dilakukan maksimal dalam 1x24 jam. Setelah waktu tersebut, sistem akan otomatis membatalkan donasi Anda.
+Jazakumullahu Khairan Katsiran.
+Terima kasih atas kebaikan dan kepercayaan Anda.";
 
         try {
             Fonnte::send($phone, $message);
             Log::info("Reminder WA terkirim untuk {$donation->donation_code}");
         } catch (\Exception $e) {
-            Log::error("Gagal kirim reminder WA: " . $e->getMessage());
+            Log::error('Gagal kirim reminder WA: ' . $e->getMessage());
         }
     }
 }

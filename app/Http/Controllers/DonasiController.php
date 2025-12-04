@@ -139,13 +139,13 @@ class DonasiController extends Controller
                     $donation->setStatusSuccess();
                     $donation->program->increment('collected_amount', $donation->amount);
 
-                    $message = "Assalamualaikum 🙏
+                    $message = "Assalamualaikum Warahmatullahi Wabarakatuh 🙏
 Terima kasih *{$donation->donor_name}* atas donasi Anda.
 📌 *Status:* BERHASIL
 📌 *Program:* {$programName}
 📌 *Nominal:* Rp {$amount}
 Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
-                    Log::info("Mengirim WA SUCCESS ke {$phone}");
+                    // Log::info("Mengirim WA SUCCESS ke {$phone}");
                     Fonnte::send($phone, $message);
                 }
             }
