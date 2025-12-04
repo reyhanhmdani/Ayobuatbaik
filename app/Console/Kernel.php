@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\AutoExpireDonationJob;
+use App\Jobs\SendPendingDonationReminder;
 use App\Models\Donation;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
