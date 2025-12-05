@@ -1,6 +1,11 @@
 @extends('components.layout.app')
 
-@section('title', 'Status Donasi - ' . $donation->program->title)
+@section('title', 'Status Donasi - ' . $donation->program->title)  
+
+@section('og_title', 'Status Donasi - ' . $donation->program->title)
+@section('og_description', 'Status Donasi - ' . $donation->program->title)
+@section('og_url', 'https://ayobuatbaik.com')
+@section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
 
 @section('header-content')
     @include('components.layout.header')

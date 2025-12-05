@@ -2,6 +2,11 @@
 
 @section('title', 'Berita & Artikel - Ayobuatbaik')
 
+@section('og_title', 'Berita & Artikel - Ayobuatbaik')
+@section('og_description', 'Berita & Artikel - Ayobuatbaik')
+@section('og_url', 'https://ayobuatbaik.com')
+@section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
+
 @section('header-content')
     @include('components.layout.header')
 @endsection

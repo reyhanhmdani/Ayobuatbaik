@@ -2,6 +2,11 @@
 
 @section('title', 'Login - Ayobuatbaik')
 
+@section('og_title', 'Login - Ayobuatbaik')
+@section('og_description', 'Login - Ayobuatbaik')
+@section('og_url', 'https://ayobuatbaik.com')
+@section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
+
 @section('content')
     <div class="min-h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 px-4 py-10">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">

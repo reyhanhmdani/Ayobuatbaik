@@ -18,6 +18,7 @@ class Donation extends Model
         'status_change_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'reminder_sent_at' => 'datetime',
     ];
 
     public function program()

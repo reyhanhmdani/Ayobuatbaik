@@ -3,6 +3,11 @@
 {{-- Menggunakan $berita->judul (asumsi ini judulnya) untuk title halaman --}}
 @section('title', $berita->judul)
 
+@section('og_title', $berita->judul)
+@section('og_description', $berita->deskripsi_singkat)
+@section('og_url', 'https://ayobuatbaik.com')
+@section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
+
 @section('header-content')
     @include('components.layout.header')
 @endsection

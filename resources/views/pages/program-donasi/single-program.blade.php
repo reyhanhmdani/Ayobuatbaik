@@ -1,6 +1,11 @@
 @extends('components.layout.app')
 
-@section('title', 'Beasiswa Santri Selfa - Ayobuatbaik')
+@section('title', $program->title)
+
+@section('og_title', $program->title)
+@section('og_description', $program->short_description)
+@section('og_url', 'https://ayobuatbaik.com')
+@section('og_image', 'https://ayobuatbaik.com/storage/' . $program->gambar)
 
 @section('header-content')
     @include('components.layout.header-with-search')

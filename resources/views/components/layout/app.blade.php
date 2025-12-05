@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:site_name" content="Ayobuatbaik">
+    <meta property="og:title" content="@yield('og_title', 'Ayobuatbaik - Platform Donasi Digital')">
+    <meta property="og:description" content="@yield('og_description', 'Ayobuatbaik - Platform Donasi Digital')">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="@yield('og_url', 'https://ayobuatbaik.com')">
+    <meta property="og:image" content="@yield('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')">
+
     <!-- Meta Pixel Code -->
     <script>
         ! function(f, b, e, v, n, t, s) {
