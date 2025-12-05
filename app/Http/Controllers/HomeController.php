@@ -7,31 +7,41 @@ use App\Models\Donation;
 use App\Models\KategoriDonasi;
 use App\Models\ProgramDonasi;
 use App\Models\Slider;
+use Cache;
 use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $featuredPrograms = ProgramDonasi::with(['kategori', 'penggalang'])
-            ->where('featured', 1)
-            ->where('status', 'active')
-            ->orderBy('id', 'desc')
-            ->take(3)
-            ->get();
-
-        $otherPrograms = ProgramDonasi::with(['kategori', 'penggalang'])
-            ->where('featured', 0)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        $kategori = KategoriDonasi::orderBy('name')->get();
-
-        $sliders = Slider::orderBy('urutan', 'asc')->get();
-
-        // Ambil 4 berita terbaru
-        $berita = Berita::orderBy('tanggal', 'desc')->take(4)->get();
-
+        // Cache kategori selama 1 jam
+        $kategori = Cache::remember('kategori_donasi', 3600, function () {
+            return KategoriDonasi::orderBy('name')->get();
+        });
+        // Cache slider selama 30 menit
+        $sliders = Cache::remember('sliders_home', 1800, function () {
+            return Slider::orderBy('urutan', 'asc')->get();
+        });
+        // Featured programs bisa di-cache 10 menit
+        $featuredPrograms = Cache::remember('featured_programs', 600, function () {
+            return ProgramDonasi::with(['kategori', 'penggalang'])
+                ->where('featured', 1)
+                ->where('status', 'active')
+                ->orderBy('id', 'desc')
+                ->take(3)
+                ->get();
+        });
+        // cache lebih pendek (5 menit) karena bisa sering update
+        $otherPrograms = Cache::remember('other_programs', 300, function () {
+            return ProgramDonasi::with(['kategori', 'penggalang'])
+                ->where('featured', 0)
+                ->where('status', 'active')
+                ->orderBy('id', 'desc')
+                ->get();
+        });
+        $berita = Cache::remember('berita_latest_4', 600, function () {
+            return Berita::orderBy('tanggal', 'desc')->take(4)->get();
+        });
         return view('pages.home', compact('featuredPrograms', 'otherPrograms', 'kategori', 'sliders', 'berita'));
     }
 
@@ -39,11 +49,11 @@ class HomeController extends Controller
     {
         $kategories = KategoriDonasi::select('id', 'name', 'slug')->get();
 
-        $programs = ProgramDonasi::with(['kategori', 'penggalang'])
+        $programs = ProgramDonasi::select('id', 'slug', 'title', 'short_description', 'gambar', 'target_amount', 'collected_amount', 'end_date', 'status', 'verified', 'kategori_id')
+            ->with(['kategori:id,name,slug']) // Juga specify untuk eager load
             ->where('status', 'active')
             ->latest()
             ->get();
-
         return view('pages.program-donasi.programs', compact('kategories', 'programs'));
     }
 
@@ -58,7 +68,9 @@ class HomeController extends Controller
             ->limit(20) // Batasi jumlah yang ditampilkan di tab Donatur
             ->get();
 
-        $donorsCount = $program->donations()->where('status', 'success')->count();
+        $donorsCount = Cache::remember("donors_count_{$program->id}", 300, function () use ($program) {
+            return $program->donations()->where('status', 'success')->count();
+        });
         $relatedPrograms = ProgramDonasi::where('id', '!=', $program->id)->inRandomOrder()->take(3)->get();
 
         if ($relatedPrograms->count() < 3) {
@@ -72,14 +84,7 @@ class HomeController extends Controller
     {
         $keyword = $request->input('q');
 
-        $programs = ProgramDonasi::when($keyword, function ($query) use ($keyword) {
-            $query
-                ->where('title', 'like', "%{$keyword}%")
-                ->orWhere('short_description', 'like', "%{$keyword}%")
-                ->orWhere('deskripsi', 'like', "%{$keyword}%");
-        })
-            ->latest()
-            ->paginate(10);
+        $programs = ProgramDonasi::search($keyword)->paginate(10);
 
         return view('pages.program-donasi.search', compact('programs', 'keyword'));
     }

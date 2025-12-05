@@ -9,6 +9,7 @@ use App\Models\KategoriDonasi;
 use App\Models\PenggalangDana;
 use App\Models\ProgramDonasi;
 use App\Models\Slider;
+use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -99,6 +100,10 @@ class ProgramDonasiController extends Controller
 
         ProgramDonasi::create($validated);
 
+        // Clear Cache
+        Cache::forget('featured_programs');
+        Cache::forget('other_programs');
+
         return redirect()->route('admin.programs.index')->with('success', 'Program Donasi Berhasil');
     }
 
@@ -173,6 +178,9 @@ class ProgramDonasiController extends Controller
         }
 
         $program->update($validated);
+
+        Cache::forget('featured_programs');
+        Cache::forget('other_programs');
 
         return redirect()->route('admin.programs.index')->with('success', 'Program Donasi Berhasil Diubah');
     }

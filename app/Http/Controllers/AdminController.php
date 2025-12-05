@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use App\Models\ProgramDonasi;
+use App\Models\User;
+use Cache;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -21,12 +23,14 @@ class AdminController extends Controller
         // Hitung total user
         // $total_users = User::count();
 
-        $stats = [
-            "total_programs" => $total_programs,
-            "total_donations" => $total_donations,
-            "total_amount" => $total_amount,
-            "total_users" => 0,
-        ];
+        $stats = Cache::remember('dashboard_stats', 300, function () {
+            return [
+                "total_programs" => ProgramDonasi::count(),
+                "total_donations" => Donation::count(),
+                "total_amount" => ProgramDonasi::sum("collected_amount"),
+                "total_users" => User::count(),
+            ];
+        });
 
         $recent_donations_query = Donation::latest()
             ->with("program")
@@ -89,7 +93,7 @@ class AdminController extends Controller
             ->when($programId, function ($query, $programId) {
                 $query->where("program_donasi_id", $programId);
             })
-            ->paginate($perPage)
+            ->simplePaginate($perPage)
             ->withQueryString(); // Memastikan parameter filter tetap ada di link pagination
 
         return view("pages.admin.donasi.index", compact("donations", "programs"));

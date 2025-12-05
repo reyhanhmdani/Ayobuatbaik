@@ -72,15 +72,10 @@
     </section>
 
     {{-- Kategori Section --}}
-    {{-- <section class="px-2 pt-8" id="kategori">
+    <section class="px-2 pt-8" id="kategori">
         <div class="text-center mb-10">
-            <h2 class="text-xl font-bold text-gray-800 mb-3">Kategori Program Kebaikan</h2>
-            <p class="text-sm text-gray-500 mt-1">
-                Temukan beragam program kebaikan yang direkomendasikan untukmu
-            </p>
-
+            <h2 class="text-xl font-bold text-gray-800 mb-3">Kategori Program Ayobuatbaik</h2>
             <div class="grid grid-cols-4 gap-3 mt-6 text-center">
-
                 <!-- Tombol Semua -->
                 <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1" data-kat="all"
                     onclick="filterProgram('all', this)">
@@ -115,7 +110,7 @@
 
             </div>
         </div>
-    </section> --}}
+    </section>
 
     <!-- Program Section -->
     <section class="px-4 pb-8" id="program">

@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Donation extends Model
 {
-    use SoftDeletes; 
-    protected $dates = ['deleted_at']; 
+    use SoftDeletes;
 
     protected $guarded = [];
 
@@ -19,6 +18,7 @@ class Donation extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'reminder_sent_at' => 'datetime',
+        'deleted_at' => 'datetime', 
     ];
 
     public function program()
@@ -26,48 +26,41 @@ class Donation extends Model
         return $this->belongsTo(ProgramDonasi::class, 'program_donasi_id');
     }
 
+    public function setStatus(string $status): void
+    {
+        $this->attributes['status'] = $status;
+        $this->attributes['status_change_at'] = now();
+        $this->save();
+    }
     public function setStatusUnpaid()
     {
-        $this->attributes['status'] = 'unpaid';
-        $this->attributes['status_change_at'] = now(); // Update timestamp
-        $this->save();
+        $this->setStatus('unpaid');
     }
-
     public function setStatusPending()
     {
-        $this->status = 'pending';
-        $this->status_change_at = now();
-        $this->save();
+        $this->setStatus('pending');
     }
-
     public function setStatusSuccess()
     {
-        $this->attributes['status'] = 'success';
-        $this->attributes['status_change_at'] = now(); // Update timestamp
-        $this->save();
+        $this->setStatus('success');
     }
     public function setStatusFailed()
     {
-        $this->attributes['status'] = 'failed';
-        $this->attributes['status_change_at'] = now(); // Update timestamp
-        $this->save();
+        $this->setStatus('failed');
     }
     public function setStatusExpired()
     {
-        $this->attributes['status'] = 'expired';
-        $this->attributes['status_change_at'] = now(); // Update timestamp
-        $this->save();
+        $this->setStatus('expired');
     }
-
 
     // helper
     public function getDonorInitialAttribute()
-{
-    // Ambil karakter pertama dari nama donatur
-    if (!empty($this->donor_name)) {
-        // Ambil huruf pertama dan ubah ke huruf kapital
-        return strtoupper(substr($this->donor_name, 0, 1));
+    {
+        // Ambil karakter pertama dari nama donatur
+        if (!empty($this->donor_name)) {
+            // Ambil huruf pertama dan ubah ke huruf kapital
+            return strtoupper(substr($this->donor_name, 0, 1));
+        }
+        return 'D'; // Default inisial jika nama kosong
     }
-    return 'D'; // Default inisial jika nama kosong
-}
 }

@@ -4,10 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class ProgramDonasi extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
+
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'short_description' => $this->short_description,
+        ];
+    }
 
     protected $table = 'program_donasi';
 
