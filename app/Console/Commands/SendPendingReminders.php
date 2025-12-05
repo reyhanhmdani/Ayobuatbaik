@@ -32,7 +32,7 @@ class SendPendingReminders extends Command
 
         $pendingDonations = Donation::where('status', 'pending')
             ->whereNull('reminder_sent_at')
-            ->where('status_change_at', '<=', now()->subSeconds(10))
+            ->where('status_change_at', '<=', now()->subMinutes(30))
             ->get();
 
         if ($pendingDonations->isEmpty()) {
