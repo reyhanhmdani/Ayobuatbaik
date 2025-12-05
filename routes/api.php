@@ -8,5 +8,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::post('/donation/{programDonasiId}', [DonasiController::class, 'store'])->name('donation.store');
-Route::post('/midtrans/notification', [DonasiController::class, 'notification'])->name('midtrans.notification');
+// Add rate limiting
+Route::middleware('throttle:60,1')->group(function () {
+    Route::post('/donation/{programDonasiId}', [DonasiController::class, 'store']);
+});
+Route::post('/midtrans/notification', [DonasiController::class, 'notification']);

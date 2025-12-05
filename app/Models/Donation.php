@@ -9,16 +9,16 @@ class Donation extends Model
 {
     use SoftDeletes;
 
-    protected $guarded = [];
-
-    // Tambahkan properti untuk menangani tanggal
+    // ✅ ONLY user-input fields
+    protected $fillable = ['donation_code', 'program_donasi_id', 'donor_name', 'donor_phone', 'donor_email', 'donation_type', 'amount', 'note'];
+    // ✅ Cast timestamps (Laravel auto-manage, tidak perlu di fillable)
     protected $casts = [
         'amount' => 'integer',
         'status_change_at' => 'datetime',
+        'reminder_sent_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'reminder_sent_at' => 'datetime',
-        'deleted_at' => 'datetime', 
+        'deleted_at' => 'datetime',
     ];
 
     public function program()
