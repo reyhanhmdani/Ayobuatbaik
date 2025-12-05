@@ -13,9 +13,17 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featuredPrograms = ProgramDonasi::where('featured', 1)->where('status', 'active')->orderBy('id', 'desc')->take(3)->get();
+        $featuredPrograms = ProgramDonasi::with(['kategori', 'penggalang'])
+            ->where('featured', 1)
+            ->where('status', 'active')
+            ->orderBy('id', 'desc')
+            ->take(3)
+            ->get();
 
-        $otherPrograms = ProgramDonasi::where('featured', 0)->orderBy('id', 'desc')->get();
+        $otherPrograms = ProgramDonasi::with(['kategori', 'penggalang'])
+            ->where('featured', 0)
+            ->orderBy('id', 'desc')
+            ->get();
 
         $kategori = KategoriDonasi::orderBy('name')->get();
 
@@ -31,7 +39,7 @@ class HomeController extends Controller
     {
         $kategories = KategoriDonasi::select('id', 'name', 'slug')->get();
 
-        $programs = ProgramDonasi::with(['kategori'])
+        $programs = ProgramDonasi::with(['kategori', 'penggalang'])
             ->where('status', 'active')
             ->latest()
             ->get();
@@ -87,10 +95,7 @@ class HomeController extends Controller
         $berita = Berita::where('slug', $slug)->firstOrFail();
 
         // Ambil 3 berita terkait/terbaru lainnya secara acak (kecuali berita saat ini)
-        $relatedBeritas = Berita::where('id', '!=', $berita->id)
-                                ->inRandomOrder()
-                                ->limit(3)
-                                ->get();
+        $relatedBeritas = Berita::where('id', '!=', $berita->id)->inRandomOrder()->limit(3)->get();
 
         // Opsional: Hitung view/baca berita (jika ada kolom views di tabel Berita)
         // $berita->increment('views');

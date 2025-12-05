@@ -112,7 +112,8 @@ class DonasiController extends Controller
             // extract original order_id (remove -R suffix if exist)
             $originalOrderId = explode('-R', $orderId)[0];
 
-            $donation = Donation::where('donation_code', $orderId)
+            $donation = Donation::with('program')
+                ->where('donation_code', $orderId)
                 ->orWhere('donation_code', 'LIKE', $originalOrderId . '%')
                 ->firstOrFail();
 
