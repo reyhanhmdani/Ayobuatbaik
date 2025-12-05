@@ -31,7 +31,7 @@
             src="https://www.facebook.com/tr?id=572554197324218&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
     <title>@yield('title', 'Ayobuatbaik - Platform Donasi Digital')</title>
-    <link rel="icon" type="image/png" href="{{ asset('icon_ABBI.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/icon_ABBI.png') }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
