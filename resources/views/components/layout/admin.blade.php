@@ -13,7 +13,7 @@
 
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" type="image/png" href="{{ asset('icon_ABBI.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/icon_ABBI.png') }}">
 
     <style>
         /* Sidebar transitions */
