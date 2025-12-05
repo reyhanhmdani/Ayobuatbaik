@@ -57,7 +57,7 @@
                                                 : 0;
                                     @endphp
                                     <div class="progress-bar-simple">
-                                        <div class="progress-fill-simple bg-secondary" style="width: {{ $progress }}">
+                                        <div class="progress-fill-simple bg-secondary" style="width: {{ $progress }}%">
                                         </div>
                                     </div>
                                 </div>

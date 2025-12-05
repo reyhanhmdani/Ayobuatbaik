@@ -83,8 +83,7 @@ class DonasiController extends Controller
                 throw new Exception('Gagal membuat data donasi. Transaksi dibatalkan.');
             }
 
-            // 🔥 DISPATCH JOBS
-            AutoExpireDonationJob::dispatch($donation->id)->delay(now()->addHours(24));
+            Log::info("Donation {$donation->donation_code} created successfully. Scheduler akan handle auto-expire & reminder.");
 
             return response()->json([
                 'snap_token' => $snapToken,
@@ -145,7 +144,7 @@ Terima kasih *{$donation->donor_name}* atas donasi Anda.
 📌 *Program:* {$programName}
 📌 *Nominal:* Rp {$amount}
 Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
-                    // Log::info("Mengirim WA SUCCESS ke {$phone}");
+                    Log::info("Mengirim WA SUCCESS ke {$phone}");
                     Fonnte::send($phone, $message);
                 }
             }
@@ -158,10 +157,9 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
                 if ($oldStatus !== 'pending') {
                     $donation->setStatusPending();
 
-                    // SCHEDULE reminder 30 menit
-                    SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addMinutes(10));
+                    // SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addMinutes(10));
 
-                    Log::info("Scheduled WA pending reminder for donation {$donation->id}");
+                    Log::info("Status berubah ke PENDING untuk {$donation->donation_code}. Scheduler akan kirim reminder dalam 30 menit.");
                 } else {
                     Log::info('Skip WA PENDING - status sudah pending sebelumnya');
                 }
@@ -199,9 +197,10 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
             ->limit(10)
             ->get();
 
+        // Cek apakah donasi sudah lebih dari 24 jam (untuk status failed/expired)
         $isDeletable = false;
         if (in_array($donation->status, ['failed', 'expired']) && $donation->status_change_at) {
-            $isDeletable = $donation->status_change_at->addMinutes(1)->isPast();
+            $isDeletable = $donation->status_change_at->addSeconds(20)->isPast();
         }
 
         $snapToken = null;
