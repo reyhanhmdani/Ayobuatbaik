@@ -44,7 +44,9 @@ Route::middleware(['auth'])
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        Route::get('/donations', [AdminController::class, 'donations'])->name('donations');
+        Route::get('donasi', [AdminController::class, 'donasi'])->name('donasi.index');
+        Route::get('donasi/createManual', [AdminController::class, 'pageStoreManualDonasi'])->name('donasi.createManual');
+        Route::post('donasi/storeManual', [AdminController::class, 'storeManualDonasi'])->name('donasi.storeManual');
         Route::get('/users', [AdminController::class, 'users'])->name('users');
 
         // CRUD Program Donasi
@@ -59,9 +61,6 @@ Route::middleware(['auth'])
             ->parameters(['berita' => 'berita'])
             ->names('berita');
         Route::post('/sliders/reorder', [SliderController::class, 'reorder'])->name('sliders.reorder');
-
-        // Route untuk Donasi (Donations)
-        Route::get('donasi', [AdminController::class, 'donasi'])->name('donasi.index');
     });
 
 // Route::get('/programs', [ProgramController::class, 'index'])->name('program.index');
