@@ -11,7 +11,7 @@ class Donation extends Model
 
     // ✅ ONLY user-input fields
     protected $fillable = ['donation_code', 'program_donasi_id', 'donor_name', 'donor_phone', 'donor_email', 'donation_type', 'amount', 'note'];
-    // ✅ Cast timestamps (Laravel auto-manage, tidak perlu di fillable)
+
     protected $casts = [
         'amount' => 'integer',
         'status_change_at' => 'datetime',

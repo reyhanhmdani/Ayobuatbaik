@@ -23,7 +23,7 @@ class AdminController extends Controller
         // Hitung total user
         // $total_users = User::count();
 
-        $stats = Cache::remember('dashboard_stats', 300, function () {
+        $stats = Cache::remember("dashboard_stats", 300, function () {
             return [
                 "total_programs" => ProgramDonasi::count(),
                 "total_donations" => Donation::count(),
@@ -32,16 +32,13 @@ class AdminController extends Controller
             ];
         });
 
-        $recent_donations_query = Donation::latest()
-            ->with("program")
-            ->take(3)
-            ->get();
+        $recent_donations_query = Donation::latest()->with("program")->take(3)->get();
 
         $recent_donations = $recent_donations_query->map(function ($donations) {
             return [
                 "donor_name" => $donations->donor_name,
                 "amount" => $donations->amount,
-                "time" => $donations->created_at->diffForHumans(), 
+                "time" => $donations->created_at->diffForHumans(),
                 "program" => $donations->program ? $donations->program->title : "Unknown Program",
             ];
         });
@@ -93,7 +90,7 @@ class AdminController extends Controller
             ->when($programId, function ($query, $programId) {
                 $query->where("program_donasi_id", $programId);
             })
-            ->simplePaginate($perPage)
+            ->paginate($perPage)
             ->withQueryString(); // Memastikan parameter filter tetap ada di link pagination
 
         return view("pages.admin.donasi.index", compact("donations", "programs"));
