@@ -88,11 +88,12 @@
                             class="text-gray-700 font-medium text-sm bg-gray-50 px-3 py-2.5 border border-r-0 border-gray-300 rounded-l-lg">
                             Rp
                         </span>
-                        <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required
-                            min="1000" placeholder="100000"
+                        <input type="text" name="amount_display" id="amount_display" value="{{ old('amount') ? number_format(old('amount'), 0, ',', '.') : '' }}" required
+                            placeholder="100000"
                             class="flex-1 border border-gray-300 rounded-r-lg px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-transparent @error('amount') border-red-500 @enderror">
+                        <input type="hidden" name="amount" id="amount" value="{{ old('amount') }}">
                     </div>
-                    <p class="text-xs text-gray-500 mt-1">Minimal donasi Rp 1.000</p>
+                    <p class="text-xs text-gray-500 mt-1">Minimal donasi Rp 1.000 (gunakan titik sebagai pemisah ribuan, contoh: 20.008)</p>
                     @error('amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -137,4 +138,54 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountDisplay = document.getElementById('amount_display');
+            const amountHidden = document.getElementById('amount');
+            const form = amountDisplay.closest('form');
+
+            // Format angka dengan pemisah ribuan (titik)
+            function formatNumber(value) {
+                // Hapus semua karakter non-digit
+                const numericValue = value.replace(/\D/g, '');
+                
+                // Format dengan pemisah ribuan
+                return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            // Event saat user mengetik
+            amountDisplay.addEventListener('input', function(e) {
+                const cursorPosition = e.target.selectionStart;
+                const oldValue = e.target.value;
+                const oldLength = oldValue.length;
+                
+                // Format value
+                const formatted = formatNumber(oldValue);
+                e.target.value = formatted;
+                
+                // Update hidden input dengan angka murni (tanpa titik)
+                amountHidden.value = formatted.replace(/\./g, '');
+                
+                // Adjust cursor position setelah formatting
+                const newLength = formatted.length;
+                const newPosition = cursorPosition + (newLength - oldLength);
+                e.target.setSelectionRange(newPosition, newPosition);
+            });
+
+            // Pastikan value yang dikirim adalah angka murni (tanpa titik)
+            form.addEventListener('submit', function(e) {
+                // Ambil value dari display input, hapus semua titik
+                const cleanValue = amountDisplay.value.replace(/\./g, '');
+                amountHidden.value = cleanValue;
+                
+                // Validasi minimal 1000
+                if (parseInt(cleanValue) < 1000) {
+                    e.preventDefault();
+                    alert('Minimal donasi adalah Rp 1.000');
+                    return false;
+                }
+            });
+        });
+    </script>
 @endsection
