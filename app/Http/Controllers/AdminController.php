@@ -149,6 +149,27 @@ class AdminController extends Controller
             ->with('success', 'Donasi manual berhasil ditambahkan! Total program bertambah Rp ' . number_format($validated['amount'], 0, ',', '.'));
     }
 
+    public function exportDonasi(Request $request)
+    {
+        $search = $request->get('search');
+        $status = $request->get('status');
+        $programId = $request->get('program_id');
+        
+        $donation = Donation::with('program')->orderBy('created_at', 'desc')
+        ->when($search, function($query, $search){
+            $query->where('donation_code', 'like', "%{$search}%")
+            ->orWhere('donor_name', 'like', "%{$search}%")
+            ->orWhere('donor_email', 'like', "%{$search}%");
+        })
+        ->when($status, function($query, $status){
+            $query->where('status', $status);
+        })
+        ->when($programId, function($query, $programId){
+            $query->where('program_donasi_id', $programId);
+        })
+        ->get();
+    }
+
     public function users()
     {
         return view('pages.admin.users');

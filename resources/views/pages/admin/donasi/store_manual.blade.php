@@ -79,7 +79,6 @@
                 </div>
 
                 {{-- Nominal Donasi --}}
-                {{-- Nominal Donasi --}}
                 <div>
                     <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">
                         Nominal Donasi <span class="text-red-500">*</span>
@@ -90,7 +89,7 @@
                             Rp
                         </span>
                         <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required
-                            min="1000" step="1000" placeholder="100000"
+                            min="1000" placeholder="100000"
                             class="flex-1 border border-gray-300 rounded-r-lg px-4 py-2.5 focus:ring-2 focus:ring-secondary focus:border-transparent @error('amount') border-red-500 @enderror">
                     </div>
                     <p class="text-xs text-gray-500 mt-1">Minimal donasi Rp 1.000</p>
