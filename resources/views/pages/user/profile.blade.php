@@ -119,10 +119,10 @@
                                         @foreach($recentDonations as $donation)
                                             <tr class="hover:bg-gray-50 transition-colors">
                                                 <td class="px-6 py-4">
-                                                    <div class="font-medium text-gray-900 line-clamp-1 max-w-xs" title="{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}">
+                                                    <div class="font-normal text-gray-700 line-clamp-1 max-w-xs" title="{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}">
                                                         {{ $donation->program ? $donation->program->title : 'Program Dihapus' }}
                                                     </div>
-                                                    <div class="text-xs text-gray-400 mt-1 font-mono">#{{ $donation->donation_code }}</div>
+                                                    {{-- <div class="text-xs text-gray-400 mt-1 font-mono">#{{ $donation->donation_code }}</div> --}}
                                                 </td>
                                                 <td class="px-6 py-4 text-right font-bold text-gray-700">
                                                     Rp {{ number_format($donation->amount, 0, ',', '.') }}
