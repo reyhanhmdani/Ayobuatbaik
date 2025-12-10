@@ -210,6 +210,48 @@
         </div>
     </div>
 
+    <!-- DOA & DUKUNGAN SECTION -->
+    @if($prayers->isNotEmpty())
+    <section class="py-8 bg-blue-50/50 mb-4 border-y border-blue-100">
+        <div class="px-4">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-primary">Doa & Dukungan</h2>
+                    <p class="text-xs text-gray-500">Pesan kebaikan dari para donatur</p>
+                </div>
+                <i class="fas fa-praying-hands text-secondary text-2xl opacity-50"></i>
+            </div>
+            
+            <div class="flex overflow-x-auto space-x-3 pb-4 snap-x hide-scrollbar">
+                @foreach($prayers as $prayer)
+                <div class="min-w-[280px] bg-white p-4 rounded-xl border border-gray-100 shadow-sm snap-center">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs flex-shrink-0">
+                            {{ $prayer->donor_initial }}
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-800">{{ $prayer->donor_name ?: 'Hamba Allah' }}</p>
+                            <p class="text-[10px] text-gray-400">Berdonasi untuk <span class="text-blue-600 font-medium truncate max-w-[150px] inline-block align-bottom">{{ $prayer->program->title ?? 'Program' }}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 relative">
+                        <i class="fas fa-quote-left text-gray-100 text-2xl absolute -top-2 -left-1"></i>
+                        <p class="text-sm text-gray-600 relative z-10 italic leading-relaxed">
+                            "{{ $prayer->note }}"
+                        </p>
+                    </div>
+                    
+                    <div class="mt-3 text-right">
+                        <span class="text-[10px] text-gray-400">{{ $prayer->created_at->diffForHumans() }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
 
     <!-- Features Section -->
     {{-- <section class="features-section py-8 rounded-2xl px-4">
