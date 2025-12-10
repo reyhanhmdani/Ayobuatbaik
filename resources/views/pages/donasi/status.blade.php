@@ -44,6 +44,20 @@
                 @endif
             </div>
 
+            {{-- META PIXEL EVENTS --}}
+            @if ($donation->status === 'success')
+                <script>
+                    // Track Purchase/Donate when success
+                    fbq('track', 'Donate', {
+                        value: {{ $donation->amount }},
+                        currency: 'IDR',
+                        content_name: '{{ $donation->program->title }}',
+                        content_ids: ['{{ $donation->program->id }}'],
+                        content_type: 'product'
+                    }, { eventID: '{{ $donation->donation_code }}' });
+                </script>
+            @endif
+
             <hr class="my-4">
 
             {{-- Detail Donasi --}}
@@ -206,6 +220,15 @@
             payButton.addEventListener("click", function() {
                 payButton.disabled = true;
                 payButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memuat...';
+
+                // TRACK INITIATE CHECKOUT
+                fbq('track', 'InitiateCheckout', {
+                    value: {{ $donation->amount }},
+                    currency: 'IDR',
+                    content_name: '{{ $donation->program->title }}',
+                    content_ids: ['{{ $donation->program->id }}'],
+                    content_type: 'product'
+                });
 
                 snap.pay('{{ $snapToken }}', {
                     onSuccess: function(result) {
