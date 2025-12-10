@@ -345,32 +345,35 @@
             data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     @endif
 
-    <script>
-        const programDonasiId = {{ $program->id }};
+@section('scripts')
+    @if (config('services.midtrans.is_production'))
+        <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
+        </script>
+    @else
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    @endif
 
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("App Loaded");
-            
+            const programDonasiId = {{ $program->id }};
+
             /* =========================================
-               1. TAB SWITCHING LOGIC (FIXED)
+                1. TAB SWITCHING
             ========================================= */
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // 1. Hapus class active dari semua tombol
                     tabButtons.forEach(btn => btn.classList.remove('active'));
-
-                    // 2. Sembunyikan semua konten tab
                     tabContents.forEach(content => content.classList.add('hidden'));
 
-                    // 3. Tambahkan class active ke tombol yang diklik
                     button.classList.add('active');
 
-                    // 4. Munculkan konten tab yang sesuai (berdasarkan data-tab)
                     const targetId = button.getAttribute('data-tab') + '-tab';
                     const targetContent = document.getElementById(targetId);
+
                     if (targetContent) {
                         targetContent.classList.remove('hidden');
                     }
@@ -378,16 +381,18 @@
             });
 
             /* =========================================
-               2. MODAL OPEN & CLOSE
+                2. MODAL
             ========================================= */
             const donationModal = document.getElementById("donation-modal");
             const openDonationBtns = document.querySelectorAll(".donation-btn");
             const closeModalBtn = document.getElementById("close-modal");
 
             function toggleModal(show) {
+                if (!donationModal) return;
+
                 if (show) {
                     donationModal.classList.remove("hidden");
-                    document.body.style.overflow = 'hidden'; // Prevent background scroll
+                    document.body.style.overflow = 'hidden';
                 } else {
                     donationModal.classList.add("hidden");
                     document.body.style.overflow = '';
@@ -395,47 +400,48 @@
             }
 
             openDonationBtns.forEach(btn => btn.addEventListener("click", () => toggleModal(true)));
-            closeModalBtn.addEventListener("click", () => toggleModal(false));
 
-            // Close modal when clicking outside content
-            donationModal.addEventListener("click", (e) => {
-                if (e.target === donationModal) toggleModal(false);
-            });
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener("click", () => toggleModal(false));
+            }
+
+            if (donationModal) {
+                donationModal.addEventListener("click", (e) => {
+                    if (e.target === donationModal) toggleModal(false);
+                });
+            }
 
             /* =========================================
-               3. DONATION AMOUNT LOGIC
+                3. AMOUNT LOGIC
             ========================================= */
             const amountOptions = document.querySelectorAll(".amount-option");
             const customAmountInput = document.getElementById("custom-amount");
+
             let selectedAmount = null;
 
-            // Handle klik pilihan nominal
             amountOptions.forEach(option => {
                 option.addEventListener("click", function() {
                     amountOptions.forEach(opt => opt.classList.remove("selected"));
 
                     this.classList.add("selected");
                     selectedAmount = this.dataset.amount;
-
-                    // Set juga ke input
                     customAmountInput.value = selectedAmount;
                 });
-
             });
 
-            // Handle input manual
             customAmountInput.addEventListener("input", function() {
                 amountOptions.forEach(opt => opt.classList.remove("selected"));
                 selectedAmount = this.value;
             });
-            
+
             /* =========================================
-            4. PAYMENT PROCESS
+                4. PAYMENT
             ========================================= */
             const payButton = document.getElementById("pay-now-btn");
 
+            if (!payButton) return;
+
             payButton.addEventListener("click", function() {
-                // Disable button to prevent double click
                 const originalText = payButton.innerText;
                 payButton.disabled = true;
                 payButton.innerText = "Memproses...";
@@ -444,20 +450,41 @@
                 let donorName = document.getElementById("donor-name").value.trim();
                 const donorPhone = document.getElementById("donor-phone").value.trim();
                 const donorEmail = document.getElementById("donor-email").value.trim();
-                const donorNote = document.getElementById("donor-note").value.trim(); // Capture Note
+                const donorNote = document.getElementById("donor-note").value.trim();
 
-                // Checkbox Hamba Allah
                 const anonymousCheck = document.getElementById("anonymous-check");
-                const nameInput = document.getElementById("donor-name");
+                if (anonymousCheck && anonymousCheck.checked) {
+                    donorName = "Hamba Allah";
+                }
 
-                // ... (validation code omitted, assume unchanged) ...
+                const finalAmount = parseInt(selectedAmount || customAmountInput.value || 0);
 
-                // Kirim Request
+                /* ===== VALIDATION ===== */
+                if (!donorName) {
+                    alert("Nama wajib diisi");
+                    resetButton();
+                    return;
+                }
+
+                if (!donorPhone) {
+                    alert("Nomor HP wajib diisi");
+                    resetButton();
+                    return;
+                }
+
+                if (!finalAmount || finalAmount < 10000) {
+                    alert("Minimal donasi Rp 10.000");
+                    resetButton();
+                    return;
+                }
+
+                /* ===== SEND REQUEST ===== */
                 fetch(`/api/donation/${programDonasiId}`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json",
                         },
                         body: JSON.stringify({
                             donor_name: donorName,
@@ -465,11 +492,11 @@
                             donor_email: donorEmail,
                             amount: finalAmount,
                             donation_type: "umum",
-                            note: donorNote // Send Note
+                            note: donorNote
                         })
                     })
                     .then(res => {
-                        if (!res.ok) throw new Error("Network response was not ok");
+                        if (!res.ok) throw new Error("Request failed");
                         return res.json();
                     })
                     .then(data => {
@@ -481,27 +508,22 @@
 
                         const donationCode = data.donation_code;
 
-                        // Trigger Snap Popup
                         snap.pay(data.snap_token, {
-                            onSuccess: function(result) {
-                                window.location.href = `/donate/status/${donationCode}`;
-                            },
-                            onPending: function(result) {
-                                window.location.href = `/donate/status/${donationCode}`;
-                            },
-                            onError: function(result) {
-                                alert("Pembayaran gagal atau dibatalkan.");
+                            onSuccess: () => window.location.href =
+                                `/donate/status/${donationCode}`,
+                            onPending: () => window.location.href =
+                                `/donate/status/${donationCode}`,
+                            onError: function() {
+                                alert("Pembayaran gagal.");
                                 resetButton();
                             },
-                            onClose: function() {
-                                // resetButton();
-                                window.location.href = `/donate/status/${donationCode}`;
-                            }
+                            onClose: () => window.location.href =
+                                `/donate/status/${donationCode}`
                         });
                     })
                     .catch(err => {
                         console.error(err);
-                        alert("Terjadi kesalahan sistem. Silakan coba lagi.");
+                        alert("Terjadi kesalahan sistem.");
                         resetButton();
                     });
 
@@ -513,4 +535,6 @@
             });
         });
     </script>
+@endsection
+
 @endsection
