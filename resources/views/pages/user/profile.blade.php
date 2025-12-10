@@ -50,32 +50,35 @@
 
             {{-- Stats Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-5 md:p-6 text-white">
+                <div class="bg-green-600 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-5 md:p-6">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-xs md:text-sm font-medium">Total Donasi</p>
-                            <h2 class="text-2xl md:text-3xl font-bold mt-1">Rp {{ number_format($totalAmount, 0, ',', '.') }}</h2>
+                        <div class="flex-1">
+                            <p class="text-white/80 text-xs md:text-sm font-medium">Total Donasi</p>
+                            <h2 class="text-white text-2xl md:text-3xl font-bold mt-1">
+                                Rp {{ number_format($totalAmount, 0, ',', '.') }}
+                            </h2>
                         </div>
-                        <div class="bg-white/20 p-3 md:p-4 rounded-lg">
-                            <i class="fas fa-hand-holding-heart text-2xl md:text-3xl"></i>
+                        <div class="bg-white/20 p-3 md:p-4 rounded-lg flex-shrink-0">
+                            <i class="fas fa-hand-holding-heart text-white text-2xl md:text-3xl"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-5 md:p-6 text-white">
+                <div class="bg-blue-600 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-5 md:p-6">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-blue-100 text-xs md:text-sm font-medium">Jumlah Donasi</p>
-                            <h2 class="text-2xl md:text-3xl font-bold mt-1">{{ $totalDonations }}x</h2>
+                        <div class="flex-1">
+                            <p class="text-white/80 text-xs md:text-sm font-medium">Jumlah Donasi</p>
+                            <h2 class="text-white text-2xl md:text-3xl font-bold mt-1">
+                                {{ $totalDonations }} kali
+                            </h2>
                         </div>
-                        <div class="bg-white/20 p-3 md:p-4 rounded-lg">
-                            <i class="fas fa-donate text-2xl md:text-3xl"></i>
+                        <div class="bg-white/20 p-3 md:p-4 rounded-lg flex-shrink-0">
+                            <i class="fas fa-donate text-white text-2xl md:text-3xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Donation History --}}
             <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
                 <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4">Riwayat Donasi</h2>
                 
@@ -193,7 +196,6 @@
                 </form>
             </div>
 
-            {{-- Change Password Form --}}
             <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
                 <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4">Ubah Password</h2>
                 
