@@ -98,11 +98,11 @@ class AdminController extends Controller
 
     public function pageStoreManualDonasi(Request $request)
     {
-        $programs = ProgramDonasi::where("status", "active")
-            ->orderBy("title", "asc")
-            ->get(["id", "title"]);
+        $programs = ProgramDonasi::where('status', 'active')
+            ->orderBy('title', 'asc')
+            ->get(['id', 'title']);
 
-        return view("pages.admin.donasi.store_manual", compact("programs"));
+        return view('pages.admin.donasi.store_manual', compact('programs'));
     }
 
     public function storeManualDonasi(Request $request)
@@ -149,75 +149,119 @@ class AdminController extends Controller
             ->with("success", "Donasi manual berhasil ditambahkan! Total program bertambah Rp " . number_format($validated["amount"], 0, ",", "."));
     }
 
+    public function pageEditManualDonasi($id)
+    {
+        $donation = Donation::find($id);
+        $programs = ProgramDonasi::where("status", "active")
+            ->orderBy("title", "asc")
+            ->get(["id", "title"]);
+        return view("pages.admin.donasi.edit_manual", compact("donation", "programs"));
+    }
+
+    public function updateManualDonasi(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "program_donasi_id" => "required|exists:program_donasi,id",
+            "donor_name" => "required|string|max:255",
+            "donor_phone" => "required|string|max:20",
+            "donor_email" => "nullable|email|max:255",
+            "amount" => "required|numeric|min:1000",
+            "status" => "required|in:pending,success,failed,expire,unpaid",
+            "note" => "nullable|string",
+            "created_at" => "required|date",
+        ]);
+
+        $donation = Donation::findOrFail($id);
+
+        // --- LOGIC REKALKULASI DANA PROGRAM ---
+
+        // 1. Ambil data lama sebelum update
+        $oldProgramId = $donation->program_donasi_id;
+        $oldAmount = $donation->amount;
+        $oldStatus = $donation->status;
+
+        // 2. Data baru yang akan diupdate
+        $newProgramId = $validated["program_donasi_id"];
+        $newAmount = $validated["amount"];
+        $newStatus = $validated["status"];
+
+        // 3. Update data donasi basic dulu
+        $donation->update([
+            "program_donasi_id" => $newProgramId,
+            "donor_name" => $validated["donor_name"],
+            "donor_phone" => $validated["donor_phone"],
+            "donor_email" => $validated["donor_email"],
+            "amount" => $newAmount, // simpan nominal baru
+            "status" => $newStatus, // simpan status baru
+            "note" => $validated["note"],
+            "created_at" => $validated["created_at"], // Update waktu donasi
+        ]);
+
+        // 4. Handle perubahan nominal di Program Donasi
+        // Case A: Program Berubah
+        if ($oldProgramId != $newProgramId) {
+            // Tarik dana dari program lama (jika dulu sukses)
+            if ($oldStatus == "success") {
+                $oldProgram = ProgramDonasi::find($oldProgramId);
+                if ($oldProgram) {
+                    $oldProgram->decrement("collected_amount", $oldAmount);
+                }
+            }
+            // Masukkan dana ke program baru (jika status baru sukses)
+            if ($newStatus == "success") {
+                $newProgram = ProgramDonasi::find($newProgramId);
+                if ($newProgram) {
+                    $newProgram->increment("collected_amount", $newAmount);
+                }
+            }
+        }
+        // Case B: Program Sama, tapi Status atau Nominal berubah
+        else {
+            $program = ProgramDonasi::find($newProgramId);
+            if ($program) {
+                // Jika dulu sukses, kurangi dulu nominal LAMA
+                if ($oldStatus == "success") {
+                    $program->decrement("collected_amount", $oldAmount);
+                }
+
+                // Jika sekarang sukses, tambah nominal BARU
+                if ($newStatus == "success") {
+                    $program->increment("collected_amount", $newAmount);
+                }
+            }
+        }
+
+        // Clear Cache
+        Cache::forget("dashboard_stats");
+        Cache::forget("featured_programs");
+        Cache::forget("other_programs");
+        Cache::forget("donors_count_{$newProgramId}");
+        if ($oldProgramId != $newProgramId) {
+            Cache::forget("donors_count_{$oldProgramId}");
+        }
+
+        return redirect()->route("admin.donasi.index")->with("success", "Donasi berhasil diperbarui! Data nominal program telah disesuaikan otomatis.");
+    }
+
     public function exportDonasi(Request $request)
     {
-        $search = $request->get("search");
-        $status = $request->get("status");
-        $programId = $request->get("program_id");
+        $search = $request->get('search');
+        $status = $request->get('status');
+        $programId = $request->get('program_id');
 
-        $donations = Donation::with("program")
-            ->orderBy("created_at", "desc")
-            ->when($search, function ($query, $search) {
-                $query
-                    ->where("donation_code", "like", "%{$search}%")
-                    ->orWhere("donor_name", "like", "%{$search}%")
-                    ->orWhere("donor_email", "like", "%{$search}%");
+        $donation = Donation::with('program')->orderBy('created_at', 'desc')
+        ->when($search, function($query, $search){
+            $query->where('donation_code', 'like', "%{$search}%")
+            ->orWhere('donor_name', 'like', "%{$search}%")
+            ->orWhere('donor_email', 'like', "%{$search}%");
             })
-            ->when($status, function ($query, $status) {
-                if ($status === "failed") {
-                    // Mengelompokkan status gagal, expired, dan unpaid
-                    $query->whereIn("status", ["failed", "expire", "unpaid"]);
-                } else {
-                    $query->where("status", $status);
-                }
+        ->when($status, function($query, $status){
+            $query->where('status', $status);
             })
-            ->when($programId, function ($query, $programId) {
-                $query->where("program_donasi_id", $programId);
+        ->when($programId, function($query, $programId){
+            $query->where('program_donasi_id', $programId);
             })
             ->get();
-
-        // Generate filename dengan timestamp
-        $filename = "donasi-export-" . date("Y-m-d-His") . ".csv";
-
-        // Headers untuk CSV download
-        $headers = [
-            "Content-Type" => "text/csv; charset=UTF-8",
-            "Content-Disposition" => "attachment; filename=\"{$filename}\"",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0",
-        ];
-
-        // Callback untuk generate CSV
-        $callback = function () use ($donations) {
-            $file = fopen("php://output", "w");
-
-            // Add BOM untuk support Unicode di Excel
-            fprintf($file, chr(0xef) . chr(0xbb) . chr(0xbf));
-
-            // Header kolom CSV
-            fputcsv($file, ["Kode Donasi", "Nama Donatur", "Email", "No HP", "Program", "Nominal", "Status", "Tipe Donasi", "Catatan", "Waktu Donasi"]);
-
-            // Data rows
-            foreach ($donations as $donation) {
-                fputcsv($file, [
-                    $donation->donation_code,
-                    $donation->donor_name,
-                    $donation->donor_email ?? "-",
-                    $donation->donor_phone,
-                    $donation->program ? $donation->program->title : "Program Dihapus",
-                    $donation->amount,
-                    ucfirst($donation->status),
-                    $donation->donation_type ?? "online",
-                    $donation->note ?? "-",
-                    $donation->created_at->format("Y-m-d H:i:s"),
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
     }
 
     public function users()

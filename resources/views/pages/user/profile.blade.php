@@ -1,243 +1,258 @@
 @extends('components.layout.app')
 
 @section('title', 'Profil Saya - Ayobuatbaik')
-
 @section('og_title', 'Profil Saya - Ayobuatbaik')
-@section('og_description', 'Profil Saya - Ayobuatbaik')
-@section('og_url', 'https://ayobuatbaik.com')
-@section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
 
 @section('content')
-    {{-- Tambah padding bottom untuk mobile navigation --}}
-    <div class="min-h-screen bg-gray-50 py-4 md:py-8 px-4 pb-24 md:pb-8">
-        <div class="max-w-4xl mx-auto">
-            {{-- Header --}}
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-bold text-gray-900">Profil Saya</h1>
-                        <p class="text-xs md:text-sm text-gray-600 mt-1">Kelola informasi profil dan lihat riwayat donasi Anda</p>
-                    </div>
-                    
-                    {{-- Buttons responsive: stack di mobile, horizontal di desktop --}}
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        @if(auth()->user()->is_admin)
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center justify-center gap-2 bg-secondary text-white px-4 py-2 rounded-lg hover:opacity-90 transition text-sm font-semibold">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        @endif
-                        
-                        <form action="{{ route('logout') }}" method="POST" class="w-full sm:w-auto">
-                            @csrf
-                            <button type="submit"
-                                class="w-full inline-flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm font-semibold">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Keluar</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
+    {{-- Main Container --}}
+    <div class="min-h-screen bg-gray-50 py-8 px-4 pb-32" x-data="{ activeTab: 'riwayat' }">
+        <div class="max-w-5xl mx-auto space-y-6">
+            
+            {{-- 1. HEADER PROFILE & STATS --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start md:items-center">
+                        {{-- Avatar & Info --}}
+                        <div class="flex items-center gap-5 flex-1">
+                            <div class="relative">
+                                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg text-white text-3xl md:text-4xl font-bold">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                                @if(auth()->user()->is_admin)
+                                    <div class="absolute -bottom-1 -right-1 bg-yellow-400 text-white rounded-full p-1.5 border-4 border-white shadow-sm" title="Admin">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h1>
+                                <p class="text-gray-500 text-sm mb-3">{{ $user->email }}</p>
+                                <div class="flex gap-3">
+                                    @if(auth()->user()->is_admin)
+                                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition">
+                                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                                        </a>
+                                    @endif
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 transition">
+                                            <i class="fas fa-sign-out-alt"></i> Keluar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                {{-- Divider --}}
+                <div class="hidden md:block w-px h-24 bg-gray-100" style="display: none;"></div>
             </div>
 
-            {{-- Success/Error Messages --}}
+            {{-- Tab Navigation Bar --}}
+            <div class="flex border-t border-gray-100 bg-gray-50/50">
+                <button @click="activeTab = 'riwayat'" 
+                    :class="activeTab === 'riwayat' ? 'text-green-600 border-green-500 bg-white' : 'text-gray-500 hover:text-gray-700 border-transparent hover:bg-gray-50'"
+                    class="flex-1 py-4 text-sm font-semibold border-b-2 transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-history"></i> Riwayat
+                </button>
+                <button @click="activeTab = 'profil'" 
+                    :class="activeTab === 'profil' ? 'text-green-600 border-green-500 bg-white' : 'text-gray-500 hover:text-gray-700 border-transparent hover:bg-gray-50'"
+                    class="flex-1 py-4 text-sm font-semibold border-b-2 transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-user-edit"></i> Profil
+                </button>
+                <button @click="activeTab = 'keamanan'" 
+                    :class="activeTab === 'keamanan' ? 'text-green-600 border-green-500 bg-white' : 'text-gray-500 hover:text-gray-700 border-transparent hover:bg-gray-50'"
+                    class="flex-1 py-4 text-sm font-semibold border-b-2 transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-lock"></i> Password
+                </button>
+            </div>
+        </div>
+
+        {{-- 2. CONTENT AREA --}}
+        <div class="min-h-[400px]">
+            {{-- Flash Message --}}
             @if(session('success'))
-                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 md:mb-6 text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow-sm mb-6 flex items-center justify-between" x-data="{ show: true }" x-show="show">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="font-medium text-sm">{{ session('success') }}</span>
+                    </div>
+                    <button @click="show = false" class="text-green-600 hover:text-green-800"><i class="fas fa-times"></i></button>
                 </div>
             @endif
 
-            {{-- Stats Cards --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-                <div class="bg-green-600 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-5 md:p-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <p class="text-white/80 text-xs md:text-sm font-medium">Total Donasi</p>
-                            <h2 class="text-white text-2xl md:text-3xl font-bold mt-1">
-                                Rp {{ number_format($totalAmount, 0, ',', '.') }}
-                            </h2>
-                        </div>
-                        <div class="bg-white/20 p-3 md:p-4 rounded-lg flex-shrink-0">
-                            <i class="fas fa-hand-holding-heart text-white text-2xl md:text-3xl"></i>
-                        </div>
+            {{-- TAB: RIWAYAT --}}
+            <div x-show="activeTab === 'riwayat'" x-transition.opacity.duration.300ms>
+                {{-- Stats Grid (Moved Here) --}}
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col justify-center">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-2">Total Donasi</p>
+                        <p class="text-xl md:text-2xl font-bold text-green-600">Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col justify-center">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-2">Frekuensi</p>
+                        <p class="text-xl md:text-2xl font-bold text-blue-600">{{ $totalDonations }} <span class="text-sm text-gray-400 font-normal">kali</span></p>
                     </div>
                 </div>
 
-                <div class="bg-blue-600 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-5 md:p-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <p class="text-white/80 text-xs md:text-sm font-medium">Jumlah Donasi</p>
-                            <h2 class="text-white text-2xl md:text-3xl font-bold mt-1">
-                                {{ $totalDonations }} kali
-                            </h2>
-                        </div>
-                        <div class="bg-white/20 p-3 md:p-4 rounded-lg flex-shrink-0">
-                            <i class="fas fa-donate text-white text-2xl md:text-3xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
-                <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4">Riwayat Donasi</h2>
-                
-                @if($recentDonations->count() > 0)
-                    {{-- Desktop Table --}}
-                    <div class="hidden md:block overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kode</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Program</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Nominal</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-bold text-gray-900">Riwayat Donasi Terbaru</h3>
+                            {{-- Optional: View All Link --}}
+                            {{-- <a href="#" class="text-sm text-green-600 hover:underline">Lihat Semua</a> --}}
+                        </div>
+
+                        @if($recentDonations->count() > 0)
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Program</th>
+                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">Nominal</th>
+                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Tanggal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        @foreach($recentDonations as $donation)
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-6 py-4">
+                                                    <div class="font-medium text-gray-900 line-clamp-1 max-w-xs" title="{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}">
+                                                        {{ $donation->program ? $donation->program->title : 'Program Dihapus' }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-400 mt-1 font-mono">#{{ $donation->donation_code }}</div>
+                                                </td>
+                                                <td class="px-6 py-4 text-right font-bold text-gray-700">
+                                                    Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                                                </td>
+                                                <td class="px-6 py-4 text-center">
+                                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
+                                                        {{ $donation->status === 'success' ? 'bg-green-100 text-green-700' : '' }}
+                                                        {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                                        {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-700' : '' }}">
+                                                        {{ ucfirst($donation->status) }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 text-sm text-gray-500">
+                                                    {{ $donation->created_at->format('d M Y, H:i') }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            {{-- Mobile Card List --}}
+                            <div class="md:hidden divide-y divide-gray-100">
                                 @foreach($recentDonations as $donation)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            {{ $donation->donation_code }}
-                                        </td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">
-                                            {{ $donation->program ? $donation->program->title : 'Program Dihapus' }}
-                                        </td>
-                                        <td class="px-4 py-3 text-sm font-bold text-green-600 text-right whitespace-nowrap">
-                                            Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                                        </td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
-                                                {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                                {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-800' : '' }}">
-                                                {{ ucfirst($donation->status) }}
+                                    <div class="p-4 space-y-3">
+                                        <div class="flex justify-between items-start">
+                                            <span class="px-2 py-1 bg-gray-100 rounded text-[10px] font-mono text-gray-500">{{ $donation->donation_code }}</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                                                {{ $donation->status === 'success' ? 'bg-green-50 text-green-700' : '' }}
+                                                {{ $donation->status === 'pending' ? 'bg-yellow-50 text-yellow-700' : '' }}
+                                                {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-50 text-red-700' : '' }}">
+                                                {{ $donation->status }}
                                             </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $donation->created_at->format('d M Y H:i') }}
-                                        </td>
-                                    </tr>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900 text-sm line-clamp-2">{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}</p>
+                                            <p class="text-xs text-gray-400 mt-1">{{ $donation->created_at->format('d M Y, H:i') }}</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-gray-50 flex justify-between items-center">
+                                            <span class="text-xs text-gray-500">Total Donasi</span>
+                                            <span class="font-bold text-gray-900">Rp {{ number_format($donation->amount, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{-- Mobile Cards --}}
-                    <div class="md:hidden space-y-3">
-                        @foreach($recentDonations as $donation)
-                            <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="text-xs font-medium text-gray-500">{{ $donation->donation_code }}</span>
-                                    <span class="px-2 py-0.5 inline-flex text-xs font-semibold rounded-full
-                                        {{ $donation->status === 'success' ? 'bg-green-100 text-green-800' : '' }}
-                                        {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                        {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-800' : '' }}">
-                                        {{ ucfirst($donation->status) }}
-                                    </span>
+                            </div>
+                        @else
+                            <div class="text-center py-16 px-4">
+                                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <i class="fas fa-hand-holding-heart text-3xl"></i>
                                 </div>
-                                <p class="text-sm font-medium text-gray-900 mb-1">
-                                    {{ $donation->program ? $donation->program->title : 'Program Dihapus' }}
-                                </p>
-                                <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
-                                    <span class="text-lg font-bold text-green-600">
-                                        Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                                    </span>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $donation->created_at->format('d M Y') }}
-                                    </span>
+                                <h4 class="text-gray-900 font-medium">Belum ada donasi</h4>
+                                <p class="text-gray-500 text-sm mt-1">Jejak kebaikan Anda akan muncul di sini.</p>
+                                <a href="{{ route('home') }}" class="mt-4 inline-block px-6 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition">Mulai Berdonasi</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- TAB: EDIT PROFILE --}}
+                <div x-show="activeTab === 'profil'" x-transition.opacity.duration.300ms style="display: none;">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-2xl mx-auto">
+                        <h3 class="font-bold text-gray-900 text-lg mb-6 flex items-center gap-2">
+                            <i class="fas fa-user-circle text-green-600"></i> Edit Informasi Profil
+                        </h3>
+                        <form action="{{ route('profile.update') }}" method="POST" class="space-y-5">
+                            @csrf
+                            <div class="space-y-1">
+                                <label class="text-sm font-semibold text-gray-700">Nama Lengkap</label>
+                                <input type="text" name="name" value="{{ old('name', $user->name) }}" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm placeholder-gray-400">
+                                @error('name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-sm font-semibold text-gray-700">Alamat Email</label>
+                                <input type="email" name="email" value="{{ old('email', $user->email) }}" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm placeholder-gray-400">
+                                @error('email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="w-full md:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold shadow-md active:transform active:scale-95 transition-all text-sm">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- TAB: KEAMANAN --}}
+                <div x-show="activeTab === 'keamanan'" x-transition.opacity.duration.300ms style="display: none;">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-2xl mx-auto">
+                        <h3 class="font-bold text-gray-900 text-lg mb-6 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-green-600"></i> Ubah Password
+                        </h3>
+                        <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-4 mb-6 text-sm text-yellow-800">
+                            <i class="fas fa-info-circle mr-1"></i> Pastikan password baru Anda kuat dan tidak mudah ditebak.
+                        </div>
+                        <form action="{{ route('profile.password') }}" method="POST" class="space-y-5">
+                            @csrf
+                            <div class="space-y-1">
+                                <label class="text-sm font-semibold text-gray-700">Password Saat Ini</label>
+                                <div class="relative">
+                                    <input type="password" name="current_password" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm">
+                                </div>
+                                @error('current_password') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                            
+                            <div class="grid md:grid-cols-2 gap-5">
+                                <div class="space-y-1">
+                                    <label class="text-sm font-semibold text-gray-700">Password Baru</label>
+                                    <input type="password" name="new_password" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm">
+                                    @error('new_password') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-semibold text-gray-700">Konfirmasi Password</label>
+                                    <input type="password" name="new_password_confirmation" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm">
                                 </div>
                             </div>
-                        @endforeach
+                            
+                            <div class="pt-4">
+                                <button type="submit" class="w-full md:w-auto px-8 py-3 bg-gray-900 hover:bg-black text-white rounded-lg font-semibold shadow-md active:transform active:scale-95 transition-all text-sm">
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                @else
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-inbox text-4xl mb-2"></i>
-                        <p class="text-sm">Belum ada riwayat donasi</p>
-                    </div>
-                @endif
-            </div>
+                </div>
 
-            {{-- Edit Profile Form --}}
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
-                <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4">Edit Profil</h2>
-                
-                <form action="{{ route('profile.update') }}" method="POST" class="space-y-4">
-                    @csrf
-                    
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-                        <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary
-                                   @error('name') border-red-500 @enderror">
-                        @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary
-                                   @error('email') border-red-500 @enderror">
-                        @error('email')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <button type="submit"
-                        class="w-full bg-secondary text-white py-2.5 px-4 rounded-lg font-semibold text-sm
-                               hover:opacity-90 transition-all duration-300">
-                        Simpan Perubahan
-                    </button>
-                </form>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-4 md:mb-6">
-                <h2 class="text-lg md:text-xl font-bold text-gray-900 mb-4">Ubah Password</h2>
-                
-                <form action="{{ route('profile.password') }}" method="POST" class="space-y-4">
-                    @csrf
-                    
-                    <div>
-                        <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Password Saat Ini</label>
-                        <input type="password" id="current_password" name="current_password" required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary
-                                   @error('current_password') border-red-500 @enderror">
-                        @error('current_password')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="new_password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-                        <input type="password" id="new_password" name="new_password" required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary
-                                   @error('new_password') border-red-500 @enderror">
-                        @error('new_password')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
-                        <input type="password" id="new_password_confirmation" name="new_password_confirmation" required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary">
-                    </div>
-
-                    <button type="submit"
-                        class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg font-semibold text-sm
-                               hover:bg-blue-700 transition-all duration-300">
-                        Ubah Password
-                    </button>
-                </form>
             </div>
         </div>
     </div>
+
+    {{-- Alpine.js --}}
+    <script src="//unpkg.com/alpinejs" defer></script>
 @endsection

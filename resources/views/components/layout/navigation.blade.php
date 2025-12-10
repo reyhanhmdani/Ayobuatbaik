@@ -26,15 +26,12 @@
             <span class="text-xs">Kebutuhan</span>
         </div> --}}
 
-        <!-- Akun Menu for Mobile -->
         @auth
-        <!-- Jika sudah login, redirect ke admin -->
         <div class="mobile-nav-item text-primary" id="akun-menu-toggle">
             <i class="fas fa-user-shield text-lg mb-1"></i>
-            <span class="text-xs">Admin</span>
+            <span class="text-xs">{{ auth()->user()->name }}</span>
         </div>
         @else
-        <!-- Jika belum login, tampilkan login -->
         <a href="{{ route('login') }}" class="mobile-nav-item text-primary {{ isActive('login') }}">
             <i class="fas fa-user text-lg mb-1"></i>
             <span class="text-xs">Akun</span>

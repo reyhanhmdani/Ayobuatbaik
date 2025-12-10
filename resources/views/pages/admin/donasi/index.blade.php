@@ -134,7 +134,12 @@
                                     </span>
                                 </td>
                                 <td class="px-3 py-2 text-xs text-gray-500 whitespace-nowrap">
-                                    {{ $donation->created_at->format('d M Y H:i') }}
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span>{{ $donation->created_at->format('d M Y H:i') }}</span>
+                                        <a href="{{ route('admin.donasi.editManual', $donation->id) }}" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-md transition-colors" title="Edit Donasi">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

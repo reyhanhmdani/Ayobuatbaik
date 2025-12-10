@@ -21,12 +21,12 @@ class OauthController extends Controller
             $googleUser = Socialite::driver("google")->user();
 
             // Cari user berdasarkan Google ID ATAU Email
-            $finduser = User::where("gauth_id", $googleUser->id)->orWhere("email", $googleUser->email)->first();
+            $finduser = User::where("gauth_id", $googleUser->getId())->orWhere("email", $googleUser->getEmail())->first();
 
             if ($finduser) {
                 // Update gauth_id jika belum ada
                 if (empty($finduser->gauth_id)) {
-                    $finduser->gauth_id = $googleUser->id;
+                    $finduser->gauth_id = $googleUser->getId();
                     $finduser->gauth_type = "google";
                     $finduser->save();
                 }
@@ -37,7 +37,7 @@ class OauthController extends Controller
                 // Redirect berdasarkan role
                 if ($finduser->is_admin) {
                     Auth::login($finduser);
-                    return redirect()->intended('admin/dashboard');
+                    return redirect()->intended("admin/dashboard");
                 } else {
                     return redirect()->intended(route("profile"));
                 }
@@ -45,9 +45,9 @@ class OauthController extends Controller
 
             // User belum terdaftar → buat user baru
             $newUser = User::create([
-                "name" => $googleUser->name,
-                "email" => $googleUser->email,
-                "gauth_id" => $googleUser->id,
+                "name" => $googleUser->getName(),
+                "email" => $googleUser->getEmail(),
+                "gauth_id" => $googleUser->getId(),
                 "gauth_type" => "google",
                 "is_admin" => false,
                 "email_verified_at" => now(),

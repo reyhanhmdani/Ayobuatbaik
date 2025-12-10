@@ -50,6 +50,8 @@ Route::middleware(["auth"])
         Route::get("donasi", [AdminController::class, "donasi"])->name("donasi.index");
         Route::get("donasi/createManual", [AdminController::class, "pageStoreManualDonasi"])->name("donasi.createManual");
         Route::post("donasi/storeManual", [AdminController::class, "storeManualDonasi"])->name("donasi.storeManual");
+        Route::get("donasi/{id}/editManual", [AdminController::class, "pageEditManualDonasi"])->name("donasi.editManual");
+        Route::put("donasi/{id}", [AdminController::class, "updateManualDonasi"])->name("donasi.updateManual");
         Route::get("donasi/export", [AdminController::class, "exportDonasi"])->name("donasi.export");
         Route::get("/users", [AdminController::class, "users"])->name("users");
 
