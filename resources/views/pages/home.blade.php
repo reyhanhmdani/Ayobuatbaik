@@ -219,7 +219,6 @@
                     <h2 class="text-xl font-bold text-primary">Doa & Dukungan</h2>
                     <p class="text-xs text-gray-500">Pesan kebaikan dari para donatur</p>
                 </div>
-                <i class="fas fa-praying-hands text-secondary text-2xl opacity-50"></i>
             </div>
             
             <div class="flex overflow-x-auto space-x-3 pb-4 snap-x hide-scrollbar">
@@ -236,7 +235,7 @@
                     </div>
                     
                     <div class="mt-3 relative">
-                        <i class="fas fa-quote-left text-gray-100 text-2xl absolute -top-2 -left-1"></i>
+                        {{-- <i class="fas fa-quote-left text-gray-100 text-2xl absolute -top-2 -left-1"></i> --}}
                         <p class="text-sm text-gray-600 relative z-10 italic leading-relaxed">
                             "{{ $prayer->note }}"
                         </p>
