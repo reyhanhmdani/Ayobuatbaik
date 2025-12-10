@@ -36,11 +36,11 @@ class DonasiController extends Controller
             $userId = null;
 
             if (auth()->check()) {
-                $userId = auth()->id();
-            } elseif ($request->donor_email || $request->donor_phone) {
-                $existingUser = User::where("email", $request->donor_email)->orWhere("phone", $request->donor_phone)->first();
-                if ($existingUser) {
-                    $userId = $existingUser->id;
+                $userId = auth()->user()->id;
+            } elseif ($request->donor_email) {
+                $exitingUser = User::where("email", $request->donor_email)->first();
+                if ($exitingUser) {
+                    $userId = $exitingUser->id;
                 }
             }
 
