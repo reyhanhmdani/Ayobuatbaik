@@ -7,6 +7,7 @@ use App\Jobs\AutoExpireDonationJob;
 use App\Jobs\SendPendingDonationReminder;
 use App\Models\Donation;
 use App\Models\ProgramDonasi;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,8 +33,18 @@ class DonasiController extends Controller
 
             $snapToken = null;
             $donation = null;
+            $userId = null;
 
-            DB::transaction(function () use ($request, $programDonasi, &$snapToken, &$donation) {
+            if (auth()->check()) {
+                $userId = auth()->id();
+            } elseif ($request->donor_email || $request->donor_phone) {
+                $existingUser = User::where("email", $request->donor_email)->orWhere("phone", $request->donor_phone)->first();
+                if ($existingUser) {
+                    $userId = $existingUser->id;
+                }
+            }
+
+            DB::transaction(function () use ($request, $programDonasi, &$snapToken, &$donation, $userId) {
                 // 1. CREATE DONATION
                 $donation = Donation::create([
                     "donation_code" => "DON-" . date("YmdHis") . "-" . rand(1000, 9999),
@@ -45,7 +56,7 @@ class DonasiController extends Controller
                     "amount" => $request->amount,
                     "note" => $request->note,
                     "status" => "unpaid",
-                    "user_id" => auth()->check() ? auth()->id() : null, // Assign user_id jika login
+                    "user_id" => $userId,
                 ]);
 
                 // 2. MIDTRANS PAYLOAD
