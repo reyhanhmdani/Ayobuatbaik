@@ -29,7 +29,7 @@
         @auth
         <div class="mobile-nav-item text-primary" id="akun-menu-toggle">
             <i class="fas fa-user-shield text-lg mb-1"></i>
-            <span class="text-xs">{{ auth()->user()->name }}</span>
+            <span class="text-xs">My Profile</span>
         </div>
         @else
         <a href="{{ route('login') }}" class="mobile-nav-item text-primary {{ isActive('login') }}">
