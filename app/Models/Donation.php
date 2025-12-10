@@ -10,47 +10,52 @@ class Donation extends Model
     use SoftDeletes;
 
     // ✅ ONLY user-input fields
-    protected $fillable = ['donation_code', 'program_donasi_id', 'donor_name', 'donor_phone', 'donor_email', 'donation_type', 'amount', 'note'];
+    protected $fillable = ["donation_code", "program_donasi_id", "donor_name", "donor_phone", "donor_email", "donation_type", "amount", "note", "user_id"];
 
     protected $casts = [
-        'amount' => 'integer',
-        'status_change_at' => 'datetime',
-        'reminder_sent_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        "amount" => "integer",
+        "status_change_at" => "datetime",
+        "reminder_sent_at" => "datetime",
+        "created_at" => "datetime",
+        "updated_at" => "datetime",
+        "deleted_at" => "datetime",
     ];
 
     public function program()
     {
-        return $this->belongsTo(ProgramDonasi::class, 'program_donasi_id');
+        return $this->belongsTo(ProgramDonasi::class, "program_donasi_id");
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function setStatus(string $status): void
     {
-        $this->attributes['status'] = $status;
-        $this->attributes['status_change_at'] = now();
+        $this->attributes["status"] = $status;
+        $this->attributes["status_change_at"] = now();
         $this->save();
     }
     public function setStatusUnpaid()
     {
-        $this->setStatus('unpaid');
+        $this->setStatus("unpaid");
     }
     public function setStatusPending()
     {
-        $this->setStatus('pending');
+        $this->setStatus("pending");
     }
     public function setStatusSuccess()
     {
-        $this->setStatus('success');
+        $this->setStatus("success");
     }
     public function setStatusFailed()
     {
-        $this->setStatus('failed');
+        $this->setStatus("failed");
     }
     public function setStatusExpired()
     {
-        $this->setStatus('expired');
+        $this->setStatus("expired");
     }
 
     // helper
@@ -61,6 +66,6 @@ class Donation extends Model
             // Ambil huruf pertama dan ubah ke huruf kapital
             return strtoupper(substr($this->donor_name, 0, 1));
         }
-        return 'D'; // Default inisial jika nama kosong
+        return "D"; // Default inisial jika nama kosong
     }
 }

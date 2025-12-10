@@ -73,11 +73,20 @@
         <div class="space-y-2">
             @auth
             <!-- Jika sudah login -->
+            <a href="{{ route('profile') }}"
+                class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
+                <i class="fas fa-user mr-3"></i>
+                <span>Profil Saya</span>
+            </a>
+
+            @if(auth()->user()->is_admin)
+            <!-- Tombol Dashboard hanya untuk Admin -->
             <a href="{{ route('admin.dashboard') }}"
                 class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
                 <i class="fas fa-tachometer-alt mr-3"></i>
-                <span>Dashboard</span>
+                <span>Dashboard Admin</span>
             </a>
+            @endif
 
             <form action="{{ route('logout') }}" method="POST" class="w-full">
                 @csrf
@@ -92,7 +101,7 @@
             <a href="{{ route('login') }}"
                 class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
                 <i class="fas fa-sign-in-alt mr-3"></i>
-                <span>Login Admin</span>
+                <span>Login</span>
             </a>
             @endauth
         </div>

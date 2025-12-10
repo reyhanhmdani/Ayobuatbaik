@@ -12,56 +12,59 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\DonasiController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get("/", [HomeController::class, "index"])->name("home");
 
-Route::get('/programs', [HomeController::class, 'programs'])->name('home.program');
-Route::get('/program/{slug}', [HomeController::class, 'program'])->name('home.program.show');
+Route::get("/programs", [HomeController::class, "programs"])->name("home.program");
+Route::get("/program/{slug}", [HomeController::class, "program"])->name("home.program.show");
 
-Route::get('/berita', [HomeController::class, 'berita'])->name('home.berita');
-Route::get('/berita/{slug}', [HomeController::class, 'showBerita'])->name('home.berita.show');
+Route::get("/berita", [HomeController::class, "berita"])->name("home.berita");
+Route::get("/berita/{slug}", [HomeController::class, "showBerita"])->name("home.berita.show");
 
 // donasi
-Route::get('/donate/status/{code}', [DonasiController::class, 'showStatus'])->name('donation.status');
-// Route::get('/donation/pay/{code}', [DonasiController::class, 'pay'])->name('donation.pay');
-// Route::get('/donation/{orderId}/expired', function () {
-//     return view('pages.donasi.expired');
-// })->name('donation.expired');
+Route::get("/donate/status/{code}", [DonasiController::class, "showStatus"])->name("donation.status");
 
-Route::get('/search', [HomeController::class, 'search'])->name('home.search');
+Route::get("/search", [HomeController::class, "search"])->name("home.search");
 
-Route::get('oauth/google', [OauthController::class, 'redirectToProvider'])->name('oauth.google');
-Route::get('oauth/google/callback', [OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
+Route::get("oauth/google", [OauthController::class, "redirectToProvider"])->name("oauth.google");
+Route::get("oauth/google/callback", [OauthController::class, "handleProviderCallback"])->name("oauth.google.callback");
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get("/login", [AuthController::class, "showLoginForm"])->name("login");
+Route::post("/login", [AuthController::class, "login"]);
+Route::post("/logout", [AuthController::class, "logout"])->name("logout");
+
+Route::middleware(["auth"])->group(function () {
+    Route::get("/profile", [UserProfileController::class, "index"])->name("profile");
+    Route::post("/profile/update", [UserProfileController::class, "updateProfile"])->name("profile.update");
+    Route::post("/profile/password", [UserProfileController::class, "updatePassword"])->name("profile.password");
+});
 
 // Admin Routes dengan middleware
-Route::middleware(['auth'])
-    ->prefix('admin')
-    ->name('admin.')
+Route::middleware(["auth"])
+    ->prefix("admin")
+    ->name("admin.")
     ->group(function () {
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        Route::get('donasi', [AdminController::class, 'donasi'])->name('donasi.index');
-        Route::get('donasi/createManual', [AdminController::class, 'pageStoreManualDonasi'])->name('donasi.createManual');
-        Route::post('donasi/storeManual', [AdminController::class, 'storeManualDonasi'])->name('donasi.storeManual');
-        Route::get('donasi/export', [AdminController::class, 'exportDonasi'])->name('donasi.export');
-        Route::get('/users', [AdminController::class, 'users'])->name('users');
+        Route::get("/dashboard", [AdminController::class, "dashboard"])->name("dashboard");
+        Route::get("donasi", [AdminController::class, "donasi"])->name("donasi.index");
+        Route::get("donasi/createManual", [AdminController::class, "pageStoreManualDonasi"])->name("donasi.createManual");
+        Route::post("donasi/storeManual", [AdminController::class, "storeManualDonasi"])->name("donasi.storeManual");
+        Route::get("donasi/export", [AdminController::class, "exportDonasi"])->name("donasi.export");
+        Route::get("/users", [AdminController::class, "users"])->name("users");
 
         // CRUD Program Donasi
-        Route::resource('programs', ProgramDonasiController::class)->names('programs');
+        Route::resource("programs", ProgramDonasiController::class)->names("programs");
         // routes/web.php
-        Route::post('ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
+        Route::post("ckeditor/upload", [CKEditorController::class, "upload"])->name("ckeditor.upload");
 
-        Route::resource('penggalang-dana', PenggalangDanaController::class)->names('penggalang_dana');
-        Route::resource('kategori-donasi', KategoriDonasiController::class)->names('kategori_donasi');
-        Route::resource('sliders', SliderController::class)->names('sliders');
-        Route::resource('berita', BeritaController::class)
-            ->parameters(['berita' => 'berita'])
-            ->names('berita');
-        Route::post('/sliders/reorder', [SliderController::class, 'reorder'])->name('sliders.reorder');
+        Route::resource("penggalang-dana", PenggalangDanaController::class)->names("penggalang_dana");
+        Route::resource("kategori-donasi", KategoriDonasiController::class)->names("kategori_donasi");
+        Route::resource("sliders", SliderController::class)->names("sliders");
+        Route::resource("berita", BeritaController::class)
+            ->parameters(["berita" => "berita"])
+            ->names("berita");
+        Route::post("/sliders/reorder", [SliderController::class, "reorder"])->name("sliders.reorder");
     });
 
 // Route::get('/programs', [ProgramController::class, 'index'])->name('program.index');
