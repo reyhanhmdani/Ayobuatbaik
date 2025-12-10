@@ -472,8 +472,8 @@
                     return;
                 }
 
-                if (!finalAmount || finalAmount < 10000) {
-                    alert("Minimal donasi Rp 10.000");
+                if (!finalAmount || finalAmount < 1000) {
+                    alert("Minimal donasi Rp 1.000");
                     resetButton();
                     return;
                 }
