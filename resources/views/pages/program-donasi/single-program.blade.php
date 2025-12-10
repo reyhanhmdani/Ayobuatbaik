@@ -349,7 +349,85 @@
         const programDonasiId = {{ $program->id }};
 
         document.addEventListener("DOMContentLoaded", function() {
-            // ... (existing code omitted for brevity) ...
+            console.log("App Loaded");
+            
+            /* =========================================
+               1. TAB SWITCHING LOGIC (FIXED)
+            ========================================= */
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 1. Hapus class active dari semua tombol
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // 2. Sembunyikan semua konten tab
+                    tabContents.forEach(content => content.classList.add('hidden'));
+
+                    // 3. Tambahkan class active ke tombol yang diklik
+                    button.classList.add('active');
+
+                    // 4. Munculkan konten tab yang sesuai (berdasarkan data-tab)
+                    const targetId = button.getAttribute('data-tab') + '-tab';
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden');
+                    }
+                });
+            });
+
+            /* =========================================
+               2. MODAL OPEN & CLOSE
+            ========================================= */
+            const donationModal = document.getElementById("donation-modal");
+            const openDonationBtns = document.querySelectorAll(".donation-btn");
+            const closeModalBtn = document.getElementById("close-modal");
+
+            function toggleModal(show) {
+                if (show) {
+                    donationModal.classList.remove("hidden");
+                    document.body.style.overflow = 'hidden'; // Prevent background scroll
+                } else {
+                    donationModal.classList.add("hidden");
+                    document.body.style.overflow = '';
+                }
+            }
+
+            openDonationBtns.forEach(btn => btn.addEventListener("click", () => toggleModal(true)));
+            closeModalBtn.addEventListener("click", () => toggleModal(false));
+
+            // Close modal when clicking outside content
+            donationModal.addEventListener("click", (e) => {
+                if (e.target === donationModal) toggleModal(false);
+            });
+
+            /* =========================================
+               3. DONATION AMOUNT LOGIC
+            ========================================= */
+            const amountOptions = document.querySelectorAll(".amount-option");
+            const customAmountInput = document.getElementById("custom-amount");
+            let selectedAmount = null;
+
+            // Handle klik pilihan nominal
+            amountOptions.forEach(option => {
+                option.addEventListener("click", function() {
+                    amountOptions.forEach(opt => opt.classList.remove("selected"));
+
+                    this.classList.add("selected");
+                    selectedAmount = this.dataset.amount;
+
+                    // Set juga ke input
+                    customAmountInput.value = selectedAmount;
+                });
+
+            });
+
+            // Handle input manual
+            customAmountInput.addEventListener("input", function() {
+                amountOptions.forEach(opt => opt.classList.remove("selected"));
+                selectedAmount = this.value;
+            });
             
             /* =========================================
             4. PAYMENT PROCESS
