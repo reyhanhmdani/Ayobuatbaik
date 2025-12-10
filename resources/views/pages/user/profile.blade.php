@@ -105,59 +105,21 @@
                         </div>
 
                         @if($recentDonations->count() > 0)
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Program</th>
-                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">Nominal</th>
-                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
-                                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Tanggal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                        @foreach($recentDonations as $donation)
-                                            <tr class="hover:bg-gray-50 transition-colors">
-                                                <td class="px-6 py-4">
-                                                    <div class="font-normal text-gray-700 line-clamp-1 max-w-xs" title="{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}">
-                                                        {{ $donation->program ? $donation->program->title : 'Program Dihapus' }}
-                                                    </div>
-                                                    {{-- <div class="text-xs text-gray-400 mt-1 font-mono">#{{ $donation->donation_code }}</div> --}}
-                                                </td>
-                                                <td class="px-6 py-4 text-right font-bold text-gray-700">
-                                                    Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                                                </td>
-                                                <td class="px-6 py-4 text-center">
-                                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
-                                                        {{ $donation->status === 'success' ? 'bg-green-100 text-green-700' : '' }}
-                                                        {{ $donation->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                                        {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-100 text-red-700' : '' }}">
-                                                        {{ ucfirst($donation->status) }}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">
-                                                    {{ $donation->created_at->format('d M Y, H:i') }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            {{-- Mobile Card List --}}
-                            <div class="md:hidden divide-y divide-gray-100">
+                            {{-- Unified Card List (Mobile Style for All) --}}
+                            <div class="divide-y divide-gray-100">
                                 @foreach($recentDonations as $donation)
-                                    <div class="p-4 space-y-3">
+                                    <div class="p-4 space-y-3 hover:bg-gray-50 transition-colors">
                                         <div class="flex justify-between items-start">
                                             <span class="px-2 py-1 bg-gray-100 rounded text-[10px] font-mono text-gray-500">{{ $donation->donation_code }}</span>
                                             <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase
                                                 {{ $donation->status === 'success' ? 'bg-green-50 text-green-700' : '' }}
                                                 {{ $donation->status === 'pending' ? 'bg-yellow-50 text-yellow-700' : '' }}
                                                 {{ in_array($donation->status, ['failed', 'expire', 'unpaid']) ? 'bg-red-50 text-red-700' : '' }}">
-                                                {{ $donation->status }}
+                                                {{ ucfirst($donation->status) }}
                                             </span>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-900 text-sm line-clamp-2">{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}</p>
+                                            <p class="font-normal text-gray-700 text-sm line-clamp-2">{{ $donation->program ? $donation->program->title : 'Program Dihapus' }}</p>
                                             <p class="text-xs text-gray-400 mt-1">{{ $donation->created_at->format('d M Y, H:i') }}</p>
                                         </div>
                                         <div class="pt-2 border-t border-gray-50 flex justify-between items-center">
