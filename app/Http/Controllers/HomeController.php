@@ -46,9 +46,14 @@ class HomeController extends Controller
             return Berita::orderBy("tanggal", "desc")->take(4)->get();
         });
 
-        // Fetch latest prayers (Donations with notes)
-        $prayers = Cache::remember("latest_prayers", 300, function () {
-            return Donation::where("status", "success")->whereNotNull("note")->where("note", "!=", "")->latest()->take(10)->get();
+        $prayers = Cache::remember('latest_prayers', 300, function () {
+            return Donation::where('status', 'success')
+                ->whereNotNull('note')
+                ->where('note', '!=', '')
+                ->where('note', '!=', 'null')
+                ->latest()
+                ->take(10)
+                ->get();
         });
 
         return view("pages.home", compact("featuredPrograms", "otherPrograms", "kategori", "sliders", "berita", "prayers"));
