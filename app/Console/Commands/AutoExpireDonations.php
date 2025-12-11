@@ -37,15 +37,10 @@ class AutoExpireDonations extends Command
             'cutoff_time' => $cutoffTime->toDateTimeString(),
         ]);
 
-        // Cari donation yang sudah > 24 jam dan masih unpaid/pending
         $expireDonations = Donation::whereIn('status', ['unpaid', 'pending'])
             ->where('expires_at', '<=', now())
-            ->update([
-                'status' => 'expired',
-                'status_change_at' => now(),
-            ]);
+            ->get();
 
-        // 🔥 LOG: Hasil query
         Log::info('Auto-Expire Command QUERY', [
             'total_found' => $expireDonations->count(),
             'donations' => $expireDonations
@@ -53,6 +48,7 @@ class AutoExpireDonations extends Command
                     return [
                         'code' => $d->donation_code,
                         'created_at' => $d->created_at->toDateTimeString(),
+                        'expires_at' => $d->expires_at,
                         'age_hours' => $d->created_at->diffInHours(now()),
                     ];
                 })
@@ -65,26 +61,18 @@ class AutoExpireDonations extends Command
             return 0;
         }
 
-        $count = 0;
-
         foreach ($expireDonations as $donation) {
             $donation->update([
                 'status' => 'expired',
                 'status_change_at' => now(),
             ]);
 
-            $this->line("⏰ Expired: {$donation->donation_code} - {$donation->donor_name} (Age: {$donation->created_at->diffForHumans()})");
+            $this->line("⏰ Expired: {$donation->donation_code}");
             Log::info('Auto-Expire: Donation expired', [
                 'donation_code' => $donation->donation_code,
-                'created_at' => $donation->created_at->toDateTimeString(),
-                'expired_at' => now()->toDateTimeString(),
+                'expired_at' => now(),
             ]);
-
-            $count++;
         }
-
-        $this->info("\n✅ Total expired: {$count} donations");
-        Log::info("Auto-Expire Command END: Berhasil expire {$count} donasi");
 
         return 0;
     }
