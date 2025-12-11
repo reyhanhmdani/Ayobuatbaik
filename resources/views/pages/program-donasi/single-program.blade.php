@@ -381,7 +381,7 @@
             });
 
             /* =========================================
-                2. MODAL
+                2. MODAL + Meta Pixel Event
             ========================================= */
             const donationModal = document.getElementById("donation-modal");
             const openDonationBtns = document.querySelectorAll(".donation-btn");
@@ -393,6 +393,17 @@
                 if (show) {
                     donationModal.classList.remove("hidden");
                     document.body.style.overflow = 'hidden';
+
+                    // Track Klik tombol Donasi
+                    if (typeof fbq !== 'undefined') {
+                        fbq('track', 'InitiateCheckout', {
+                            content_name: '{{ $program->title }}',
+                            content_category: 'Donasi',
+                            content_ids: ['{{ $program->id }}'],
+                            currency: 'IDR'
+                        });
+                        console.log('Meta Pixel InitiateCheckout event sent');
+                    }
                 } else {
                     donationModal.classList.add("hidden");
                     document.body.style.overflow = '';
@@ -435,7 +446,7 @@
             });
 
             /* =========================================
-                4. PAYMENT
+                4. PAYMENT + Meta Pixel Event
             ========================================= */
             const payButton = document.getElementById("pay-now-btn");
 
@@ -478,6 +489,17 @@
                     return;
                 }
 
+                // Track Donasi (yang isi form)
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'Purchase', {
+                        content_name: '{{ $program->title }}',
+                        content_category: 'Donasi',
+                        content_ids: ['{{ $program->id }}'],
+                        currency: 'IDR'
+                    });
+                    console.log('✅ Meta Pixel Purchase event sent');
+                }
+
                 /* ===== SEND REQUEST ===== */
                 fetch(`/api/donation/${programDonasiId}`, {
                         method: "POST",
@@ -508,9 +530,33 @@
 
                         const donationCode = data.donation_code;
 
+                        // Track Donasi Pending
+                        if (typeof fbq !== 'undefined') {
+                            fbq('track', 'AddPaymentInfo', {
+                                content_name: '{{ $program->title }}',
+                                content_category: 'Donasi',
+                                content_ids: ['{{ $program->id }}'],
+                                value: finalAmount,
+                                currency: 'IDR'
+                            });
+                            console.log('✅ Meta Pixel: AddPaymentInfo tracked');
+                        }
+
                         snap.pay(data.snap_token, {
-                            onSuccess: () => window.location.href =
-                                `/donate/status/${donationCode}`,
+                            onSuccess: () => {
+                                // 🔥 META PIXEL: Track Purchase Success
+                                if (typeof fbq !== 'undefined') {
+                                    fbq('track', 'Purchase', {
+                                        content_name: '{{ $program->title }}',
+                                        content_category: 'Donasi',
+                                        content_ids: ['{{ $program->id }}'],
+                                        value: finalAmount,
+                                        currency: 'IDR'
+                                    });
+                                    console.log('✅ Meta Pixel: Purchase tracked');
+                                }
+                                window.location.href = `/donate/status/${donationCode}`;
+                            },
                             onPending: () => window.location.href =
                                 `/donate/status/${donationCode}`,
                             onError: function() {
