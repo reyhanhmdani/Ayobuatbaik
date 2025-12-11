@@ -358,6 +358,17 @@
         document.addEventListener("DOMContentLoaded", function() {
             const programDonasiId = {{ $program->id }};
 
+            // 🔥 1. VIEW CONTENT (Saat halaman dibuka)
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'ViewContent', {
+                    content_name: '{{ $program->title }}',
+                    content_ids: ['{{ $program->id }}'],
+                    content_type: 'product',
+                    value: {{ $program->target_amount }},
+                    currency: 'IDR'
+                });
+            }
+
             /* =========================================
                 1. TAB SWITCHING
             ========================================= */
@@ -489,17 +500,6 @@
                     return;
                 }
 
-                // Track Donasi (yang isi form)
-                if (typeof fbq !== 'undefined') {
-                    fbq('track', 'Purchase', {
-                        content_name: '{{ $program->title }}',
-                        content_category: 'Donasi',
-                        content_ids: ['{{ $program->id }}'],
-                        currency: 'IDR'
-                    });
-                    console.log('✅ Meta Pixel Purchase event sent');
-                }
-
                 /* ===== SEND REQUEST ===== */
                 fetch(`/api/donation/${programDonasiId}`, {
                         method: "POST",
@@ -552,7 +552,7 @@
                                         content_ids: ['{{ $program->id }}'],
                                         value: finalAmount,
                                         currency: 'IDR'
-                                    });
+                                    }, { eventID: donationCode }); 
                                     console.log('✅ Meta Pixel: Purchase tracked');
                                 }
                                 window.location.href = `/donate/status/${donationCode}`;

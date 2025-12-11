@@ -32,7 +32,7 @@ class SendPendingReminders extends Command
 
         $now = now();
         $minTime = $now->copy()->subHours(24);
-        $maxTime = $now->copy()->subMinutes(15);
+        $maxTime = $now->copy()->subMinutes(1);
 
         $pendingDonations = Donation::where("status", "pending")
             ->where("created_at", ">=", $minTime)
