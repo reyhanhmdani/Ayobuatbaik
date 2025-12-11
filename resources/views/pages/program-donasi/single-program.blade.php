@@ -361,10 +361,10 @@
             // 🔥 1. VIEW CONTENT (Saat halaman dibuka)
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'ViewContent', {
-                    content_name: '{{ $program->title }}',
+                    content_name: '{{ $program->title ?? "Program Donasi" }}',
                     content_ids: ['{{ $program->id }}'],
                     content_type: 'product',
-                    value: {{ $program->target_amount }},
+                    value: {{ $program->target_amount ?? 0 }},
                     currency: 'IDR'
                 });
             }

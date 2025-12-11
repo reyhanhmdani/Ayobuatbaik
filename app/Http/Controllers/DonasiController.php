@@ -110,7 +110,6 @@ class DonasiController extends Controller
             Log::info("Donation {$donation->donation_code} created successfully. Scheduler akan handle auto-expire & reminder.");
 
             // 🔥 META PIXEL: Server-Side Tracking (AddPaymentInfo)
-            // Merekam data user (Guest/Auth) saat mereka sukses submit form
             $this->sendMetaPixelEvent(
                 "AddPaymentInfo",
                 [
