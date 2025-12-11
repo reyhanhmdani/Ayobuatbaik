@@ -25,33 +25,38 @@ class AutoExpireDonations extends Command
     /**
      * Execute the console command.
      */
-      public function handle()
+    public function handle()
     {
         $this->info('🔍 Checking for expired donations...');
 
         $cutoffTime = now()->subHours(24);
-        
+
         // 🔥 LOG: Waktu cutoff
-        Log::info("Auto-Expire Command START", [
+        Log::info('Auto-Expire Command START', [
             'now' => now()->toDateTimeString(),
-            'cutoff_time' => $cutoffTime->toDateTimeString()
+            'cutoff_time' => $cutoffTime->toDateTimeString(),
         ]);
 
         // Cari donation yang sudah > 24 jam dan masih unpaid/pending
         $expireDonations = Donation::whereIn('status', ['unpaid', 'pending'])
-            ->where('created_at', '<=', $cutoffTime)
-            ->get();
+            ->where('expires_at', '<=', now())
+            ->update([
+                'status' => 'expired',
+                'status_change_at' => now(),
+            ]);
 
         // 🔥 LOG: Hasil query
-        Log::info("Auto-Expire Command QUERY", [
+        Log::info('Auto-Expire Command QUERY', [
             'total_found' => $expireDonations->count(),
-            'donations' => $expireDonations->map(function($d) {
-                return [
-                    'code' => $d->donation_code,
-                    'created_at' => $d->created_at->toDateTimeString(),
-                    'age_hours' => $d->created_at->diffInHours(now())
-                ];
-            })->toArray()
+            'donations' => $expireDonations
+                ->map(function ($d) {
+                    return [
+                        'code' => $d->donation_code,
+                        'created_at' => $d->created_at->toDateTimeString(),
+                        'age_hours' => $d->created_at->diffInHours(now()),
+                    ];
+                })
+                ->toArray(),
         ]);
 
         if ($expireDonations->isEmpty()) {
@@ -69,10 +74,10 @@ class AutoExpireDonations extends Command
             ]);
 
             $this->line("⏰ Expired: {$donation->donation_code} - {$donation->donor_name} (Age: {$donation->created_at->diffForHumans()})");
-            Log::info("Auto-Expire: Donation expired", [
+            Log::info('Auto-Expire: Donation expired', [
                 'donation_code' => $donation->donation_code,
                 'created_at' => $donation->created_at->toDateTimeString(),
-                'expired_at' => now()->toDateTimeString()
+                'expired_at' => now()->toDateTimeString(),
             ]);
 
             $count++;
