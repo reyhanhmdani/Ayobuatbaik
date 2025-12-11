@@ -24,12 +24,14 @@ class Donation extends Model
         "status_change_at",
         "reminder_sent_at",
         "snap_token",
+        "expires_at",
     ];
 
     protected $casts = [
         "amount" => "integer",
         "status_change_at" => "datetime",
         "reminder_sent_at" => "datetime",
+        "expires_at" => "datetime",
         "created_at" => "datetime",
         "updated_at" => "datetime",
         "deleted_at" => "datetime",

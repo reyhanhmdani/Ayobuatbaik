@@ -106,7 +106,7 @@
                             Batas Waktu:
                         </span>
                         <span class="font-semibold">
-                            {{ $donation->status_change_at->addHours(24)->translatedFormat('d M Y, H:i') }} WIB
+                            {{ $donation->expires_at->translatedFormat('d M Y, H:i') }} WIB
                         </span>
                     </div>
                 @endif

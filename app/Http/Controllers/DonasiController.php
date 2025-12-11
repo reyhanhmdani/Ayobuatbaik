@@ -47,6 +47,7 @@ class DonasiController extends Controller
 
             DB::transaction(function () use ($request, $programDonasi, &$snapToken, &$donation, $userId) {
                 // 1. CREATE DONATION
+                $timestamp = now();
                 $donation = Donation::create([
                     "donation_code" => "DON-" . date("YmdHis") . "-" . rand(1000, 9999),
                     "program_donasi_id" => $programDonasi->id,
@@ -58,7 +59,7 @@ class DonasiController extends Controller
                     "note" => $request->note,
                     "status" => "unpaid",
                     "user_id" => $userId,
-                    "expires_at" => now()->addHours(24),
+                    "expires_at" => $timestamp->copy()->addHours(24),
                 ]);
 
                 // 2. MIDTRANS PAYLOAD
@@ -80,6 +81,11 @@ class DonasiController extends Controller
                             "name" => ucwords(str_replace("_", " ", $donation->donation_type)),
                         ],
                     ],
+                    "expiry" => [
+                        "start_time" => $timestamp->format("Y-m-d H:i:s O"),
+                        "unit" => "hour",
+                        "duration" => 24,
+                    ],
                 ];
 
                 // 3. GET SNAP TOKEN
@@ -89,7 +95,11 @@ class DonasiController extends Controller
                     // Log::error('MIDTRANS ERROR: ' . $e->getMessage());
                     throw new Exception("Gagal membuat snap token. Transaksi dibatalkan.");
                 }
-                $donation->update(["snap_token" => $snapToken]);
+
+                // Simpan snap_token
+                $donation->update([
+                    "snap_token" => $snapToken,
+                ]);
             });
 
             // 4. CEK KEBERHASILAN ASIGNMENT
@@ -187,7 +197,7 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
 
                     // SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addMinutes(10));
 
-                    Log::info("Status berubah ke PENDING untuk {$donation->donation_code}. Scheduler akan kirim reminder dalam 30 menit.");
+                    Log::info("Status berubah ke PENDING untuk {$donation->donation_code}. Scheduler akan kirim reminder dalam 10 menit.");
                 } else {
                     Log::info("Skip WA PENDING - status sudah pending sebelumnya");
                 }
