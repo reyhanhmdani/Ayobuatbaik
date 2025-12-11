@@ -33,13 +33,17 @@
             'https://connect.facebook.net/en_US/fbevents.js');
 
         @auth
-            // Advanced Matching (User Logged In)
-            fbq('init', '572554197324218', {
-                em: '{{ hash('sha256', auth()->user()->email) }}',
-                ph: '{{ hash('sha256', auth()->user()->phone ?? '') }}'
-            });
+            @php
+                $userData = [
+                    'em' => hash('sha256', strtolower(trim(auth()->user()->email))),
+                ];
+                if (!empty(auth()->user()->phone)) {
+                    $phone = preg_replace('/[^0-9]/', '', auth()->user()->phone);
+                    $userData['ph'] = hash('sha256', $phone);
+                }
+            @endphp
+            fbq('init', '572554197324218', {!! json_encode($userData) !!});
         @else
-            // Standard Init (Guest)
             fbq('init', '572554197324218');
         @endauth
 
