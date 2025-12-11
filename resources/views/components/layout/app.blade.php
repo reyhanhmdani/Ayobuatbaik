@@ -34,16 +34,29 @@
 
         @auth
             @php
-                $userData = [
-                    'em' => hash('sha256', strtolower(trim(auth()->user()->email))),
-                ];
+                $userData = [];
+                // Validasi Email: Wajib ada dan tidak kosong
+                if (!empty(auth()->user()->email)) {
+                    $userData['em'] = hash('sha256', strtolower(trim(auth()->user()->email)));
+                }
+                
+                // Validasi HP: Wajib ada dan tidak kosong
                 if (!empty(auth()->user()->phone)) {
                     $phone = preg_replace('/[^0-9]/', '', auth()->user()->phone);
-                    $userData['ph'] = hash('sha256', $phone);
+                    // Minimal 9 digit untuk dianggap valid (628...)
+                    if (strlen($phone) >= 9) {
+                        $userData['ph'] = hash('sha256', $phone);
+                    }
                 }
             @endphp
-            fbq('init', '572554197324218', {!! json_encode($userData) !!});
+
+            @if (!empty($userData))
+                fbq('init', '572554197324218', {!! json_encode($userData) !!});
+            @else
+                fbq('init', '572554197324218');
+            @endif
         @else
+            // Standard Init (Guest)
             fbq('init', '572554197324218');
         @endauth
 
