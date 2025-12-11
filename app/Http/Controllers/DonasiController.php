@@ -109,6 +109,21 @@ class DonasiController extends Controller
 
             Log::info("Donation {$donation->donation_code} created successfully. Scheduler akan handle auto-expire & reminder.");
 
+            // 🔥 META PIXEL: Server-Side Tracking (AddPaymentInfo)
+            // Merekam data user (Guest/Auth) saat mereka sukses submit form
+            $this->sendMetaPixelEvent(
+                "AddPaymentInfo",
+                [
+                    "content_name" => $programDonasi->title,
+                    "content_category" => "Donation",
+                    "content_ids" => [$programDonasi->id],
+                    "value" => $donation->amount,
+                    "currency" => "IDR",
+                    "transaction_id" => $donation->donation_code,
+                ],
+                $donation,
+            );
+
             return response()->json([
                 "snap_token" => $snapToken,
                 "donation_code" => $donation->donation_code,
