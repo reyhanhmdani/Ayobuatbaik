@@ -355,19 +355,20 @@
     @endif
 
     <script>
+        // 🔥 VIEW CONTENT (Ditaruh diluar DOMContentLoaded agar langsung jalan)
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'ViewContent', {
+                content_name: '{{ $program->title ?? "Program Donasi" }}',
+                content_ids: ['{{ $program->id }}'],
+                content_type: 'product',
+                value: {{ $program->target_amount ?? 0 }},
+                currency: 'IDR'
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             const programDonasiId = {{ $program->id }};
 
-            // 🔥 1. VIEW CONTENT (Saat halaman dibuka)
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'ViewContent', {
-                    content_name: '{{ $program->title ?? "Program Donasi" }}',
-                    content_ids: ['{{ $program->id }}'],
-                    content_type: 'product',
-                    value: {{ $program->target_amount ?? 0 }},
-                    currency: 'IDR'
-                });
-            }
 
             /* =========================================
                 1. TAB SWITCHING
