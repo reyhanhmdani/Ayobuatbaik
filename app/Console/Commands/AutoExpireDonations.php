@@ -25,14 +25,34 @@ class AutoExpireDonations extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+      public function handle()
     {
         $this->info('🔍 Checking for expired donations...');
 
+        $cutoffTime = now()->subHours(24);
+        
+        // 🔥 LOG: Waktu cutoff
+        Log::info("Auto-Expire Command START", [
+            'now' => now()->toDateTimeString(),
+            'cutoff_time' => $cutoffTime->toDateTimeString()
+        ]);
+
         // Cari donation yang sudah > 24 jam dan masih unpaid/pending
         $expireDonations = Donation::whereIn('status', ['unpaid', 'pending'])
-            ->where('created_at', '<=', now()->subHours(24))
+            ->where('created_at', '<=', $cutoffTime)
             ->get();
+
+        // 🔥 LOG: Hasil query
+        Log::info("Auto-Expire Command QUERY", [
+            'total_found' => $expireDonations->count(),
+            'donations' => $expireDonations->map(function($d) {
+                return [
+                    'code' => $d->donation_code,
+                    'created_at' => $d->created_at->toDateTimeString(),
+                    'age_hours' => $d->created_at->diffInHours(now())
+                ];
+            })->toArray()
+        ]);
 
         if ($expireDonations->isEmpty()) {
             $this->info('✅ No donations to expire.');
@@ -43,20 +63,23 @@ class AutoExpireDonations extends Command
         $count = 0;
 
         foreach ($expireDonations as $donation) {
-            // Update status menjadi expired
             $donation->update([
                 'status' => 'expired',
                 'status_change_at' => now(),
             ]);
 
-            $this->line("⏰ Expired: {$donation->donation_code} - {$donation->donor_name}");
-            Log::info("Auto-Expire: {$donation->donation_code} telah di-expire");
+            $this->line("⏰ Expired: {$donation->donation_code} - {$donation->donor_name} (Age: {$donation->created_at->diffForHumans()})");
+            Log::info("Auto-Expire: Donation expired", [
+                'donation_code' => $donation->donation_code,
+                'created_at' => $donation->created_at->toDateTimeString(),
+                'expired_at' => now()->toDateTimeString()
+            ]);
 
             $count++;
         }
 
         $this->info("\n✅ Total expired: {$count} donations");
-        Log::info("Auto-Expire: Berhasil expire {$count} donasi");
+        Log::info("Auto-Expire Command END: Berhasil expire {$count} donasi");
 
         return 0;
     }

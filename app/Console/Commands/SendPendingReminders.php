@@ -30,10 +30,11 @@ class SendPendingReminders extends Command
     {
         $this->info('📱 Checking for pending donations to remind...');
 
-        $pendingDonations = Donation::where('status', 'pending')
-            ->whereNull('reminder_sent_at')
-            ->where('status_change_at', '<=', now()->subMinutes(30))
-            ->get();
+        $now = now();
+        $minTime = $now->copy()->subHours(24);
+        $maxTime = $now->copy()->subMinutes(15);
+
+        $pendingDonations = Donation::where('status', 'pending')->where('created_at', '>=', $minTime)->where('created_at', '<=', $maxTime)->whereNull('reminder_sent_at')->get();
 
         if ($pendingDonations->isEmpty()) {
             $this->info('✅ No pending donations to remind.');
@@ -51,7 +52,7 @@ class SendPendingReminders extends Command
 
             $message = "Assalamualaikum Warahmatullahi Wabarakatuh
 Yth. Bapak/Ibu Dermawan,
-Terima kasih atas niat baik Anda untuk berdonasi. Berikut ini adalah instruksi pembayaran donasi Anda:
+Terima kasih atas niat baik Anda untuk berdonasi {$programName}. Berikut ini adalah instruksi pembayaran donasi Anda:
 Mohon lakukan transfer sesuai nominal berikut :
 📌 Nominal: Rp {$amount}
 Silakan transfer ke rekening yang telah kami sediakan pada link berikut: {$url}
@@ -62,14 +63,20 @@ Terima kasih atas kebaikan dan kepercayaan Anda.";
             try {
                 Fonnte::send($phone, $message);
 
-                // Update reminder_sent_at agar tidak dikirim lagi
                 $donation->update(['reminder_sent_at' => now()]);
 
                 $count++;
-                Log::info("Reminder Command: WA terkirim untuk {$donation->donation_code}");
+                Log::info('Reminder Command: WA terkirim', [
+                    'donation_code' => $donation->donation_code,
+                    'phone' => $phone,
+                    'sent_at' => now()->toDateTimeString(),
+                ]);
                 $this->info("📤 Reminder sent: {$donation->donation_code}");
             } catch (\Exception $e) {
-                Log::error("Reminder Command: Gagal kirim WA untuk {$donation->donation_code} - {$e->getMessage()}");
+                Log::error('Reminder Command: Gagal kirim WA', [
+                    'donation_code' => $donation->donation_code,
+                    'error' => $e->getMessage(),
+                ]);
                 $this->error("❌ Failed: {$donation->donation_code}");
             }
         }

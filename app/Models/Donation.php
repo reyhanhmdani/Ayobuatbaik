@@ -9,8 +9,22 @@ class Donation extends Model
 {
     use SoftDeletes;
 
-    // ✅ ONLY user-input fields
-    protected $fillable = ["donation_code", "program_donasi_id", "donor_name", "donor_phone", "donor_email", "donation_type", "amount", "note", "user_id"];
+    // ✅ ONLY user-input fields & System fields
+    protected $fillable = [
+        "donation_code",
+        "program_donasi_id",
+        "donor_name",
+        "donor_phone",
+        "donor_email",
+        "donation_type",
+        "amount",
+        "note",
+        "user_id",
+        "status",
+        "status_change_at",
+        "reminder_sent_at",
+        "snap_token",
+    ];
 
     protected $casts = [
         "amount" => "integer",
