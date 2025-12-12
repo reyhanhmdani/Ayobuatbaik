@@ -382,22 +382,28 @@
 
                 // 🔥 Hitung offset untuk centering (kompensasi padding kiri)
                 function getCenterOffset() {
+                    const containerWidth = sliderTrack.parentElement.offsetWidth;
+                    const slide = sliderItems[0];
+                    const slideWidth = slide.offsetWidth;
+                    
                     const trackStyle = getComputedStyle(sliderTrack);
                     const paddingLeft = parseFloat(trackStyle.paddingLeft) || 0;
-                    const paddingRight = parseFloat(trackStyle.paddingRight) || 0;
 
-                    // Offset = padding kiri - setengah gap (agar slide benar-benar center)
-                    return (paddingLeft + paddingRight) / 2;
+                    // Rumus centering: (Lebar Container - Lebar Slide) / 2
+                    // Dikurangi paddingLeft karena track dimulai setelah padding
+                    return (containerWidth - slideWidth) / 2 - paddingLeft;
                 }
 
                 // Update posisi track dengan centering
                 function updateTrackPosition(withTransition = true) {
                     useTransition = withTransition;
-                    const slideWidth = getSlideWidth();
+                    const slideFullWidth = getSlideWidth(); // lebar slide + gap
                     const centerOffset = getCenterOffset();
 
-                    // Hitung translateX dengan kompensasi center offset
-                    const translateX = -(internalIndex * slideWidth) + centerOffset;
+                    // Hitung translateX
+                    // Posisi slide = internalIndex * slideFullWidth
+                    // Geser ke kiri sebanyak posisi slide, lalu tambah offset biar center
+                    const translateX = -(internalIndex * slideFullWidth) + centerOffset;
 
                     sliderTrack.style.transition = useTransition ? 'transform 0.5s ease-in-out' : 'none';
                     sliderTrack.style.transform = `translateX(${translateX}px)`;
