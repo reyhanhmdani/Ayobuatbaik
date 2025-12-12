@@ -9,7 +9,7 @@
 
 @section('content')
     <!-- Pilihan Section -->
-    <section class="px-4 py-8 bg-gray-50" aria-labelledby="featured-section">
+    <section class="px-4 py-8" aria-labelledby="featured-section">
         <div class="max-w-7xl mx-auto">
             <header class="mb-6">
                 <h2 id="featured-section" class="text-xl font-bold text-primary flex items-center gap-2">
