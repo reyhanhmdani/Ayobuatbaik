@@ -9,9 +9,15 @@
 
 @section('content')
     <!-- Pilihan Section -->
-    <section class="px-4 py-8">
-        <div class="">
-            <h2 class="text-lg font-bold text-primary mb-3">Ayo Berbuat Baik</h2>
+    <section class="px-4 py-8 bg-gray-50" aria-labelledby="featured-section">
+        <div class="max-w-7xl mx-auto">
+            <header class="mb-6">
+                <h2 id="featured-section" class="text-xl font-bold text-primary flex items-center gap-2">
+                    <i class="fas fa-star text-secondary"></i>
+                    Ayo Berbuat Baik
+                </h2>
+                <div class="h-1 w-16 bg-secondary rounded-full mt-2"></div>
+            </header>
             @forelse ($featuredPrograms as $programPilihan)
                 <div class="grid grid-cols-1 gap-1 mt-4">
                     <a href="{{ route('home.program.show', $programPilihan->slug) }}" class="block">
@@ -72,9 +78,12 @@
     </section>
 
     {{-- Kategori Section --}}
-    <section class="px-2 pt-8" id="kategori">
-        <div class="text-center mb-10">
-            <h2 class="text-xl font-bold text-gray-800 mb-3">Kategori Program Ayobuatbaik</h2>
+    <section class="px-4 py-12 bg-white" id="kategori" aria-labelledby="category-section">
+        <div class="max-w-7xl mx-auto">
+            <header class="text-center mb-8">
+                <h2 id="category-section" class="text-xl font-bold text-primary mb-2">Kategori Program Ayobuatbaik</h2>
+                <p class="text-sm text-gray-600">Pilih kategori sesuai kebutuhan Anda</p>
+            </header>
             <div class="grid grid-cols-4 gap-3 mt-6 text-center">
                 <!-- Tombol Semua -->
                 <div class="kategori-btn flex flex-col items-center cursor-pointer space-y-1" data-kat="all"
@@ -113,7 +122,15 @@
     </section>
 
     <!-- Program Section -->
-    <section class="px-4 pb-8" id="program">
+    <section class="px-4 py-12 bg-blue-50/30" id="program" aria-labelledby="program-section">
+        <div class="max-w-7xl mx-auto">
+            <header class="mb-6">
+                <h2 id="program-section" class="text-xl font-bold text-primary flex items-center gap-2">
+                    <i class="fas fa-hand-holding-heart text-secondary"></i>
+                    Program Donasi
+                </h2>
+                <div class="h-1 w-16 bg-secondary rounded-full mt-2"></div>
+            </header>
         <div class="grid grid-cols-1 gap-7">
             @foreach ($otherPrograms as $program)
                 @php
@@ -169,12 +186,13 @@
             @endforeach
         </div>
 
-        <div class="text-center mt-8">
-            <a href="{{ route('home.program') }}"
-                class="bg-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-grayDark transition-all flex items-center justify-center mx-auto">
-                <span>Lihat Program Lainnya</span>
-                <i class="fas fa-arrow-right ml-2 text-xs"></i>
-            </a>
+            <div class="text-center mt-8">
+                <a href="{{ route('home.program') }}"
+                    class="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-lg text-sm hover:bg-grayDark transition-all shadow-md hover:shadow-lg">
+                    <span>Lihat Program Lainnya</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -212,39 +230,50 @@
 
     <!-- DOA & DUKUNGAN SECTION -->
     @if($prayers->isNotEmpty())
-    <section class="py-8 bg-blue-50/50 mb-4 border-y border-blue-100">
+    <section class="py-8 bg-gradient-to-br from-primary via-gray-800 to-gray-900 mb-4 border-y-2 border-secondary/30 relative overflow-hidden" aria-labelledby="prayer-section-title">
+        <!-- Decorative accent -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent"></div>
+        
         <div class="px-4">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-xl font-bold text-primary">Doa & Dukungan</h2>
-                    <p class="text-xs text-gray-500">Pesan kebaikan dari para donatur</p>
+            <header class="mb-4">
+                <h2 id="prayer-section-title" class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-hands-praying text-secondary"></i>
+                    Doa & Dukungan
+                </h2>
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-gray-300">Pesan kebaikan dari para donatur</p>
+                    <p class="text-[10px] text-secondary/80 flex items-center gap-1">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span>Geser untuk melihat lebih banyak</span>
+                    </p>
                 </div>
-            </div>
+            </header>
             
-            <div class="flex overflow-x-auto space-x-3 pb-4 snap-x hide-scrollbar">
+            <div class="flex overflow-x-auto space-x-3 pb-4 snap-x hide-scrollbar" role="list">
                 @foreach($prayers as $prayer)
-                <div class="min-w-[280px] bg-white p-4 rounded-xl border border-gray-100 shadow-sm snap-center">
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xs flex-shrink-0">
+                <article class="min-w-[280px] h-[240px] bg-white p-4 rounded-xl border border-gray-100 shadow-sm snap-center hover:shadow-md transition-shadow flex flex-col" role="listitem">
+                    <header class="flex items-start gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-sm flex-shrink-0" aria-hidden="true">
                             {{ $prayer->donor_initial }}
                         </div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-800">{{ $prayer->donor_name ?: 'Hamba Allah' }}</p>
-                            <p class="text-[10px] text-gray-400">Berdonasi untuk <span class="text-blue-600 font-medium truncate max-w-[150px] inline-block align-bottom">{{ $prayer->program->title ?? 'Program' }}</span></p>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-bold text-gray-800 leading-tight">{{ $prayer->donor_name ?: 'Hamba Allah' }}</h3>
+                            <p class="text-[10px] text-gray-500 mt-0.5">{{ $prayer->created_at->diffForHumans() }}</p>
                         </div>
-                    </div>
+                    </header>
                     
-                    <div class="mt-3 relative">
-                        {{-- <i class="fas fa-quote-left text-gray-100 text-2xl absolute -top-2 -left-1"></i> --}}
-                        <p class="text-sm text-gray-600 relative z-10 italic leading-relaxed">
-                            "{{ $prayer->note }}"
+                    <blockquote class="relative flex-1">
+                        <p class="text-sm text-gray-700 italic leading-relaxed line-clamp-4">
+                            {{ Str::limit($prayer->note, 120) }}
                         </p>
-                    </div>
+                    </blockquote>
                     
-                    <div class="mt-3 text-right">
-                        <span class="text-[10px] text-gray-400">{{ $prayer->created_at->diffForHumans() }}</span>
-                    </div>
-                </div>
+                    <footer class="mt-3 pt-3 border-t border-gray-100">
+                        <p class="text-[10px] text-gray-500">
+                            <span class="font-medium text-gray-700 truncate inline-block max-w-[200px] align-bottom">{{ Str::limit($prayer->program->title, 32) ?? 'Program' }}</span>
+                        </p>
+                    </footer>
+                </article>
                 @endforeach
             </div>
         </div>
@@ -298,15 +327,20 @@
     </section> --}}
 
     <!-- Berita Section -->
-    <section class="px-4 py-8 mb-12" id="berita">
-        <div class="mb-8">
-            <h2 class="text-xl font-bold text-primary mb-2">Berita & Artikel</h2>
-            <p class="text-gray-500 text-sm">Update terbaru program dan artikel inspiratif</p>
-        </div>
+    <section class="px-4 py-12 bg-gray-50 mb-4" id="berita" aria-labelledby="news-section">
+        <div class="max-w-7xl mx-auto">
+            <header class="mb-8">
+                <h2 id="news-section" class="text-xl font-bold text-primary flex items-center gap-2">
+                    <i class="fas fa-newspaper text-secondary"></i>
+                    Berita & Artikel
+                </h2>
+                <div class="h-1 w-16 bg-secondary rounded-full mt-2"></div>
+                <p class="text-gray-600 text-sm mt-3">Update terbaru program dan artikel inspiratif</p>
+            </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse ($berita as $item)
-                <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary transition-colors">
+                <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary hover:shadow-md transition-all">
                     <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
                         <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->judul }}"
                             class="w-full h-full object-cover" />
@@ -327,10 +361,11 @@
 
         <div class="text-center mt-6">
             <a href="{{ route('home.berita') }}"
-                class="text-secondary font-semibold text-sm hover:text-goldDark transition-colors flex items-center justify-center mx-auto">
+                class="inline-flex items-center gap-2 text-secondary font-semibold text-sm hover:text-goldDark transition-colors">
                 <span>Lihat Semua Berita</span>
-                <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                <i class="fas fa-arrow-right text-xs"></i>
             </a>
+        </div>
         </div>
     </section>
 
