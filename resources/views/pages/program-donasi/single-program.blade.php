@@ -138,8 +138,8 @@
                 class="flex-1 donation-btn bg-blue-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-blue-700 transition">
                 <i class="fas fa-heart mr-2"></i>Donasi Sekarang
             </button>
-            <button
-                class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
+            <button id="share-btn"
+                class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                 <i class="fas fa-share-alt"></i>
             </button>
         </div>
@@ -328,6 +328,60 @@
                 <button id="pay-now-btn"
                     class="w-full py-3 rounded-lg font-bold text-center bg-blue-600 text-white hover:bg-blue-700 transition shadow-md">
                     Lanjutkan Pembayaran
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHARE MODAL -->
+    <div id="share-modal"
+        class="hidden fixed inset-0 bg-black/50 flex justify-center items-end sm:items-center z-50 transition-opacity">
+        <div
+            class="bg-white w-full sm:max-w-sm sm:rounded-lg rounded-t-2xl shadow-lg transform transition-transform duration-300">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold text-lg">Bagikan Program</h3>
+                <button id="close-share-modal" class="text-gray-500 hover:text-red-500 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-5 grid grid-cols-4 gap-4 text-center">
+                <!-- WhatsApp -->
+                <a href="https://wa.me/?text={{ urlencode($program->title . ' ' . url()->current()) }}" target="_blank"
+                    class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl group-hover:bg-green-600 group-hover:text-white transition">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <span class="text-xs text-gray-600">WhatsApp</span>
+                </a>
+
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank"
+                    class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </div>
+                    <span class="text-xs text-gray-600">Facebook</span>
+                </a>
+
+                <!-- Twitter / X -->
+                <a href="https://twitter.com/intent/tweet?text={{ urlencode($program->title) }}&url={{ urlencode(url()->current()) }}"
+                    target="_blank" class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gray-100 text-black flex items-center justify-center text-xl group-hover:bg-black group-hover:text-white transition">
+                        <i class="fab fa-x-twitter"></i>
+                    </div>
+                    <span class="text-xs text-gray-600">X</span>
+                </a>
+
+                <!-- Copy Link -->
+                <button id="copy-link-btn" class="flex flex-col items-center gap-2 group w-full">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xl group-hover:bg-gray-600 group-hover:text-white transition">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <span class="text-xs text-gray-600">Salin</span>
                 </button>
             </div>
         </div>
@@ -580,6 +634,77 @@
                     payButton.classList.remove("opacity-70", "cursor-not-allowed");
                 }
             });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            /* =========================================
+                SHARE FUNCTIONALITY
+            ========================================= */
+            const shareBtn = document.getElementById("share-btn");
+            const shareModal = document.getElementById("share-modal");
+            const closeShareModal = document.getElementById("close-share-modal");
+            const copyLinkBtn = document.getElementById("copy-link-btn");
+
+            // Data untuk Web Share API
+            const shareData = {
+                title: '{{ $program->title }}',
+                text: 'Bantu mereka dengan berdonasi di program ini!',
+                url: '{{ url()->current() }}'
+            };
+
+            if (shareBtn) {
+                shareBtn.addEventListener("click", async () => {
+                    // Coba Native Share dulu (untuk Mobile)
+                    if (navigator.share) {
+                        try {
+                            await navigator.share(shareData);
+                            console.log('Berhasil dibagikan');
+                        } catch (err) {
+                            console.log('Share dibatalkan atau error:', err);
+                            // Jika user cancel, jangan buka modal.
+                            // Jika error teknis, mungkin bisa buka modal sebagai fallback,
+                            // tapi biasanya cancel dianggap normal.
+                        }
+                    } else {
+                        toggleShareModal(true);
+                    }
+                });
+            }
+
+            function toggleShareModal(show) {
+                if (!shareModal) return;
+                if (show) {
+                    shareModal.classList.remove("hidden");
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    shareModal.classList.add("hidden");
+                    document.body.style.overflow = '';
+                }
+            }
+
+            if (closeShareModal) {
+                closeShareModal.addEventListener("click", () => toggleShareModal(false));
+            }
+
+            if (shareModal) {
+                shareModal.addEventListener("click", (e) => {
+                    if (e.target === shareModal) toggleShareModal(false);
+                });
+            }
+
+            // Copy Link Functionality
+            if (copyLinkBtn) {
+                copyLinkBtn.addEventListener("click", () => {
+                    navigator.clipboard.writeText(shareData.url).then(() => {
+                        alert("Link berhasil disalin!");
+                        toggleShareModal(false);
+                    }).catch(err => {
+                        console.error("Gagal menyalin link: ", err);
+                    });
+                });
+            }
         });
     </script>
 @endsection
