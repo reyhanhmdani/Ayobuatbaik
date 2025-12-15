@@ -78,7 +78,7 @@
     </section>
 
     {{-- Kategori Section --}}
-    <section class="px-4 py-12 bg-white" id="kategori" aria-labelledby="category-section">
+    <section class="px-4 py-6 bg-white" id="kategori" aria-labelledby="category-section">
         <div class="max-w-7xl mx-auto">
             <header class="text-center mb-8">
                 <h2 id="category-section" class="text-xl font-bold text-primary mb-2">Kategori Program Ayobuatbaik</h2>
@@ -122,7 +122,7 @@
     </section>
 
     <!-- Program Section -->
-    <section class="px-4 py-12 bg-blue-50/30" id="program" aria-labelledby="program-section">
+    <section class="px-4 pt-6 pb-12 bg-blue-50/30" id="program" aria-labelledby="program-section">
         <div class="max-w-7xl mx-auto">
             <header class="mb-6">
                 <h2 id="program-section" class="text-xl font-bold text-primary flex items-center gap-2">
