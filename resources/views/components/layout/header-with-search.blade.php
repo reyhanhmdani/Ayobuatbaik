@@ -1,4 +1,4 @@
-<nav class="mobile-top-bar bg-primary">
+<nav class="mobile-top-bar bg-gradient-to-br from-primary via-gray-800 to-gray-900">
     <div class="flex items-center justify-between h-full px-2 py-2">
 
         <a href="{{ route('home') }}" class="flex-shrink-0 mr-4">
