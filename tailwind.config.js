@@ -6,12 +6,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: {
-                    DEFAULT: "#242124",
-                    from: "#242124",
-                    via: "#1f2937", // gray-800
-                    to: "#111827", // gray-900
-                },
+                primary: "#242124",
                 secondary: "#daaf65",
                 // secondary: "#E5B121",
                 hijau: "#16a34a",

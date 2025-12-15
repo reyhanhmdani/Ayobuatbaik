@@ -1,5 +1,5 @@
 <header class="relative text-white overflow-hidden pt-2 pb-8">
-    <div class="absolute top-0 left-0 right-0 z-0 bg-gradient-to-br from-primary via-gray-800 to-gray-900 h-24 md:h-28"></div>
+    <div class="absolute top-0 left-0 right-0 z-0 bg-primary h-24 md:h-28"></div>
     <div class="relative w-full z-10 overflow-hidden">
         <div class="slider-track flex h-auto gap-3 px-4" style="transition: transform 0.5s ease-in-out;"> {{-- ✅ Kembali ke px-4 --}}
             {{-- Clone slides terakhir di awal --}}
