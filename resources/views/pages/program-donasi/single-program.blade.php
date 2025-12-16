@@ -390,17 +390,6 @@
 
 @section('scripts')
     @if (config('services.midtrans.is_production'))
-        {{-- Script Production --}}
-        <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
-        </script>
-    @else
-        {{-- Script Sandbox --}}
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
-    @endif
-
-@section('scripts')
-    @if (config('services.midtrans.is_production'))
         <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
         </script>
     @else
@@ -409,10 +398,9 @@
     @endif
 
     <script>
-        // 🔥 VIEW CONTENT (Ditaruh diluar DOMContentLoaded agar langsung jalan)
         if (typeof fbq !== 'undefined') {
             fbq('track', 'ViewContent', {
-                content_name: '{{ $program->title ?? "Program Donasi" }}',
+                content_name: {!! json_encode($program->title ?? 'Program Donasi') !!},
                 content_ids: ['{{ $program->id }}'],
                 content_type: 'product',
                 value: {{ $program->target_amount ?? 0 }},
@@ -460,12 +448,13 @@
                     donationModal.classList.remove("hidden");
                     document.body.style.overflow = 'hidden';
 
-                    // Track Klik tombol Donasi
+                    // Track Klik tombol Donasi dengan value
                     if (typeof fbq !== 'undefined') {
                         fbq('track', 'InitiateCheckout', {
-                            content_name: '{{ $program->title }}',
+                            content_name: {!! json_encode($program->title) !!},
                             content_category: 'Donasi',
                             content_ids: ['{{ $program->id }}'],
+                            value: {{ $program->target_amount ?? 0 }},
                             currency: 'IDR'
                         });
                         console.log('Meta Pixel InitiateCheckout event sent');
@@ -585,15 +574,15 @@
 
                         const donationCode = data.donation_code;
 
-                        // Track Donasi Pending
+                        // Track Donasi Pending dengan eventID untuk deduplication
                         if (typeof fbq !== 'undefined') {
                             fbq('track', 'AddPaymentInfo', {
-                                content_name: '{{ $program->title }}',
+                                content_name: {!! json_encode($program->title) !!},
                                 content_category: 'Donasi',
                                 content_ids: ['{{ $program->id }}'],
                                 value: finalAmount,
                                 currency: 'IDR'
-                            });
+                            }, { eventID: donationCode });
                             console.log('✅ Meta Pixel: AddPaymentInfo tracked');
                         }
 
@@ -602,7 +591,7 @@
                                 // 🔥 META PIXEL: Track Purchase Success
                                 if (typeof fbq !== 'undefined') {
                                     fbq('track', 'Purchase', {
-                                        content_name: '{{ $program->title }}',
+                                        content_name: {!! json_encode($program->title) !!},
                                         content_category: 'Donasi',
                                         content_ids: ['{{ $program->id }}'],
                                         value: finalAmount,

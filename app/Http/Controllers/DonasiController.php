@@ -121,6 +121,7 @@ class DonasiController extends Controller
                     "transaction_id" => $donation->donation_code,
                 ],
                 $donation,
+                $donation->donation_code,
             );
 
             return response()->json([
@@ -189,6 +190,7 @@ class DonasiController extends Controller
                             "transaction_id" => $donation->donation_code,
                         ],
                         $donation,
+                        $donation->donation_code, // eventID for deduplication
                     );
                     $message = "Assalamualaikum Warahmatullahi Wabarakatuh 🙏
 Terima kasih *{$donation->donor_name}* atas donasi Anda.
@@ -263,7 +265,7 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
         return view("pages.donasi.status", compact("donation", "recentDonation", "isDeletable", "snapToken"));
     }
 
-    private function sendMetaPixelEvent($eventName, $customData, $donation)
+    private function sendMetaPixelEvent($eventName, $customData, $donation, $eventId = null)
     {
         $pixelId = env("META_PIXEL_ID");
         $accessToken = env("META_PIXEL_ACCESS_TOKEN");
@@ -274,22 +276,27 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
         }
 
         try {
-            $response = Http::post("https://graph.facebook.com/v18.0/{$pixelId}/events", [
-                "data" => [
-                    [
-                        "event_name" => $eventName,
-                        "event_time" => time(),
-                        "action_source" => "website",
-                        "user_data" => [
-                            "em" => hash("sha256", strtolower(trim($donation->donor_email ?? ""))),
-                            "ph" => hash("sha256", preg_replace("/[^0-9]/", "", $donation->donor_phone)),
-                            "client_user_agent" => request()->header("User-Agent"),
-                            "client_ip_address" => request()->ip(),
-                        ],
-                        "custom_data" => $customData,
-                        "event_source_url" => url()->current(),
-                    ],
+            $eventData = [
+                "event_name" => $eventName,
+                "event_time" => time(),
+                "action_source" => "website",
+                "user_data" => [
+                    "em" => hash("sha256", strtolower(trim($donation->donor_email ?? ""))),
+                    "ph" => hash("sha256", preg_replace("/[^0-9]/", "", $donation->donor_phone)),
+                    "client_user_agent" => request()->header("User-Agent"),
+                    "client_ip_address" => request()->ip(),
                 ],
+                "custom_data" => $customData,
+                "event_source_url" => url()->current(),
+            ];
+
+            // Add event_id for deduplication if provided
+            if ($eventId) {
+                $eventData["event_id"] = $eventId;
+            }
+
+            $response = Http::post("https://graph.facebook.com/v18.0/{$pixelId}/events", [
+                "data" => [$eventData],
                 "access_token" => $accessToken,
             ]);
 
