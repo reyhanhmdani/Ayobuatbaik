@@ -51,19 +51,19 @@
             @endphp
 
             @if (!empty($userData))
-                fbq('init', '572554197324218', {!! json_encode($userData) !!});
+                fbq('init', '2777910462416668', {!! json_encode($userData) !!});
             @else
-                fbq('init', '572554197324218');
+                fbq('init', '2777910462416668');
             @endif
         @else
             // Standard Init (Guest)
-            fbq('init', '572554197324218');
+            fbq('init', '2777910462416668');
         @endauth
 
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=572554197324218&ev=PageView&noscript=1" /></noscript>
+            src="https://www.facebook.com/tr?id=2777910462416668&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
     <title>@yield('title', 'Ayobuatbaik - Platform Donasi Digital')</title>
     <link rel="icon" type="image/png" href="{{ asset('img/icon_ABBI.png') }}">
