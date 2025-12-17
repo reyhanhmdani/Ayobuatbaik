@@ -9,78 +9,84 @@
             <span class="block sm:inline">{{ session('success') }}</span>
         </div>
     @endif
-    <div class="max-w-7xl mx-auto mt-8">
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 mb-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="max-w-full mx-auto mt-8">
+        <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100 mb-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
-                <div class="flex items-center gap-3">
-                    <h3 class="text-base font-semibold text-gray-900">Data Transaksi ({{ $donations->total() ?? 0 }})</h3>
+                <div class="flex items-center gap-2">
+                    <h3 class="text-base md:text-lg font-semibold text-gray-900">Data Transaksi
+                        ({{ $donations->total() ?? 0 }})</h3>
 
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('admin.donasi.createManual') }}"
-                            class="inline-flex items-center gap-1 bg-green-600 text-white px-2 py-1.5 text-xs rounded-lg hover:bg-green-700 transition">
-                            <i class="fas fa-plus"></i>
-                            <span class="hidden sm:inline">Manual</span>
-                        </a>
+                    <a href="{{ route('admin.donasi.createManual') }}"
+                        class="ml-1 inline-flex items-center gap-1 bg-green-600 text-white px-2 py-1 text-xs rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-plus"></i>
+                        <span>Manual</span>
+                    </a>
 
-                        <a href="{{ route('admin.donasi.export', request()->query()) }}" target="_blank"
-                            class="inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1.5 text-xs rounded-lg hover:bg-blue-700 transition">
-                            <i class="fas fa-download"></i>
-                            <span class="hidden sm:inline">CSV</span>
-                        </a>
-                    </div>
+                    {{-- TOMBOL EKSPOR DENGAN QUERY FILTER --}}
+                    <a href="{{ route('admin.donasi.export', request()->query()) }}" target="_blank"
+                        class="ml-1 inline-flex items-center gap-1 bg-blue-600 text-white px-2 py-1 text-xs rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-download"></i>
+                        <span>Ekspor CSV</span>
+                    </a>
                 </div>
 
                 <form id="controlsForm" method="GET"
-                    class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center flex-wrap xl:flex-nowrap">
+                    class="flex flex-col gap-2 items-stretch md:flex-row md:items-center text-sm">
 
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <input type="text" name="search" placeholder="Cari donatur..." value="{{ request('search') }}"
-                            class="w-full sm:w-40 md:w-48 border px-3 py-2 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
-                    </div>
+                    <input type="text" name="search" placeholder="Kode/nama donatur..." value="{{ request('search') }}"
+                        class="w-full md:w-48 border px-2 py-1 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
 
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <div class="flex w-full gap-2 md:w-auto">
+
                         {{-- FILTER PROGRAM DONASI --}}
-                        <select name="program_id" id="program_id" class="border rounded px-2 py-2 text-xs w-full sm:w-32 md:w-40">
-                            <option value="">Semua Program</option>
-                            @foreach ($programs as $program)
-                                <option value="{{ $program->id }}"
-                                    {{ request('program_id') == $program->id ? 'selected' : '' }}>
-                                    {{ Str::limit($program->title, 15) }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center gap-1 w-full md:w-40">
+                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Program</label>
+                            <select name="program_id" id="program_id" class="border rounded px-2 py-1 text-xs w-full">
+                                <option value="">Program</option>
+                                @foreach ($programs as $program)
+                                    <option value="{{ $program->id }}"
+                                        {{ request('program_id') == $program->id ? 'selected' : '' }}>
+                                        {{ Str::limit($program->title, 15) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         {{-- FILTER STATUS --}}
-                        <select name="status" id="status" class="border rounded px-2 py-2 text-xs w-full sm:w-24 md:w-28">
-                            <option value="">Semua Status</option>
-                            <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success
-                            </option>
-                            <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
-                            </option>
-                            <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
-                            <option value="expire" {{ request('status') == 'expire' ? 'selected' : '' }}>Expired
-                            </option>
-                        </select>
-                        
-                        <select name="perPage" id="perPage" class="border rounded px-2 py-2 text-xs w-full sm:w-16">
-                            @foreach ([15, 30, 50] as $size)
-                                <option value="{{ $size }}"
-                                    {{ request('perPage', 15) == $size ? 'selected' : '' }}>
-                                    {{ $size }}</option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center gap-1 w-full md:w-28">
+                            <label class="text-xs text-gray-600 hidden sm:block md:hidden">Status</label>
+                            <select name="status" id="status" class="border rounded px-2 py-1 text-xs w-full">
+                                <option value="">Status</option>
+                                <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success
+                                </option>
+                                <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Gagal</option>
+                                <option value="expire" {{ request('status') == 'expire' ? 'selected' : '' }}>Expired
+                                </option>
+                            </select>
+                        </div>
+
+                        {{-- FILTER PER PAGE (kecil) --}}
+                        <div class="w-16">
+                            <select name="perPage" id="perPage" class="border rounded px-2 py-1 text-xs w-full">
+                                @foreach ([15, 30, 50] as $size)
+                                    <option value="{{ $size }}"
+                                        {{ request('perPage', 15) == $size ? 'selected' : '' }}>
+                                        {{ $size }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
-                    {{-- Tombol Terapkan --}}
-                    <button type="submit"
-                        class="bg-secondary text-white px-3 py-2 text-xs rounded-md hover:opacity-95 transition w-full sm:w-auto">
-                        <i class="fas fa-search sm:hidden"></i>
-                        <span class="hidden sm:inline">Terapkan</span>
-                    </button>
-                </form>
-            </div>
+            </div> {{-- END GROUP DROP DOWN --}}
+
+
+            <button type="submit"
+                class="bg-secondary text-white px-2 py-1 text-xs rounded-md hover:opacity-95 transition md:w-auto">Terapkan</button>
+            </form>
         </div>
     </div>
 
@@ -208,18 +214,6 @@
                     if (el) el.addEventListener('change', () => document.getElementById('controlsForm')
                         .submit());
                 });
-
-                // press Enter in search input to submit
-                const searchInput = document.querySelector('input[name="search"]');
-                if (searchInput) {
-                    searchInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            document.getElementById('controlsForm').submit();
-                        }
-                    });
-                }
-            });
             });
         </script>
     @endsection
