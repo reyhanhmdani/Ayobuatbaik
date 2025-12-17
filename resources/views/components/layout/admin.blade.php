@@ -105,7 +105,7 @@
     </style>
 </head>
 
-<body class="bg-gray-100 font-poppins">
+<body class="bg-gray-100 font-poppins" style="zoom: 90%">
 
     <!-- Overlay for Mobile -->
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
