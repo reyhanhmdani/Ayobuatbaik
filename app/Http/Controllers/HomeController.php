@@ -37,6 +37,7 @@ class HomeController extends Controller
                 ->where("featured", 0)
                 ->where("status", "active")
                 ->orderBy("id", "desc")
+                ->take(6)
                 ->get();
         });
         $berita = Cache::remember("berita_latest_4", 600, function () {

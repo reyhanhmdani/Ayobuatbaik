@@ -230,7 +230,7 @@
 
     <!-- DOA & DUKUNGAN SECTION -->
     @if($prayers->isNotEmpty())
-    <section class="py-8 bg-gradient-to-br from-primary via-gray-800 to-gray-900 mb-4 border-y-2 border-secondary/30 relative overflow-hidden" aria-labelledby="prayer-section-title">
+    <section class="py-8 mt-8 bg-gradient-to-br from-primary via-gray-800 to-gray-900 mb-4 border-y-2 border-secondary/30 relative overflow-hidden" aria-labelledby="prayer-section-title">
         <!-- Decorative accent -->
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent"></div>
         
