@@ -33,14 +33,14 @@
                 </div>
 
                 <form id="controlsForm" method="GET"
-                    class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center flex-wrap xl:flex-nowrap">
 
                     <div class="flex items-center gap-2">
                         <input type="text" name="search" placeholder="Cari donatur..." value="{{ request('search') }}"
-                            class="w-full sm:w-48 border px-3 py-2 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
+                            class="w-full lg:w-48 border px-3 py-2 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
                     </div>
 
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
                         {{-- FILTER PROGRAM DONASI --}}
                         <select name="program_id" id="program_id" class="border rounded px-2 py-2 text-xs w-full sm:w-40">
                             <option value="">Semua Program</option>
@@ -64,15 +64,13 @@
                             <option value="expire" {{ request('status') == 'expire' ? 'selected' : '' }}>Expired
                             </option>
                         </select>
-                    </div>
-                    
-                    <div>
-                         <select name="perPage" id="perPage" class="border rounded px-2 py-2 text-xs">
-                                @foreach ([15, 30, 50] as $size)
-                                    <option value="{{ $size }}"
-                                        {{ request('perPage', 15) == $size ? 'selected' : '' }}>
-                                        {{ $size }}</option>
-                                @endforeach
+                        
+                        <select name="perPage" id="perPage" class="border rounded px-2 py-2 text-xs w-full sm:w-16">
+                            @foreach ([15, 30, 50] as $size)
+                                <option value="{{ $size }}"
+                                    {{ request('perPage', 15) == $size ? 'selected' : '' }}>
+                                    {{ $size }}</option>
+                            @endforeach
                         </select>
                     </div>
 
