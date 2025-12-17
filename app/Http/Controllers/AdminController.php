@@ -91,6 +91,7 @@ class AdminController extends Controller
                 $query->where("program_donasi_id", $programId);
             })
             ->paginate($perPage)
+            ->onEachSide(1)
             ->withQueryString(); // Memastikan parameter filter tetap ada di link pagination
 
         return view("pages.admin.donasi.index", compact("donations", "programs"));
