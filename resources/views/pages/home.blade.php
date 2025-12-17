@@ -258,7 +258,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="text-sm font-bold text-gray-800 leading-tight">{{ $prayer->donor_name ?: 'Hamba Allah' }}</h3>
-                            <p class="text-[10px] text-gray-500 mt-0.5">{{ $prayer->created_at->diffForHumans() }}</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::setLocale('id') && false ?: $prayer->created_at->diffForHumans() }}</p>
                         </div>
                     </header>
                     
