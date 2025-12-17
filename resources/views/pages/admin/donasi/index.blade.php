@@ -33,16 +33,16 @@
                 </div>
 
                 <form id="controlsForm" method="GET"
-                    class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center flex-wrap xl:flex-nowrap">
+                    class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center flex-wrap xl:flex-nowrap">
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
                         <input type="text" name="search" placeholder="Cari donatur..." value="{{ request('search') }}"
-                            class="w-full lg:w-48 border px-3 py-2 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
+                            class="w-full sm:w-40 md:w-48 border px-3 py-2 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-secondary" />
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                         {{-- FILTER PROGRAM DONASI --}}
-                        <select name="program_id" id="program_id" class="border rounded px-2 py-2 text-xs w-full sm:w-40">
+                        <select name="program_id" id="program_id" class="border rounded px-2 py-2 text-xs w-full sm:w-32 md:w-40">
                             <option value="">Semua Program</option>
                             @foreach ($programs as $program)
                                 <option value="{{ $program->id }}"
@@ -53,7 +53,7 @@
                         </select>
 
                         {{-- FILTER STATUS --}}
-                        <select name="status" id="status" class="border rounded px-2 py-2 text-xs w-full sm:w-28">
+                        <select name="status" id="status" class="border rounded px-2 py-2 text-xs w-full sm:w-24 md:w-28">
                             <option value="">Semua Status</option>
                             <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success
                             </option>
@@ -76,7 +76,7 @@
 
                     {{-- Tombol Terapkan --}}
                     <button type="submit"
-                        class="bg-secondary text-white px-3 py-2 text-xs rounded-md hover:opacity-95 transition">
+                        class="bg-secondary text-white px-3 py-2 text-xs rounded-md hover:opacity-95 transition w-full sm:w-auto">
                         <i class="fas fa-search sm:hidden"></i>
                         <span class="hidden sm:inline">Terapkan</span>
                     </button>
