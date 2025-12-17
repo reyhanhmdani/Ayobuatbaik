@@ -98,11 +98,11 @@ class AdminController extends Controller
 
     public function pageStoreManualDonasi(Request $request)
     {
-        $programs = ProgramDonasi::where('status', 'active')
-            ->orderBy('title', 'asc')
-            ->get(['id', 'title']);
+        $programs = ProgramDonasi::where("status", "active")
+            ->orderBy("title", "asc")
+            ->get(["id", "title"]);
 
-        return view('pages.admin.donasi.store_manual', compact('programs'));
+        return view("pages.admin.donasi.store_manual", compact("programs"));
     }
 
     public function storeManualDonasi(Request $request)
@@ -245,23 +245,55 @@ class AdminController extends Controller
 
     public function exportDonasi(Request $request)
     {
-        $search = $request->get('search');
-        $status = $request->get('status');
-        $programId = $request->get('program_id');
+        $search = $request->get("search");
+        $status = $request->get("status");
+        $programId = $request->get("program_id");
 
-        $donation = Donation::with('program')->orderBy('created_at', 'desc')
-        ->when($search, function($query, $search){
-            $query->where('donation_code', 'like', "%{$search}%")
-            ->orWhere('donor_name', 'like', "%{$search}%")
-            ->orWhere('donor_email', 'like', "%{$search}%");
-            })
-        ->when($status, function($query, $status){
-            $query->where('status', $status);
-            })
-        ->when($programId, function($query, $programId){
-            $query->where('program_donasi_id', $programId);
-            })
-            ->get();
+        return response()->streamDownload(function () use ($search, $status, $programId) {
+            $handle = fopen("php://output", "w");
+
+            // Header CSV
+            fputcsv($handle, ["No", "Kode Donasi", "Tanggal", "Nama Donatur", "Telepon", "Email", "Program", "Nominal", "Status", "Catatan"]);
+
+            // Query Data (Sama dengan filter index)
+            $query = Donation::with("program")
+                ->orderBy("created_at", "desc")
+                ->when($search, function ($q, $search) {
+                    $q->where("donation_code", "like", "%{$search}%")
+                        ->orWhere("donor_name", "like", "%{$search}%")
+                        ->orWhere("donor_email", "like", "%{$search}%");
+                })
+                ->when($status, function ($q, $status) {
+                    if ($status === "failed") {
+                        $q->whereIn("status", ["failed", "expire", "unpaid"]);
+                    } else {
+                        $q->where("status", $status);
+                    }
+                })
+                ->when($programId, function ($q, $programId) {
+                    $q->where("program_donasi_id", $programId);
+                });
+
+            // Chunking untuk performa jika data banyak
+            $query->chunk(500, function ($donations) use ($handle) {
+                foreach ($donations as $index => $donation) {
+                    fputcsv($handle, [
+                        $donation->id,
+                        $donation->donation_code,
+                        $donation->created_at->format("Y-m-d H:i:s"),
+                        $donation->donor_name,
+                        $donation->donor_phone,
+                        $donation->donor_email,
+                        $donation->program ? $donation->program->title : "Program Dihapus",
+                        $donation->amount,
+                        $donation->status,
+                        $donation->note,
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, "laporan-donasi-" . date("Y-m-d-His") . ".csv");
     }
 
     public function users()
