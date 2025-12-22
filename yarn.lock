@@ -1055,6 +1055,11 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+sweetalert2@^11.26.16:
+  version "11.26.16"
+  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.26.16.tgz"
+  integrity sha512-hOCwAMsYFiuzmQCtTsaa3nD89xApgsA0SRGXGapVod26ZV5toqzaLvURDZ5jzinpwj+nOguqc5nnuTVHp89mOw==
+
 tailwindcss@^3.4.18, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1", "tailwindcss@>=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1":
   version "3.4.18"
   resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.18.tgz"

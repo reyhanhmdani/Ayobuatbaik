@@ -61,11 +61,13 @@
                         <i class="fas fa-edit text-lg"></i>
                     </a>
 
-                    <form action="{{ route('admin.sliders.destroy', $slider->id) }}"
+                    <form id="delete-form-{{ $slider->id }}" 
+                          action="{{ route('admin.sliders.destroy', $slider->id) }}"
                           method="POST"
-                          onsubmit="return confirm('Hapus slider ini?')">
+                          class="inline">
                         @csrf @method('DELETE')
-                        <button class="text-red-600 hover:text-red-800">
+                        <button type="button" onclick="confirmDelete('delete-form-{{ $slider->id }}', 'Hapus slider ini?')" 
+                                class="text-red-600 hover:text-red-800">
                             <i class="fas fa-trash text-lg"></i>
                         </button>
                     </form>

@@ -98,10 +98,11 @@
                                     <td class="px-4 py-3 text-right">
                                         <a href="{{ route('admin.berita.edit', $item->id) }}"
                                             class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus berita ini?');">
+                                        <form id="delete-form-{{ $item->id }}" action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
+                                            class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                            <button type="button" onclick="confirmDelete('delete-form-{{ $item->id }}', 'Hapus berita ini?')" 
+                                                class="text-red-600 hover:text-red-800">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -146,10 +147,11 @@
                                 <div class="mt-2 flex justify-end gap-3 text-xs">
                                     <a href="{{ route('admin.berita.edit', $item->id) }}" class="text-blue-600">
                                         <i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Hapus berita ini?');" class="inline">
+                                    <form id="delete-form-mobile-{{ $item->id }}" action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
+                                        class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600">
+                                        <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $item->id }}', 'Hapus berita ini?')" 
+                                            class="text-red-600">
                                             <i class="fas fa-trash"></i></button>
                                     </form>
                                 </div>

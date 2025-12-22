@@ -79,10 +79,11 @@
                                     <td class="px-4 py-3 text-right">
                                         <a href="{{ route('admin.kitab_chapter.edit', $chapter->id) }}"
                                             class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.kitab_chapter.destroy', $chapter->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus bab ini? Semua maqolah di dalamnya juga akan terhapus.');">
+                                        <form id="delete-form-{{ $chapter->id }}" action="{{ route('admin.kitab_chapter.destroy', $chapter->id) }}" method="POST"
+                                            class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                            <button type="button" onclick="confirmDelete('delete-form-{{ $chapter->id }}', 'Hapus bab ini? Semua maqolah di dalamnya juga akan terhapus.')" 
+                                                class="text-red-600 hover:text-red-800">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -121,10 +122,11 @@
                                     <div class="flex gap-3 text-xs">
                                         <a href="{{ route('admin.kitab_chapter.edit', $chapter->id) }}" class="text-blue-600">
                                             <i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.kitab_chapter.destroy', $chapter->id) }}" method="POST"
-                                            onsubmit="return confirm('Hapus bab ini?');" class="inline">
+                                        <form id="delete-form-mobile-{{ $chapter->id }}" action="{{ route('admin.kitab_chapter.destroy', $chapter->id) }}" method="POST"
+                                            class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600">
+                                            <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $chapter->id }}', 'Hapus bab ini?')" 
+                                                class="text-red-600">
                                                 <i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>

@@ -147,10 +147,10 @@
                                             <i class="fas fa-eye"></i> Show
                                         </a>
 
-                                        <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus program ini?');">
+                                        <form id="delete-form-{{ $program->id }}" action="{{ route('admin.programs.destroy', $program->id) }}" 
+                                            method="POST" class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit"
+                                            <button type="button" onclick="confirmDelete('delete-form-{{ $program->id }}', 'Hapus program ini?')"
                                                 class="text-red-600 hover:text-red-800 text-xs inline-flex items-center gap-1">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
@@ -215,10 +215,11 @@
                                         <a href="{{ route('admin.programs.edit', $program->id) }}"
                                             class="text-blue-600 text-sm hover:text-blue-800"><i
                                                 class="fas fa-eye"></i></a>
-                                        <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus program ini?');">
+                                        <form id="delete-form-mobile-{{ $program->id }}" action="{{ route('admin.programs.destroy', $program->id) }}" 
+                                            method="POST" class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 text-sm hover:text-red-800"><i
+                                            <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $program->id }}', 'Hapus program ini?')" 
+                                                class="text-red-600 text-sm hover:text-red-800"><i
                                                     class="fas fa-trash"></i></button>
                                         </form>
                                     </div>

@@ -89,15 +89,20 @@
                                         {{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 60) }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}"
-                                            class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('admin.kitab_maqolah.destroy', $maqolah->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus maqolah ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}"
+                                                class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></a>
+                                            
+                                            <form id="delete-form-{{ $maqolah->id }}" 
+                                                action="{{ route('admin.kitab_maqolah.destroy', $maqolah->id) }}" 
+                                                method="POST" class="inline">
+                                                @csrf @method('DELETE')
+                                                <button type="button" onclick="confirmDelete('delete-form-{{ $maqolah->id }}')" 
+                                                    class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -129,10 +134,12 @@
                                 <div class="flex justify-end gap-3 text-xs mt-3">
                                     <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}" class="text-blue-600">
                                         <i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('admin.kitab_maqolah.destroy', $maqolah->id) }}" method="POST"
-                                        onsubmit="return confirm('Hapus maqolah ini?');" class="inline">
+                                    <form id="delete-form-mobile-{{ $maqolah->id }}"
+                                        action="{{ route('admin.kitab_maqolah.destroy', $maqolah->id) }}" method="POST"
+                                        class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600">
+                                        <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $maqolah->id }}')" 
+                                            class="text-red-600">
                                             <i class="fas fa-trash"></i></button>
                                     </form>
                                 </div>

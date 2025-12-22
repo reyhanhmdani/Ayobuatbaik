@@ -59,10 +59,11 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <form action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
-                                        class="inline" onsubmit="return confirm('Hapus penggalang ini?');">
+                                    <form id="delete-form-{{ $item->id }}" action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
+                                        class="inline">
                                         @csrf @method('DELETE')
-                                        <button class="text-red-600 hover:text-red-800">
+                                        <button type="button" onclick="confirmDelete('delete-form-{{ $item->id }}', 'Hapus penggalang ini?')" 
+                                            class="text-red-600 hover:text-red-800">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -107,10 +108,11 @@
                                 <a href="{{ route('admin.penggalang_dana.edit', $item->id) }}"
                                     class="text-blue-600"><i class="fas fa-edit"></i></a>
 
-                                <form action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus penggalang ini?');">
+                                <form id="delete-form-mobile-{{ $item->id }}" action="{{ route('admin.penggalang_dana.destroy', $item->id) }}" method="POST"
+                                    class="inline">
                                     @csrf @method('DELETE')
-                                    <button class="text-red-600"><i class="fas fa-trash"></i></button>
+                                    <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $item->id }}', 'Hapus penggalang ini?')"
+                                    class="text-red-600"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </div>

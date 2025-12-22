@@ -108,10 +108,9 @@
                         <i class="fas fa-edit"></i> Edit Program
                     </a>
 
-                    <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST" class="inline"
-                        onsubmit="return confirm('ANDA YAKIN INGIN MENGHAPUS PROGRAM INI?');">
+                    <form id="delete-form-{{ $program->id }}" action="{{ route('admin.programs.destroy', $program->id) }}" method="POST" class="inline">
                         @csrf @method('DELETE')
-                        <button type="submit"
+                        <button type="button" onclick="confirmDelete('delete-form-{{ $program->id }}', 'ANDA YAKIN INGIN MENGHAPUS PROGRAM INI?')"
                             class="inline-flex items-center gap-2 bg-white border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-50 transition">
                             <i class="fas fa-trash"></i> Hapus
                         </button>

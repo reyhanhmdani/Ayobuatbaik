@@ -46,10 +46,11 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <form action="{{ route('admin.kategori_donasi.destroy', $kategori->id) }}" method="POST"
-                                        class="inline" onsubmit="return confirm('Hapus kategori ini?');">
+                                    <form id="delete-form-{{ $kategori->id }}" action="{{ route('admin.kategori_donasi.destroy', $kategori->id) }}" method="POST"
+                                        class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800">
+                                        <button type="button" onclick="confirmDelete('delete-form-{{ $kategori->id }}', 'Hapus kategori ini?')" 
+                                            class="text-red-600 hover:text-red-800">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -89,10 +90,11 @@
                         <a href="{{ route('admin.kategori_donasi.edit', $kategori->id) }}"
                             class="text-blue-600"><i class="fas fa-edit"></i></a>
 
-                        <form action="{{ route('admin.kategori_donasi.destroy', $kategori->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus kategori ini?');">
+                        <form id="delete-form-mobile-{{ $kategori->id }}" action="{{ route('admin.kategori_donasi.destroy', $kategori->id) }}" method="POST"
+                            class="inline">
                             @csrf @method('DELETE')
-                            <button class="text-red-600"><i class="fas fa-trash"></i></button>
+                            <button type="button" onclick="confirmDelete('delete-form-mobile-{{ $kategori->id }}', 'Hapus kategori ini?')"
+                            class="text-red-600"><i class="fas fa-trash"></i></button>
                         </form>
                     </div>
                 </div>
