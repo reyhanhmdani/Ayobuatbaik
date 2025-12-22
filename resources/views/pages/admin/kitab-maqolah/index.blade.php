@@ -86,7 +86,7 @@
                                         <div class="font-semibold">{{ Str::limit($maqolah->judul, 40) }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-gray-600">
-                                        {{ Str::limit(strip_tags($maqolah->konten), 60) }}
+                                        {{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 60) }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
                                         <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}"
