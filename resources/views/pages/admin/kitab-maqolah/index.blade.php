@@ -86,7 +86,7 @@
                                         <div class="font-semibold">{{ Str::limit($maqolah->judul, 40) }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-gray-600">
-                                        {{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 60) }}
+                                        {{ Str::limit(strip_tags($maqolah->konten), 60) }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
                                         <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}"
@@ -125,7 +125,7 @@
                             <div class="flex-1">
                                 <div class="text-xs text-gray-400 mb-1">Bab {{ $maqolah->chapter->nomor_bab }}</div>
                                 <div class="font-semibold text-sm">{{ Str::limit($maqolah->judul, 35) }}</div>
-                                <div class="text-xs text-gray-500 mt-1">{{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 50) }}</div>
+                                <div class="text-xs text-gray-500 mt-1">{{ Str::limit(strip_tags($maqolah->konten), 50) }}</div>
                                 <div class="flex justify-end gap-3 text-xs mt-3">
                                     <a href="{{ route('admin.kitab_maqolah.edit', $maqolah->id) }}" class="text-blue-600">
                                         <i class="fas fa-edit"></i></a>

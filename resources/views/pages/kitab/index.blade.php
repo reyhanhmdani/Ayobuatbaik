@@ -29,7 +29,7 @@
                         <i class="fas fa-book-open mr-1.5 text-secondary"></i> {{ count($chapters) }} Bab
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
-                        <i class="fas fa-scroll mr-1.5 text-secondary"></i> 214 Maqolah
+                        <i class="fas fa-scroll mr-1.5 text-secondary"></i> {{ $maqolahs }} Maqolah
                     </div>
                 </div>
             </div>

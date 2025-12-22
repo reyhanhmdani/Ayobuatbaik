@@ -14,8 +14,10 @@ class KitabController extends Controller
     public function index()
     {
         $chapters = KitabChapter::withCount("maqolahs")->orderBy("urutan")->get();
+        
+        $maqolahs = KitabMaqolah::count();
 
-        return view("pages.kitab.index", compact("chapters"));
+        return view("pages.kitab.index", compact("chapters", "maqolahs"));
     }
 
     /**
