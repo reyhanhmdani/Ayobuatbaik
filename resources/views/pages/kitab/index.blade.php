@@ -22,7 +22,7 @@
                 <h1 class="text-2xl font-bold mb-2 tracking-tight">Kitab Nashaihul Ibad</h1>
                 <p class="text-sm text-gray-300 mb-3 font-serif italic">نصائح العباد</p>
                 <p class="text-xs text-gray-400 max-w-sm mx-auto leading-relaxed">
-                    Kumpulan maqolah-maqolah hikmah karya Syekh Muhammad Nawawi al-Bantani al-Jawi
+                    Kumpulan maqolah-maqolah hikmah karya Syekh Muhammad Nawawi al-Bantani al-Jawi Al-Indunisi
                 </p>
                 <div class="flex justify-center gap-4 mt-6 text-xs">
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
