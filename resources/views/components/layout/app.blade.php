@@ -12,7 +12,7 @@
     <meta property="og:image" content="@yield('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')">
 
     <!-- Meta Pixel Code -->
-    <script>
+    {{-- <script>
         ! function(f, b, e, v, n, t, s) {
             if (f.fbq) return;
             n = f.fbq = function() {
@@ -63,7 +63,7 @@
         fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=2777910462416668&ev=PageView&noscript=1" /></noscript>
+            src="https://www.facebook.com/tr?id=2777910462416668&ev=PageView&noscript=1" /></noscript> --}}
     <!-- End Meta Pixel Code -->
     <title>@yield('title', 'Ayobuatbaik - Platform Donasi Digital')</title>
     <link rel="icon" type="image/png" href="{{ asset('img/icon_ABBI.png') }}">

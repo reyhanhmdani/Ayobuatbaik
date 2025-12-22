@@ -1,0 +1,103 @@
+@extends('components.layout.admin')
+
+@section('title', 'Edit Bab Kitab')
+@section('page-title', 'Edit Bab Kitab')
+
+@section('content')
+    <div class="max-w-4xl mx-auto mt-8">
+        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-6">Edit Bab #{{ $kitabChapter->nomor_bab }}</h2>
+
+            {{-- Alert Error --}}
+            @if ($errors->any())
+                <div class="p-3 mb-4 bg-red-50 border border-red-200 text-red-700 rounded">
+                    <strong>Terdapat kesalahan:</strong>
+                    <ul class="list-disc ml-5 mt-2">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('admin.kitab_chapter.update', $kitabChapter->id) }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                <!-- Nomor Bab -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Bab</label>
+                    <input type="number" name="nomor_bab" value="{{ old('nomor_bab', $kitabChapter->nomor_bab) }}"
+                        class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0"
+                        placeholder="Masukkan nomor bab" min="1" required>
+                </div>
+
+                <!-- Judul Bab -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Bab</label>
+                    <input type="text" name="judul_bab" value="{{ old('judul_bab', $kitabChapter->judul_bab) }}"
+                        class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0"
+                        placeholder="Contoh: Nasihat yang Berisi Dua Perkara" required>
+                </div>
+
+                <!-- Deskripsi -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                    <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi', $kitabChapter->deskripsi) }}</textarea>
+                </div>
+
+                <!-- Tombol -->
+                <div class="flex justify-end gap-3 pt-4">
+                    <a href="{{ route('admin.kitab_chapter.index') }}"
+                        class="px-4 py-2 text-gray-600 hover:text-gray-800">Batal</a>
+                    <button type="submit"
+                        class="px-5 py-2 bg-primary text-white rounded-lg hover:bg-gray-700 transition">Simpan
+                        Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CKEditor -->
+    <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+    <script>
+        try {
+            CKEDITOR.replace('deskripsi', {
+                height: 400,
+                filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
+                filebrowserUploadMethod: 'form',
+                toolbar: [{
+                        name: 'basicstyles',
+                        items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']
+                    },
+                    {
+                        name: 'paragraph',
+                        items: ['NumberedList', 'BulletedList', 'Blockquote', 'JustifyLeft', 'JustifyCenter',
+                            'JustifyRight', 'JustifyBlock'
+                        ]
+                    },
+                    {
+                        name: 'insert',
+                        items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar']
+                    },
+                    {
+                        name: 'styles',
+                        items: ['Styles', 'Format', 'Font', 'FontSize']
+                    },
+                    {
+                        name: 'colors',
+                        items: ['TextColor', 'BGColor']
+                    },
+                    {
+                        name: 'tools',
+                        items: ['Maximize']
+                    }
+                ],
+                bodyClass: 'prose prose-sm text-gray-700',
+                width: '100%'
+            });
+        } catch (e) {
+            console.error('CKEditor init error:', e);
+        }
+    </script>
+@endsection

@@ -23,16 +23,23 @@
             <span>Dashboard</span>
         </a>
 
-        <a href="{{ route('admin.sliders.index') }}"
-            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.sliders.*') ? 'bg-gray-800' : '' }}">
-            <i class="fas fa-images"></i>
-            <span>Sliders</span>
-        </a>
 
         <a href="{{ route('admin.programs.index') }}"
             class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.programs.*') ? 'bg-gray-800' : '' }}">
             <i class="fas fa-hand-holding-heart w-5"></i>
             <span>Program Donasi</span>
+        </a>
+
+        <a href="{{ route('admin.kitab_chapter.index') }}"
+            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.kitab_chapter.*') ? 'bg-gray-800' : '' }}">
+            <i class="fas fa-book w-5"></i>
+            <span>Kitab Bab</span>
+        </a>
+
+        <a href="{{ route('admin.kitab_maqolah.index') }}"
+            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.kitab_maqolah.*') ? 'bg-gray-800' : '' }}">
+            <i class="fas fa-book w-5"></i>
+            <span>Kitab Maqolah</span>
         </a>
 
         <a href="{{ route('admin.donasi.index') }}"
@@ -41,10 +48,10 @@
             <span>Transaksi Donasi</span>
         </a>
 
-        <a href="{{ route('admin.berita.index') }}"
-            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.berita.*') ? 'bg-gray-800' : '' }}">
-            <i class="fas fa-newspaper w-5"></i>
-            <span>Berita</span>
+        <a href="{{ route('admin.sliders.index') }}"
+            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.sliders.*') ? 'bg-gray-800' : '' }}">
+            <i class="fas fa-images"></i>
+            <span>Sliders</span>
         </a>
 
         <a href="{{ route('admin.kategori_donasi.index') }}"
@@ -57,6 +64,12 @@
             class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.users') ? 'bg-gray-800' : '' }}">
             <i class="fas fa-users w-5"></i>
             <span>Penggalang Donasi</span>
+        </a>
+
+        <a href="{{ route('admin.berita.index') }}"
+            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.berita.*') ? 'bg-gray-800' : '' }}">
+            <i class="fas fa-newspaper w-5"></i>
+            <span>Berita</span>
         </a>
     </nav>
 

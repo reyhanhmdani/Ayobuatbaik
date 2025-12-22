@@ -7,16 +7,24 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KitabChapterController;
+use App\Http\Controllers\KitabMaqolahController;
 use App\Http\Controllers\OauthController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\DonasiController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\KitabController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", [HomeController::class, "index"])->name("home");
 
+// Kitab Nashaihul Ibad
+Route::get("/kitab", [KitabController::class, "index"])->name("home.kitab.index");
+Route::get("/kitab/{slug}", [KitabController::class, "showChapter"])->name("home.kitab.chapter");
+Route::get("/kitab/{chapterSlug}/maqolah/{id}", [KitabController::class, "showMaqolah"])->name("home.kitab.maqolah");
+    
 Route::get("/programs", [HomeController::class, "programs"])->name("home.program");
 Route::get("/program/{slug}", [HomeController::class, "program"])->name("home.program.show");
 
@@ -67,6 +75,9 @@ Route::middleware(["auth"])
             ->parameters(["berita" => "berita"])
             ->names("berita");
         Route::post("/sliders/reorder", [SliderController::class, "reorder"])->name("sliders.reorder");
+
+        Route::resource("kitab-chapter", KitabChapterController::class)->names("kitab_chapter");
+        Route::resource("kitab-maqolah", KitabMaqolahController::class)->names("kitab_maqolah");
     });
 
 // Route::get('/programs', [ProgramController::class, 'index'])->name('program.index');
