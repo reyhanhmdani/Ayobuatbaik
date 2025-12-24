@@ -47,11 +47,12 @@
             {{-- META PIXEL EVENTS --}}
             @if ($donation->status === 'success')
                 <script>
-                    // Track Purchase/Donate when success
+                    // Track Donate (Previously Purchase)
                     fbq('track', 'Donate', {
                         value: {{ $donation->amount }},
                         currency: 'IDR',
                         content_name: '{{ $donation->program->title }}',
+                        content_category: 'Donasi',
                         content_ids: ['{{ $donation->program->id }}'],
                         content_type: 'product'
                     }, { eventID: '{{ $donation->donation_code }}' });

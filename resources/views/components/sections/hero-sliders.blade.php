@@ -11,7 +11,7 @@
                 <a href="{{ $slide->url ?? '#' }}" data-slide-clone="head"
                     class="slider-clone min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
                     <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
-                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async"
                         onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
                 </a>
             @endforeach
@@ -25,7 +25,9 @@
                 <a href="{{ $slide->url ?? '#' }}" data-slide-index="{{ $loop->index }}"
                     class="slider-item min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
                     <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
-                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        class="absolute inset-0 w-full h-full object-cover" 
+                        @if($loop->first) fetchpriority="high" @else loading="lazy" @endif
+                        decoding="async"
                         onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
                 </a>
             @endforeach
@@ -39,7 +41,7 @@
                 <a href="{{ $slide->url ?? '#' }}" data-slide-clone="tail"
                     class="slider-clone min-w-[90%] flex-shrink-0 relative flex items-center justify-center rounded-xl overflow-hidden aspect-[16/9] bg-gray-200"> {{-- ✅ Kembali ke min-w-[90%] --}}
                     <img src="{{ $imageUrl }}" alt="{{ $slide->alt_text ?? 'Slider Image' }}"
-                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                        class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async"
                         onerror="this.onerror=null; this.src='{{ $fallbackImageUrl }}';">
                 </a>
             @endforeach

@@ -68,7 +68,7 @@
         <!-- Hero Image -->
         <div class="relative h-64 overflow-hidden">
             <img src="{{ asset('storage/' . $program->gambar) }}" alt="{{ $program->title }}"
-                class="w-full h-full object-cover" loading="lazy" />
+                class="w-full h-full object-cover" fetchpriority="high" decoding="sync" />
 
             <div class="absolute inset-0 bg-black bg-opacity-20"></div>
         </div>
@@ -588,16 +588,16 @@
 
                         snap.pay(data.snap_token, {
                             onSuccess: () => {
-                                // 🔥 META PIXEL: Track Purchase Success
+                                // 🔥 META PIXEL: Track Donate Success (Client-Side)
                                 if (typeof fbq !== 'undefined') {
-                                    fbq('track', 'Purchase', {
+                                    fbq('track', 'Donate', {
                                         content_name: {!! json_encode($program->title) !!},
                                         content_category: 'Donasi',
                                         content_ids: ['{{ $program->id }}'],
                                         value: finalAmount,
                                         currency: 'IDR'
                                     }, { eventID: donationCode }); 
-                                    console.log('✅ Meta Pixel: Purchase tracked');
+                                    console.log('✅ Meta Pixel: Donate tracked');
                                 }
                                 window.location.href = `/donate/status/${donationCode}`;
                             },

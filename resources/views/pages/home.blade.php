@@ -24,7 +24,9 @@
                         <div class="bg-white overflow-hidden shadow-md card-hover-effect flex items-stretch h-28">
                             <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
                                 <img src="{{ asset('storage/' . $programPilihan->gambar) }}"
-                                    alt="{{ $programPilihan->title }}" class="w-full h-full object-cover">
+                                    alt="{{ $programPilihan->title }}" class="w-full h-full object-cover"
+                                    @if($loop->first) fetchpriority="high" @else loading="lazy" @endif 
+                                    decoding="async">
                             </div>
 
                             <div class="py-2 px-3 flex flex-col justify-between w-full">
@@ -147,7 +149,7 @@
                         data-category="{{ $program->kategori->slug }}">
                         <div class="w-1/2 h-full flex-shrink-0 overflow-hidden">
                             <img src="{{ asset('storage/' . $program->gambar) }}" alt="{{ $program->title }}"
-                                class="w-full h-full object-cover">
+                                class="w-full h-full object-cover" loading="lazy" decoding="async">
                         </div>
 
                         <div class="py-2 px-3 flex flex-col justify-between w-full">
@@ -343,7 +345,7 @@
                 <div class="bg-white rounded-lg border border-gray-100 p-4 hover:border-secondary hover:shadow-md transition-all">
                     <div class="w-full h-32 rounded-lg overflow-hidden mb-3">
                         <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->judul }}"
-                            class="w-full h-full object-cover" />
+                            class="w-full h-full object-cover" loading="lazy" decoding="async" />
                     </div>
                     <span
                         class="text-xs text-secondary font-medium">{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</span>
