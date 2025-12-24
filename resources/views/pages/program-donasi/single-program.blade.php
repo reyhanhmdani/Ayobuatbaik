@@ -402,9 +402,7 @@
             fbq('track', 'ViewContent', {
                 content_name: {!! json_encode($program->title ?? 'Program Donasi') !!},
                 content_ids: ['{{ $program->id }}'],
-                content_type: 'product',
-                value: {{ $program->target_amount ?? 0 }},
-                currency: 'IDR'
+                content_type: 'product'
             });
         }
 
