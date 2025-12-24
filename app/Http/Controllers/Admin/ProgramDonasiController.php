@@ -192,6 +192,12 @@ class ProgramDonasiController extends Controller
     public function destroy(string $id)
     {
         $program = ProgramDonasi::findOrFail($id);
+        
+        // Hapus Gambar dari storage
+        if ($program->gambar && Storage::disk('public')->exists($program->gambar)) {
+            Storage::disk('public')->delete($program->gambar);
+        }
+
         $program->delete();
 
         return redirect()->route('admin.programs.index')->with('success', 'Program Donasi berhasil dihapus');
