@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSliderRequest;
 use App\Http\Requests\UpdateSliderRequest;
 use App\Models\Slider;
+use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,8 +33,8 @@ class SliderController extends Controller
         // Shift semua slider yang urutannya >= urutan baru
         Slider::where('urutan', '>=', $urutan)->increment('urutan');
 
-        // Upload file ke storage/public/sliders
-        $path = $request->file('gambar')->store('sliders', 'public');
+        // Upload file (Optimize to WebP)
+        $path = ImageHelper::uploadAndOptimize($request->file('gambar'), 'sliders', 1200);
 
         // Simpan slider baru
         Slider::create([
@@ -73,7 +74,7 @@ class SliderController extends Controller
                 Storage::disk('public')->delete($slider->gambar);
             }
 
-            $path = $request->file('gambar')->store('sliders', 'public');
+            $path = ImageHelper::uploadAndOptimize($request->file('gambar'), 'sliders', 1200);
             $slider->gambar = $path;
         }
 

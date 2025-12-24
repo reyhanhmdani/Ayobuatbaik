@@ -10,6 +10,7 @@ use App\Models\PenggalangDana;
 use App\Models\ProgramDonasi;
 use App\Models\Slider;
 use Cache;
+use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -94,7 +95,7 @@ class ProgramDonasiController extends Controller
         $validated['status'] = $validated['status'] ?? 'nonaktif';
 
         if ($request->hasFile('gambar')) {
-            $path = $request->file('gambar')->store('programs', 'public');
+            $path = ImageHelper::uploadAndOptimize($request->file('gambar'), 'programs', 800);
             $validated['gambar'] = $path;
         }
 
@@ -174,7 +175,7 @@ class ProgramDonasiController extends Controller
             if ($program->gambar && Storage::disk('public')->exists($program->gambar)) {
                 Storage::disk('public')->delete($program->gambar);
             }
-            $validated['gambar'] = $request->file('gambar')->store('programs', 'public');
+            $validated['gambar'] = ImageHelper::uploadAndOptimize($request->file('gambar'), 'programs', 800);
         }
 
         $program->update($validated);

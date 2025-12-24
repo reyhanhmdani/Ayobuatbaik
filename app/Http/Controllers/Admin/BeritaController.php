@@ -6,6 +6,7 @@ use App\Http\Requests\StoreBeritaRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateBeritaRequest;
 use App\Models\Berita;
+use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -37,7 +38,7 @@ class BeritaController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $request->file('gambar')->store('berita', 'public');
+            $validated['gambar'] = ImageHelper::uploadAndOptimize($request->file('gambar'), 'berita', 800);
         }
 
         $validated['slug'] = Str::slug($validated['judul']);
@@ -73,7 +74,7 @@ class BeritaController extends Controller
             if ($berita->gambar && Storage::disk('public')->exists($berita->gambar)) {
                 Storage::disk('public')->delete($berita->gambar);
             }
-            $validated['gambar'] = $request->file('gambar')->store('berita', 'public');
+            $validated['gambar'] = ImageHelper::uploadAndOptimize($request->file('gambar'), 'berita', 800);
         }
 
         $validated['slug'] = Str::slug($validated['judul']);
