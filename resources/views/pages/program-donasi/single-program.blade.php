@@ -448,14 +448,12 @@
                     donationModal.classList.remove("hidden");
                     document.body.style.overflow = 'hidden';
 
-                    // Track Klik tombol Donasi dengan value
+                    // Track Klik tombol Donasi (Tanpa value karena belum pilih nominal)
                     if (typeof fbq !== 'undefined') {
                         fbq('track', 'InitiateCheckout', {
                             content_name: {!! json_encode($program->title) !!},
                             content_category: 'Donasi',
-                            content_ids: ['{{ $program->id }}'],
-                            value: {{ $program->target_amount ?? 0 }},
-                            currency: 'IDR'
+                            content_ids: ['{{ $program->id }}']
                         });
                         console.log('Meta Pixel InitiateCheckout event sent');
                     }
