@@ -182,14 +182,6 @@
                         </div>
                         <form action="{{ route('profile.password') }}" method="POST" class="space-y-5">
                             @csrf
-                            <div class="space-y-1">
-                                <label class="text-sm font-semibold text-gray-700">Password Saat Ini</label>
-                                <div class="relative">
-                                    <input type="password" name="current_password" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm">
-                                </div>
-                                @error('current_password') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                            </div>
-                            
                             <div class="grid md:grid-cols-2 gap-5">
                                 <div class="space-y-1">
                                     <label class="text-sm font-semibold text-gray-700">Password Baru</label>

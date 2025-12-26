@@ -22,31 +22,9 @@ class UpdatePasswordRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = $this->user();
-        $isGoogleUser = !empty($user->gauth_id);
-
-        $rules = [
-            'new_password' => 'required|string|min:6|confirmed',
+        return [
+            'new_password' => 'required|string|min:8|confirmed',
         ];
-
-        if (!$isGoogleUser) {
-            $rules['current_password'] = 'required|string';
-        }
-        return $rules;
-    }
-
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $user = $this->user();
-            $isGoogleUser = !empty($user->gauth_id);
-
-            if (!$isGoogleUser && $this->filled('current_password')) {
-                if (!Hash::check($this->current_password, $user->password)) {
-                    $validator->errors()->add('current_password', 'Password saat ini salah.');
-                }
-            }
-        });
     }
 
     public function messages(): array
