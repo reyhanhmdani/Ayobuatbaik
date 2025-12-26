@@ -180,7 +180,7 @@ class DonasiController extends Controller
 
                     // Meta Pixel: Server-side donasi event
                     $this->sendMetaPixelEvent(
-                        'Purchase',
+                        'Donate',
                         [
                             'content_name' => $programName,
                             'content_category' => 'Donation',
@@ -190,7 +190,7 @@ class DonasiController extends Controller
                             'transaction_id' => $donation->donation_code,
                         ],
                         $donation,
-                        $donation->donation_code, // eventID for deduplication
+                        $donation->donation_code,
                     );
                     $message = "Assalamualaikum Warahmatullahi Wabarakatuh 🙏
 Terima kasih *{$donation->donor_name}* atas donasi Anda.
@@ -210,9 +210,6 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
                 // 🔥 HANYA KIRIM JIKA STATUS BERUBAH
                 if ($oldStatus !== 'pending') {
                     $donation->setStatusPending();
-
-                    // SendPendingDonationReminder::dispatch($donation->id)->delay(now()->addMinutes(10));
-
                     Log::info("Status berubah ke PENDING untuk {$donation->donation_code}. Scheduler akan kirim reminder dalam 10 menit.");
                 } else {
                     Log::info('Skip WA PENDING - status sudah pending sebelumnya');

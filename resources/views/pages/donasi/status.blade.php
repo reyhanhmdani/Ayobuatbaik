@@ -47,7 +47,6 @@
             {{-- META PIXEL EVENTS --}}
             @if ($donation->status === 'success')
                 <script>
-                    // Track Donate (Previously Purchase)
                     fbq('track', 'Donate', {
                         value: {{ $donation->amount }},
                         currency: 'IDR',
