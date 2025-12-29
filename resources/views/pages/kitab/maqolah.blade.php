@@ -63,7 +63,8 @@
                     <div class="flex gap-2">
                         <a href="https://wa.me/?text={{ urlencode('*' . $maqolah->judul . "*\n\nBaca selengkapnya di: " . route('home.kitab.maqolah', ['chapterSlug' => $chapter->slug, 'id' => $maqolah->id])) }}" 
                             target="_blank"
-                            class="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white text-center py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-green-200">
+                            class="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white text-center py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-green-200"
+                            onclick="fbq('track', 'Contact');">
                             <i class="fab fa-whatsapp mr-1.5 text-lg align-middle"></i> WhatsApp
                         </a>
                         <button onclick="copyToClipboard()" 

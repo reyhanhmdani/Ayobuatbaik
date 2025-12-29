@@ -347,7 +347,7 @@
             <div class="p-5 grid grid-cols-4 gap-4 text-center">
                 <!-- WhatsApp -->
                 <a href="https://wa.me/?text={{ urlencode($program->title . ' ' . url()->current()) }}" target="_blank"
-                    class="flex flex-col items-center gap-2 group">
+                    class="flex flex-col items-center gap-2 group" onclick="fbq('track', 'Contact');">
                     <div
                         class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl group-hover:bg-green-600 group-hover:text-white transition">
                         <i class="fab fa-whatsapp"></i>

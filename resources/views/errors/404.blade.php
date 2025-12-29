@@ -22,7 +22,8 @@
                 </a>
                 
                 <a href="https://wa.me/6282133337058" target="_blank"
-                    class="block w-full py-3 rounded-lg font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50 transition">
+                    class="block w-full py-3 rounded-lg font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+                    onclick="fbq('track', 'Contact');">
                     <i class="fab fa-whatsapp mr-2"></i>Hubungi Admin
                 </a>
             </div>
