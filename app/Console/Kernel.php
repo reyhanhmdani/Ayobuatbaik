@@ -12,17 +12,27 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('donations:delete-expired')->daily();
-
+        // Kirim reminder WA setiap 10 menit
         $schedule->command('donations:send-reminders')
             ->everyTenMinutes()
             ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/donations_reminders.log'));
+            ->runInBackground();
 
+        // Auto-expire donasi setiap jam
         $schedule->command('donations:auto-expire')
             ->hourly()
             ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/donations_auto_expire.log'));
+            ->runInBackground();
+
+        // Hapus donasi failed setiap hari jam 1 pagi
+        $schedule->command('donations:delete-failed')
+            ->dailyAt('01:00')
+            ->withoutOverlapping();
+
+        // Hapus donasi expired setiap hari jam 2 pagi
+        $schedule->command('donations:delete-expired')
+            ->dailyAt('02:00')
+            ->withoutOverlapping();
     }
 
     /**

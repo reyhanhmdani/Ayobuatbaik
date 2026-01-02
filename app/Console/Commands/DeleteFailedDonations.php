@@ -9,16 +9,21 @@ use Carbon\Carbon;
 class DeleteFailedDonations extends Command
 {
     protected $signature = 'donations:delete-failed';
-    protected $description = 'Delete failed or expired donations older than 24 hours.';
+    protected $description = 'Delete failed donations older than 24 hours';
 
     public function handle()
     {
         $cutoffTime = Carbon::now()->subHours(24);
 
-        $deletedCount = Donation::where('status', 'failed')->where('status_change_at', '<', $cutoffTime)->delete();
+        $deletedCount = Donation::where('status', 'failed')
+            ->where('status_change_at', '<', $cutoffTime)
+            ->delete();
 
-        $this->info("{$deletedCount} failed donations deleted.");
+        if ($deletedCount > 0) {
+            $this->info("[" . now()->format('Y-m-d H:i') . "] Deleted: {$deletedCount} failed donations");
+        }
 
         return 0;
     }
 }
+

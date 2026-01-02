@@ -9,43 +9,25 @@ use Log;
 
 class SendPendingReminders extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = "donations:send-reminders";
+    protected $description = "Kirim Reminder WA untuk donasi pending";
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = "Kirim Reminder WA untuk donasi pending setelah 15 menit";
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $this->info("📱 Checking for pending donations to remind...");
-
         $now = now();
-        $minTime = $now->copy()->subHours(24);
-        $maxTime = $now->copy()->subMinutes(1);
 
         $pendingDonations = Donation::where("status", "pending")
-            ->where("created_at", ">=", $minTime)
-            ->where("created_at", "<=", $maxTime)
+            ->where("created_at", ">=", $now->copy()->subHours(24))
+            ->where("created_at", "<=", $now->copy()->subMinutes(1))
             ->whereNull("reminder_sent_at")
             ->get();
 
         if ($pendingDonations->isEmpty()) {
-            $this->info("✅ No pending donations to remind.");
             return 0;
         }
 
-        $count = 0;
+        $sent = 0;
+        $failed = 0;
 
         foreach ($pendingDonations as $donation) {
             $phone = preg_replace("/^0/", "62", $donation->donor_phone);
@@ -65,27 +47,19 @@ Terima kasih atas kebaikan dan kepercayaan Anda.";
 
             try {
                 Fonnte::send($phone, $message);
-
                 $donation->update(["reminder_sent_at" => now()]);
-
-                $count++;
-                $this->info("📤 Reminder sent: {$donation->donation_code}");
+                $sent++;
             } catch (\Exception $e) {
-                Log::error("Reminder Command: Gagal kirim WA", [
-                    "donation_code" => $donation->donation_code,
-                    "error" => $e->getMessage(),
-                ]);
-                $this->error("❌ Failed: {$donation->donation_code}");
+                Log::error("Reminder failed: {$donation->donation_code}");
+                $failed++;
             }
         }
 
-        $this->info("✅ Total reminders sent: {$count}");
-        
-        // Log ringkasan saja jika ada yang terkirim
-        if ($count > 0) {
-            Log::info("Reminder: {$count} WA terkirim");
+        if ($sent > 0 || $failed > 0) {
+            $this->info("[" . now()->format('Y-m-d H:i') . "] Reminders - Sent: {$sent}, Failed: {$failed}");
         }
 
         return 0;
     }
 }
+
