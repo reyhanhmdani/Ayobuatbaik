@@ -107,7 +107,7 @@ class DonasiController extends Controller
                 throw new Exception('Gagal membuat data donasi. Transaksi dibatalkan.');
             }
 
-            Log::info("Donation {$donation->donation_code} created successfully. Scheduler akan handle auto-expire & reminder.");
+            Log::debug("Donation {$donation->donation_code} created.");
 
             // 🔥 META PIXEL: Server-Side Tracking (AddPaymentInfo)
             $this->sendMetaPixelEvent(
@@ -141,7 +141,8 @@ class DonasiController extends Controller
 
     public function notification(Request $request)
     {
-        Log::info('CALLBACK MIDTRANS MASUK:', $request->all());
+        // Log callback tanpa data sensitif
+        Log::debug('Midtrans callback received', ['order_id' => $request->input('order_id'), 'status' => $request->input('transaction_status')]);
         $notif = $request->all();
 
         DB::transaction(function () use ($notif) {
@@ -198,7 +199,7 @@ Terima kasih *{$donation->donor_name}* atas donasi Anda.
 📌 *Program:* {$programName}
 📌 *Nominal:* Rp {$amount}
 Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
-                    Log::info("Mengirim WA SUCCESS ke {$phone}");
+                    Log::debug("WA SUCCESS sent for {$donation->donation_code}");
                     Fonnte::send($phone, $message);
                 }
             }
@@ -210,9 +211,9 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
                 // 🔥 HANYA KIRIM JIKA STATUS BERUBAH
                 if ($oldStatus !== 'pending') {
                     $donation->setStatusPending();
-                    Log::info("Status berubah ke PENDING untuk {$donation->donation_code}. Scheduler akan kirim reminder dalam 10 menit.");
+                    Log::debug("Status PENDING: {$donation->donation_code}");
                 } else {
-                    Log::info('Skip WA PENDING - status sudah pending sebelumnya');
+                    // Skip WA PENDING - status sudah pending sebelumnya
                 }
             }
 
@@ -226,7 +227,7 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
                 } elseif ($oldStatus !== 'failed' && $status !== 'expire') {
                     $donation->setStatusFailed();
                 }
-                Log::info("Status {$orderId} berubah jadi {$status}, TANPA mengirim WA.");
+                Log::debug("Status {$orderId} changed to {$status}");
             }
         });
 
@@ -298,9 +299,9 @@ Semoga Allah membalas semua kebaikan Anda. Aamiin 🤲";
             ]);
 
             if ($response->successful()) {
-                Log::info("Meta Pixel Event Sent: {$eventName}", $response->json());
+                Log::debug("Meta Pixel: {$eventName} sent");
             } else {
-                Log::error("Meta Pixel Event Failed: {$eventName}", $response->json());
+                Log::warning("Meta Pixel: {$eventName} failed", ['status' => $response->status()]);
             }
         } catch (Exception $e) {
             Log::error('Meta Pixel Error: ' . $e->getMessage());

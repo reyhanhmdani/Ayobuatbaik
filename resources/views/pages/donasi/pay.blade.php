@@ -122,17 +122,14 @@
                 // Open Midtrans Snap payment popup
                 snap.pay('{{ $snapToken }}', {
                     onSuccess: function(result) {
-                        console.log('Payment success:', result);
                         window.location.href =
                             "{{ route('donation.status', $donation->donation_code) }}";
                     },
                     onPending: function(result) {
-                        console.log('Payment pending:', result);
                         window.location.href =
                             "{{ route('donation.status', $donation->donation_code) }}";
                     },
                     onError: function(result) {
-                        console.log('Payment error:', result);
                         alert('Pembayaran gagal. Silakan coba lagi.');
 
                         // Re-enable button
@@ -141,9 +138,6 @@
                             '<i class="fas fa-credit-card"></i> <span>Bayar Sekarang</span>';
                     },
                     onClose: function() {
-                        console.log('Payment popup closed');
-
-                        // Re-enable button
                         payButton.disabled = false;
                         payButton.innerHTML =
                             '<i class="fas fa-credit-card"></i> <span>Bayar Sekarang</span>';

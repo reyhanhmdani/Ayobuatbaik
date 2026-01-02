@@ -453,7 +453,6 @@
                             content_category: 'Donasi',
                             content_ids: ['{{ $program->id }}']
                         });
-                        console.log('Meta Pixel InitiateCheckout event sent');
                     }
                 } else {
                     donationModal.classList.add("hidden");
@@ -579,7 +578,6 @@
                                 value: finalAmount,
                                 currency: 'IDR'
                             }, { eventID: donationCode });
-                            console.log('✅ Meta Pixel: AddPaymentInfo tracked');
                         }
 
                         snap.pay(data.snap_token, {
@@ -592,8 +590,7 @@
                                         content_ids: ['{{ $program->id }}'],
                                         value: finalAmount,
                                         currency: 'IDR'
-                                    }, { eventID: donationCode }); 
-                                    console.log('✅ Meta Pixel: Donate tracked');
+                                    }, { eventID: donationCode });
                                 }
                                 window.location.href = `/donate/status/${donationCode}`;
                             },
@@ -645,9 +642,8 @@
                     if (navigator.share) {
                         try {
                             await navigator.share(shareData);
-                            console.log('Berhasil dibagikan');
                         } catch (err) {
-                            console.log('Share dibatalkan atau error:', err);
+                            // Share dibatalkan atau error
                             // Jika user cancel, jangan buka modal.
                             // Jika error teknis, mungkin bisa buka modal sebagai fallback,
                             // tapi biasanya cancel dianggap normal.

@@ -22,13 +22,13 @@ class Fonnte
         ]);
 
         $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
 
-        \Log::info("FONNTE SEND:", [
-            "target" => $target,
-            "message" => $message,
-            "response" => $response,
-        ]);
+        // Hanya log error, tidak log data sensitif
+        if ($httpCode !== 200) {
+            \Log::error("Fonnte: Gagal mengirim WA", ['http_code' => $httpCode]);
+        }
 
         return $response;
     }

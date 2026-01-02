@@ -42,7 +42,6 @@ class SendPendingReminders extends Command
 
         if ($pendingDonations->isEmpty()) {
             $this->info("✅ No pending donations to remind.");
-            Log::info("Reminder Command: Tidak ada donasi pending yang perlu reminder");
             return 0;
         }
 
@@ -70,11 +69,6 @@ Terima kasih atas kebaikan dan kepercayaan Anda.";
                 $donation->update(["reminder_sent_at" => now()]);
 
                 $count++;
-                Log::info("Reminder Command: WA terkirim", [
-                    "donation_code" => $donation->donation_code,
-                    "phone" => $phone,
-                    "sent_at" => now()->toDateTimeString(),
-                ]);
                 $this->info("📤 Reminder sent: {$donation->donation_code}");
             } catch (\Exception $e) {
                 Log::error("Reminder Command: Gagal kirim WA", [
@@ -86,7 +80,11 @@ Terima kasih atas kebaikan dan kepercayaan Anda.";
         }
 
         $this->info("✅ Total reminders sent: {$count}");
-        Log::info("Reminder Command: Total {$count} reminder terkirim");
+        
+        // Log ringkasan saja jika ada yang terkirim
+        if ($count > 0) {
+            Log::info("Reminder: {$count} WA terkirim");
+        }
 
         return 0;
     }

@@ -29,32 +29,12 @@ class AutoExpireDonations extends Command
     {
         $this->info("🔍 Checking for expired donations...");
 
-        // 🔥 LOG: Start Check
-        Log::info("Auto-Expire Command START", [
-            "now" => now()->toDateTimeString(),
-        ]);
-
         $expireDonations = Donation::whereIn("status", ["unpaid", "pending"])
             ->where("expires_at", "<=", now())
             ->get();
 
-        Log::info("Auto-Expire Command QUERY", [
-            "total_found" => $expireDonations->count(),
-            "donations" => $expireDonations
-                ->map(function ($d) {
-                    return [
-                        "code" => $d->donation_code,
-                        "created_at" => $d->created_at->toDateTimeString(),
-                        "expires_at" => $d->expires_at,
-                        "age" => $d->created_at->diffForHumans(),
-                    ];
-                })
-                ->toArray(),
-        ]);
-
         if ($expireDonations->isEmpty()) {
             $this->info("✅ No donations to expire.");
-            Log::info("Auto-Expire: Tidak ada donasi yang perlu di-expire");
             return 0;
         }
 
@@ -65,10 +45,11 @@ class AutoExpireDonations extends Command
             ]);
 
             $this->line("⏰ Expired: {$donation->donation_code}");
-            Log::info("Auto-Expire: Donation expired", [
-                "donation_code" => $donation->donation_code,
-                "expired_at" => now(),
-            ]);
+        }
+
+        // Log ringkasan saja
+        if ($expireDonations->count() > 0) {
+            Log::info("Auto-Expire: {$expireDonations->count()} donasi expired");
         }
 
         return 0;
