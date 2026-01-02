@@ -21,6 +21,8 @@ class DeleteFailedDonations extends Command
 
         if ($deletedCount > 0) {
             $this->info("[" . now()->format('Y-m-d H:i') . "] Deleted: {$deletedCount} failed donations");
+        } else {
+            $this->info("[" . now()->format('Y-m-d H:i') . "] Deleted: 0 failed donations");
         }
 
         return 0;

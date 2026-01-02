@@ -23,6 +23,7 @@ class SendPendingReminders extends Command
             ->get();
 
         if ($pendingDonations->isEmpty()) {
+            $this->info("[" . now()->format('Y-m-d H:i') . "] Reminders - Sent: 0, Failed: 0 (No pending donations)");
             return 0;
         }
 
@@ -55,9 +56,7 @@ Terima kasih atas kebaikan dan kepercayaan Anda.";
             }
         }
 
-        if ($sent > 0 || $failed > 0) {
-            $this->info("[" . now()->format('Y-m-d H:i') . "] Reminders - Sent: {$sent}, Failed: {$failed}");
-        }
+        $this->info("[" . now()->format('Y-m-d H:i') . "] Reminders - Sent: {$sent}, Failed: {$failed}");
 
         return 0;
     }

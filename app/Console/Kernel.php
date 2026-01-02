@@ -18,20 +18,15 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground();
 
-        // Auto-expire donasi setiap jam
+        // Auto-expire donasi setiap hari jam 00:00
         $schedule->command('donations:auto-expire')
-            ->hourly()
+            ->dailyAt('00:00')
             ->withoutOverlapping()
             ->runInBackground();
 
         // Hapus donasi failed setiap hari jam 1 pagi
         $schedule->command('donations:delete-failed')
             ->dailyAt('01:00')
-            ->withoutOverlapping();
-
-        // Hapus donasi expired setiap hari jam 2 pagi
-        $schedule->command('donations:delete-expired')
-            ->dailyAt('02:00')
             ->withoutOverlapping();
     }
 

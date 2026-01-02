@@ -21,6 +21,8 @@ class AutoExpireDonations extends Command
 
         if ($expired > 0) {
             $this->info("[" . now()->format('Y-m-d H:i') . "] Expired: {$expired} donations");
+        } else {
+            $this->info("[" . now()->format('Y-m-d H:i') . "] Expired: 0 donations (No expired donations found)");
         }
 
         return 0;
