@@ -14,12 +14,12 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Cache kategori selama 1 jam
-        $kategori = Cache::remember("kategori_donasi", 3600, function () {
+        // Cache kategori selama 24 jam
+        $kategori = Cache::remember("kategori_donasi", 86400, function () {
             return KategoriDonasi::orderBy("name")->get();
         });
-        // Cache slider selama 30 menit
-        $sliders = Cache::remember("sliders_home", 1800, function () {
+        // Cache slider selama 1 jam
+        $sliders = Cache::remember("sliders_home", 3600, function () {
             return Slider::orderBy("urutan", "asc")->get();
         });
         // Featured programs bisa di-cache 10 menit
@@ -31,8 +31,7 @@ class HomeController extends Controller
                 ->take(3)
                 ->get();
         });
-        // cache lebih pendek (5 menit) karena bisa sering update
-        $otherPrograms = Cache::remember("other_programs", 300, function () {
+        $otherPrograms = Cache::remember("other_programs", 3600, function () {
             return ProgramDonasi::with(["kategori", "penggalang"])
                 ->where("featured", 0)
                 ->where("status", "active")
@@ -40,14 +39,14 @@ class HomeController extends Controller
                 ->take(6)
                 ->get();
         });
-        $berita = Cache::remember("berita_latest_4", 600, function () {
+        $berita = Cache::remember("berita_latest_4", 3600, function () {
             return Berita::orderBy("tanggal", "desc")->take(4)->get();
         });
-        $berita = Cache::remember("berita_latest_4", 600, function () {
+        $berita = Cache::remember("berita_latest_4", 3600, function () {
             return Berita::orderBy("tanggal", "desc")->take(4)->get();
         });
 
-        $prayers = Cache::remember('latest_prayers', 300, function () {
+        $prayers = Cache::remember('latest_prayers', 3600, function () {
             return Donation::where('status', 'success')
                 ->whereNotNull('note')
                 ->where('note', '!=', '')
