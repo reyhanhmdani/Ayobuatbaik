@@ -122,7 +122,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="4" class="px-6 py-10 text-center">
+                                                <td colspan="4" class="px-3 py-5 text-center">
                                                     <div class="flex flex-col items-center gap-2">
                                                         <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
                                                             <i class="fas fa-folder-open text-xl"></i>
