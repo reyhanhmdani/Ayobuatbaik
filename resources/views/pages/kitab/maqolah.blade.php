@@ -92,7 +92,7 @@
                         <a href="{{ route('home.kitab.chapter', $chapter->slug) }}" 
                             class="w-full h-11 flex items-center justify-center gap-2 bg-gray-50 text-gray-400 rounded-xl text-xs font-bold transition-all border border-transparent">
                             <i class="fas fa-list"></i>
-                            <span>Daftar Maqolah {{ $chapter->nomor_bab }}</span>
+                            <span>Daftar BAB {{ $chapter->nomor_bab }}</span>
                         </a>
                     @endif
                 </div>
@@ -114,7 +114,7 @@
                     @else
                         <a href="{{ route('home.kitab.chapter', $chapter->slug) }}" 
                             class="w-full h-11 flex items-center justify-center gap-2 bg-gray-800 text-white hover:bg-gray-700 rounded-xl text-xs font-bold transition-all shadow-lg group">
-                            <span>Daftar Maqolah {{ $chapter->nomor_bab }}</span>
+                            <span>Daftar BAB {{ $chapter->nomor_bab }}</span>
                             <i class="fas fa-list group-hover:scale-110 transition-transform"></i>
                         </a>
                     @endif
