@@ -40,8 +40,7 @@
                 </div>
 
                 <h1 class="text-xl font-bold leading-tight text-white/90">
-                    Terjemah Kitab Nashaihul Ibad Bab {{ $chapter->nomor_bab }} Maqolah {{ $maqolah->nomor_maqolah }}
-                    @if($maqolah->judul) : {{ $maqolah->judul }} @endif
+                    Terjemah Kitab Nashaihul Ibad {{ $maqolah->judul ?: 'Bab ' . $chapter->nomor_bab . ' Maqolah ' . $maqolah->nomor_maqolah }}
                 </h1>
             </div>
         </div>
