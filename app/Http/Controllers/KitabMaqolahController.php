@@ -15,39 +15,61 @@ class KitabMaqolahController extends Controller
     public function index(Request $request)
     {
         $chapters = KitabChapter::orderBy("nomor_bab")->get();
-        $selectedChapter = $request->chapter ? KitabChapter::find($request->chapter) : null;
+        $selectedChapterId = $request->chapter;
+        $search = $request->search;
 
-        $query = KitabMaqolah::with("chapter");
+        if (!$selectedChapterId && !$search) {
+            // Grouped view: All chapters with their maqolahs
+            $chaptersWithMaqolahs = KitabChapter::with(['maqolahs' => function($q) {
+                $q->orderBy('nomor_maqolah', 'asc');
+            }])
+            ->orderBy('nomor_bab', 'asc')
+            ->paginate($request->get("perPage", 5)); // Paginate chapters for better performance if many
 
-        // Filter by chapter
-        if ($request->chapter) {
-            $query->where("chapter_id", $request->chapter);
+            return view("pages.admin.kitab-maqolah.index", [
+                "chapters" => $chapters,
+                "chaptersWithMaqolahs" => $chaptersWithMaqolahs,
+                "isGrouped" => true,
+                "selectedChapter" => null
+            ]);
         }
 
-        // Search
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where("judul", "like", "%" . $request->search . "%")->orWhere("konten", "like", "%" . $request->search . "%");
+        // Standard Flat View (Filtered or Searched)
+        $query = KitabMaqolah::with("chapter");
+
+        if ($selectedChapterId) {
+            $query->where("chapter_id", $selectedChapterId);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where("judul", "like", "%" . $search . "%")
+                  ->orWhere("konten", "like", "%" . $search . "%");
             });
         }
 
-        // Default sort: Chapter Number then Maqolah Number
+        // Sort: Default to Chapter then Maqolah if not specified
         $sortField = $request->get("sort", "chapter_nomor");
         $sortDirection = $request->get("direction", "asc");
 
         if ($sortField === "chapter_nomor" || $sortField === "chapter") {
-            $query
-                ->join("kitab_chapters", "kitab_maqolah.chapter_id", "=", "kitab_chapters.id")
-                ->orderBy("kitab_chapters.nomor_bab", $sortDirection)
-                ->orderBy("kitab_maqolah.nomor_maqolah", "asc")
-                ->select("kitab_maqolah.*");
+            $query->join("kitab_chapters", "kitab_maqolah.chapter_id", "=", "kitab_chapters.id")
+                  ->orderBy("kitab_chapters.nomor_bab", $sortDirection)
+                  ->orderBy("kitab_maqolah.nomor_maqolah", "asc")
+                  ->select("kitab_maqolah.*");
         } else {
             $query->orderBy($sortField, $sortDirection);
         }
 
         $maqolahs = $query->paginate($request->get("perPage", 10));
+        $selectedChapter = $selectedChapterId ? KitabChapter::find($selectedChapterId) : null;
 
-        return view("pages.admin.kitab-maqolah.index", compact("maqolahs", "chapters", "selectedChapter"));
+        return view("pages.admin.kitab-maqolah.index", [
+            "maqolahs" => $maqolahs,
+            "chapters" => $chapters,
+            "selectedChapter" => $selectedChapter,
+            "isGrouped" => false
+        ]);
     }
 
     /**
