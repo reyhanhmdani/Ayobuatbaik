@@ -24,7 +24,7 @@
         <!-- Kitab Menu for Mobile -->
         <div class="mobile-nav-item text-primary" id="kitab-menu-toggle">
             <i class="fas fa-book text-lg mb-1"></i>
-            <span class="text-xs">Kebutuhan</span>
+            <span class="text-xs">Hikmah</span>
         </div>
 
         @auth
