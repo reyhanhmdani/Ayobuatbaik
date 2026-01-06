@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KitabChapter;
 use App\Models\KitabMaqolah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class KitabController extends Controller
 {
@@ -13,9 +14,13 @@ class KitabController extends Controller
      */
     public function index()
     {
-        $chapters = KitabChapter::withCount("maqolahs")->orderBy("urutan")->get();
-        
-        $maqolahs = KitabMaqolah::count();
+        $chapters = Cache::remember("kitab_chapters_list", 43200, function () {
+            return KitabChapter::withCount("maqolahs")->orderBy("urutan")->get();
+        });
+
+        $maqolahs = Cache::remember("kitab_total_maqolah", 43200, function () {
+            return KitabMaqolah::count();
+        });
 
         return view("pages.kitab.index", compact("chapters", "maqolahs"));
     }
@@ -25,13 +30,15 @@ class KitabController extends Controller
      */
     public function showChapter($slug)
     {
-        $chapter = KitabChapter::where("slug", $slug)
-            ->with([
-                "maqolahs" => function ($query) {
-                    $query->orderBy("urutan");
-                },
-            ])
-            ->firstOrFail();
+        $chapter = Cache::remember("kitab_chapter_{$slug}", 43200, function () use ($slug) {
+            return KitabChapter::where("slug", $slug)
+                ->with([
+                    "maqolahs" => function ($query) {
+                        $query->orderBy("urutan");
+                    },
+                ])
+                ->firstOrFail();
+        });
 
         return view("pages.kitab.chapter", compact("chapter"));
     }
@@ -41,15 +48,18 @@ class KitabController extends Controller
      */
     public function showMaqolah($chapterSlug, $id)
     {
-        $chapter = KitabChapter::where("slug", $chapterSlug)->firstOrFail();
+        $cacheKey = "kitab_maqolah_{$id}";
+        $data = Cache::remember($cacheKey, 43200, function () use ($chapterSlug, $id) {
+            $chapter = KitabChapter::where("slug", $chapterSlug)->firstOrFail();
+            $maqolah = KitabMaqolah::where("chapter_id", $chapter->id)->where("id", $id)->firstOrFail();
 
-        $maqolah = KitabMaqolah::where("chapter_id", $chapter->id)->where("id", $id)->firstOrFail();
+            // Get previous and next maqolah
+            $previous = KitabMaqolah::where("chapter_id", $chapter->id)->where("urutan", "<", $maqolah->urutan)->orderBy("urutan", "desc")->first();
+            $next = KitabMaqolah::where("chapter_id", $chapter->id)->where("urutan", ">", $maqolah->urutan)->orderBy("urutan", "asc")->first();
 
-        // Get previous and next maqolah
-        $previous = KitabMaqolah::where("chapter_id", $chapter->id)->where("urutan", "<", $maqolah->urutan)->orderBy("urutan", "desc")->first();
+            return compact("chapter", "maqolah", "previous", "next");
+        });
 
-        $next = KitabMaqolah::where("chapter_id", $chapter->id)->where("urutan", ">", $maqolah->urutan)->orderBy("urutan", "asc")->first();
-
-        return view("pages.kitab.maqolah", compact("chapter", "maqolah", "previous", "next"));
+        return view("pages.kitab.maqolah", $data);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\KitabChapter;
 use App\Models\KitabMaqolah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class KitabMaqolahController extends Controller
 {
@@ -104,7 +105,12 @@ class KitabMaqolahController extends Controller
 
         $validated["urutan"] = $validated["nomor_maqolah"];
 
-        KitabMaqolah::create($validated);
+        $maqolah = KitabMaqolah::create($validated);
+
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget('kitab_total_maqolah');
+        Cache::forget("kitab_chapter_{$maqolah->chapter->slug}");
 
         return redirect()
             ->route("admin.kitab_maqolah.index", ["chapter" => $validated["chapter_id"]])
@@ -146,7 +152,17 @@ class KitabMaqolahController extends Controller
 
         $validated["urutan"] = $validated["nomor_maqolah"];
 
+        $oldChapterSlug = $kitabMaqolah->chapter->slug;
         $kitabMaqolah->update($validated);
+
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget('kitab_total_maqolah');
+        Cache::forget("kitab_chapter_{$oldChapterSlug}");
+        if ($oldChapterSlug !== $kitabMaqolah->chapter->slug) {
+            Cache::forget("kitab_chapter_{$kitabMaqolah->chapter->slug}");
+        }
+        Cache::forget("kitab_maqolah_{$kitabMaqolah->id}");
 
         return redirect()
             ->route("admin.kitab_maqolah.index", ["chapter" => $validated["chapter_id"]])
@@ -159,7 +175,15 @@ class KitabMaqolahController extends Controller
     public function destroy(KitabMaqolah $kitabMaqolah)
     {
         $chapterId = $kitabMaqolah->chapter_id;
+        $chapterSlug = $kitabMaqolah->chapter->slug;
+        $maqolahId = $kitabMaqolah->id;
         $kitabMaqolah->delete();
+
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget('kitab_total_maqolah');
+        Cache::forget("kitab_chapter_{$chapterSlug}");
+        Cache::forget("kitab_maqolah_{$maqolahId}");
 
         return redirect()
             ->route("admin.kitab_maqolah.index", ["chapter" => $chapterId])

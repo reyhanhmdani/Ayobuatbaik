@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\KitabChapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class KitabChapterController extends Controller
 {
@@ -59,6 +60,10 @@ class KitabChapterController extends Controller
 
         KitabChapter::create($validated);
 
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget('kitab_total_maqolah');
+
         return redirect()->route("admin.kitab_chapter.index")->with("success", "Bab berhasil ditambahkan.");
     }
 
@@ -93,7 +98,15 @@ class KitabChapterController extends Controller
         $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . ($request->judul_bab ? "-" . $request->judul_bab : ""));
         $validated["urutan"] = $validated["nomor_bab"];
 
+        $oldSlug = $kitabChapter->slug;
         $kitabChapter->update($validated);
+
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget("kitab_chapter_{$oldSlug}");
+        if ($oldSlug !== $kitabChapter->slug) {
+            Cache::forget("kitab_chapter_{$kitabChapter->slug}");
+        }
 
         return redirect()->route("admin.kitab_chapter.index")->with("success", "Bab berhasil diperbarui.");
     }
@@ -104,7 +117,13 @@ class KitabChapterController extends Controller
     public function destroy(KitabChapter $kitabChapter)
     {
         // Maqolahs akan otomatis terhapus karena cascade
+        $chapterSlug = $kitabChapter->slug;
         $kitabChapter->delete();
+
+        // Hapus cache kitab
+        Cache::forget('kitab_chapters_list');
+        Cache::forget('kitab_total_maqolah');
+        Cache::forget("kitab_chapter_{$chapterSlug}");
 
         return redirect()->route("admin.kitab_chapter.index")->with("success", "Bab berhasil dihapus.");
     }
