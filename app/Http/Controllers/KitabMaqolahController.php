@@ -15,11 +15,10 @@ class KitabMaqolahController extends Controller
     public function index(Request $request)
     {
         $chapters = KitabChapter::orderBy("nomor_bab")->get();
-        $selectedChapterId = $request->chapter;
         $search = $request->search;
 
-        if (!$selectedChapterId && !$search) {
-            // Grouped view: All chapters with their maqolahs
+        if (!$request->has('chapter') && !$search) {
+            // Grouped view: Default landing overview
             $chaptersWithMaqolahs = KitabChapter::with(['maqolahs' => function($q) {
                 $q->orderBy('nomor_maqolah', 'asc');
             }])
@@ -36,6 +35,7 @@ class KitabMaqolahController extends Controller
 
         // Standard Flat View (Filtered or Searched)
         $query = KitabMaqolah::with("chapter");
+        $selectedChapterId = $request->chapter;
 
         if ($selectedChapterId) {
             $query->where("chapter_id", $selectedChapterId);
@@ -62,7 +62,7 @@ class KitabMaqolahController extends Controller
         }
 
         $maqolahs = $query->paginate($request->get("perPage", 10));
-        $selectedChapter = $selectedChapterId ? KitabChapter::find($selectedChapterId) : null;
+        $selectedChapter = ($selectedChapterId && $selectedChapterId !== "") ? KitabChapter::find($selectedChapterId) : null;
 
         return view("pages.admin.kitab-maqolah.index", [
             "maqolahs" => $maqolahs,
