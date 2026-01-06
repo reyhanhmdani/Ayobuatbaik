@@ -58,8 +58,8 @@
                 <!-- Konten -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Konten Maqolah</label>
-                    <p class="text-xs text-gray-500 mb-2">Gunakan format HTML untuk teks Arab dan terjemahan. Contoh styling
-                        sudah tersedia.</p>
+                    {{-- <p class="text-xs text-gray-500 mb-2">Gunakan format HTML untuk teks Arab dan terjemahan. Contoh styling
+                        sudah tersedia.</p> --}}
                     <textarea name="konten" id="konten" class="w-full">{{ old('konten') }}</textarea>
                 </div>
 
