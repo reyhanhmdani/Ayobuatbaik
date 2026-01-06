@@ -31,14 +31,15 @@ class KitabMaqolahController extends Controller
             });
         }
 
-        // Sort
-        $sortField = $request->get("sort", "urutan");
+        // Default sort: Chapter Number then Maqolah Number
+        $sortField = $request->get("sort", "chapter_nomor");
         $sortDirection = $request->get("direction", "asc");
 
-        if ($sortField === "chapter") {
+        if ($sortField === "chapter_nomor" || $sortField === "chapter") {
             $query
                 ->join("kitab_chapters", "kitab_maqolah.chapter_id", "=", "kitab_chapters.id")
                 ->orderBy("kitab_chapters.nomor_bab", $sortDirection)
+                ->orderBy("kitab_maqolah.nomor_maqolah", "asc")
                 ->select("kitab_maqolah.*");
         } else {
             $query->orderBy($sortField, $sortDirection);
