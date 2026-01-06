@@ -53,6 +53,7 @@ class KitabChapterController extends Controller
             "deskripsi" => "nullable|string",
         ]);
 
+        $validated["judul_bab"] = $request->judul_bab ?? "";
         $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . ($request->judul_bab ? "-" . $request->judul_bab : ""));
         $validated["urutan"] = $validated["nomor_bab"];
 
@@ -88,6 +89,7 @@ class KitabChapterController extends Controller
             "deskripsi" => "nullable|string",
         ]);
 
+        $validated["judul_bab"] = $request->judul_bab ?? "";
         $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . ($request->judul_bab ? "-" . $request->judul_bab : ""));
         $validated["urutan"] = $validated["nomor_bab"];
 
