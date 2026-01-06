@@ -68,7 +68,8 @@
                                 {{-- Content --}}
                                 <div class="flex-1 min-w-0 pt-1">
                                     <h3 class="font-bold text-gray-800 text-sm group-hover:text-secondary transition-colors mb-1 line-clamp-2">
-                                        {{ $maqolah->judul ?? 'Maqolah ' . $maqolah->nomor_maqolah }}
+                                        Terjemah Kitab Nashaihul Ibad {{ $chapter->nomor_bab ? 'Bab ' . $chapter->nomor_bab : '' }} Maqolah {{ $maqolah->nomor_maqolah }}
+                                        @if($maqolah->judul) : {{ $maqolah->judul }} @endif
                                     </h3>
                                     <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed font-light">
                                         {{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 120) }}

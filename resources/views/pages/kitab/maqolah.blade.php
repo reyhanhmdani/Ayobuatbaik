@@ -1,8 +1,8 @@
 @extends('components.layout.app')
 
-@section('title', $maqolah->judul . ' - Kitab Nashaihul Ibad')
+@section('title', 'Terjemah Kitab Nashaihul Ibad Bab ' . $chapter->nomor_bab . ' Maqolah ' . $maqolah->nomor_maqolah . ' - Ayobuatbaik')
 
-@section('og_title', $maqolah->judul . ' - Kitab Nashaihul Ibad')
+@section('og_title', 'Terjemah Kitab Nashaihul Ibad Bab ' . $chapter->nomor_bab . ' Maqolah ' . $maqolah->nomor_maqolah . ' - Ayobuatbaik')
 @section('og_description', Str::limit(strip_tags($maqolah->konten), 160))
 @section('og_url', route('home.kitab.maqolah', ['chapterSlug' => $chapter->slug, 'id' => $maqolah->id]))
 @section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
@@ -40,7 +40,8 @@
                 </div>
 
                 <h1 class="text-xl font-bold leading-tight text-white/90">
-                    {{ $maqolah->judul ?? 'Maqolah ' . $maqolah->nomor_maqolah }}
+                    Terjemah Kitab Nashaihul Ibad Bab {{ $chapter->nomor_bab }} Maqolah {{ $maqolah->nomor_maqolah }}
+                    @if($maqolah->judul) : {{ $maqolah->judul }} @endif
                 </h1>
             </div>
         </div>
