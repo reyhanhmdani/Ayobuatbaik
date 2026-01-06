@@ -49,11 +49,11 @@ class KitabChapterController extends Controller
     {
         $validated = $request->validate([
             "nomor_bab" => "required|integer|unique:kitab_chapters,nomor_bab",
-            "judul_bab" => "required|string|max:255",
+            "judul_bab" => "nullable|string|max:255",
             "deskripsi" => "nullable|string",
         ]);
 
-        $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . "-" . $validated["judul_bab"]);
+        $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . ($request->judul_bab ? "-" . $request->judul_bab : ""));
         $validated["urutan"] = $validated["nomor_bab"];
 
         KitabChapter::create($validated);
@@ -84,11 +84,11 @@ class KitabChapterController extends Controller
     {
         $validated = $request->validate([
             "nomor_bab" => "required|integer|unique:kitab_chapters,nomor_bab," . $kitabChapter->id,
-            "judul_bab" => "required|string|max:255",
+            "judul_bab" => "nullable|string|max:255",
             "deskripsi" => "nullable|string",
         ]);
 
-        $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . "-" . $validated["judul_bab"]);
+        $validated["slug"] = Str::slug("bab-" . $validated["nomor_bab"] . ($request->judul_bab ? "-" . $request->judul_bab : ""));
         $validated["urutan"] = $validated["nomor_bab"];
 
         $kitabChapter->update($validated);

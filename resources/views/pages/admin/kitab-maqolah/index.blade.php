@@ -29,7 +29,7 @@
                         <option value="">Semua Bab</option>
                         @foreach($chapters as $ch)
                             <option value="{{ $ch->id }}" {{ request('chapter') == $ch->id ? 'selected' : '' }}>
-                                Bab {{ $ch->nomor_bab }} - {{ Str::limit($ch->judul_bab, 25) }}
+                                Bab {{ $ch->nomor_bab }} @if($ch->judul_bab) - {{ Str::limit($ch->judul_bab, 25) }} @endif
                             </option>
                         @endforeach
                     </select>

@@ -59,7 +59,7 @@
                                 {{-- Chapter Info --}}
                                 <div class="flex-1 min-w-0">
                                     <h3 class="font-semibold text-gray-800 text-sm group-hover:text-primary transition-colors line-clamp-1 mb-1">
-                                        {{ $chapter->judul_bab }}
+                                        Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}
                                     </h3>
                                     <p class="text-xs text-gray-500 line-clamp-1">
                                         {{ Str::limit(strip_tags($chapter->deskripsi), 100) }}

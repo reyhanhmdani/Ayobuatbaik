@@ -64,7 +64,7 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-3 font-semibold text-primary">{{ $chapter->nomor_bab }}</td>
                                     <td class="px-4 py-3">
-                                        <div class="font-semibold">{{ $chapter->judul_bab }}</div>
+                                        <div class="font-semibold">Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-gray-600">
                                         {{ Str::limit(strip_tags($chapter->deskripsi), 60) }}
@@ -112,7 +112,7 @@
                                 <span class="text-primary font-bold">{{ $chapter->nomor_bab }}</span>
                             </div>
                             <div class="flex-1">
-                                <div class="font-semibold text-sm">{{ $chapter->judul_bab }}</div>
+                                <div class="font-semibold text-sm">Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}</div>
                                 <div class="text-xs text-gray-500 mt-1">{{ Str::limit($chapter->deskripsi, 50) }}</div>
                                 <div class="flex items-center justify-between mt-3">
                                     <a href="{{ route('admin.kitab_maqolah.index', ['chapter' => $chapter->id]) }}"

@@ -1,8 +1,8 @@
 @extends('components.layout.app')
 
-@section('title', $chapter->judul_bab . ' - Kitab Nashaihul Ibad')
+@section('title', 'Nashaihul Ibad Bab ' . $chapter->nomor_bab . ($chapter->judul_bab ? ' : ' . $chapter->judul_bab : '') . ' - Ayobuatbaik')
 
-@section('og_title', $chapter->judul_bab . ' - Kitab Nashaihul Ibad')
+@section('og_title', 'Nashaihul Ibad Bab ' . $chapter->nomor_bab . ($chapter->judul_bab ? ' : ' . $chapter->judul_bab : '') . ' - Ayobuatbaik')
 @section('og_description', strip_tags($chapter->deskripsi))
 @section('og_url', route('home.kitab.chapter', $chapter->slug))
 @section('og_image', 'https://ayobuatbaik.com/img/icon_ABBI.png')
@@ -36,7 +36,7 @@
                         <span class="inline-block px-2 py-0.5 rounded-md bg-secondary/20 text-secondary text-[10px] font-bold tracking-wider mb-2 border border-secondary/20">
                             BAB {{ $chapter->nomor_bab }}
                         </span>
-                        <h1 class="text-xl font-bold leading-tight mb-2">{{ $chapter->judul_bab }}</h1>
+                        <h1 class="text-xl font-bold leading-tight mb-2">Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}</h1>
                         @if($chapter->deskripsi)
                             <p class="text-sm text-gray-300 leading-relaxed font-light">
                                 {!! $chapter->deskripsi !!}

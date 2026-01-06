@@ -34,10 +34,14 @@
 
                 <!-- Judul Bab -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Bab</label>
-                    <input type="text" name="judul_bab" value="{{ old('judul_bab', $kitabChapter->judul_bab) }}"
-                        class="w-full border-0 border-b border-gray-300 focus:border-primary focus:ring-0"
-                        placeholder="Contoh: Nasihat yang Berisi Dua Perkara" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Bab (Optional)</label>
+                    <div class="flex items-center gap-2 border-b border-gray-300 focus-within:border-primary">
+                        <span class="text-gray-400 text-sm whitespace-nowrap">Nashaihul Ibad Bab {{ $kitabChapter->nomor_bab }} :</span>
+                        <input type="text" name="judul_bab" value="{{ old('judul_bab', $kitabChapter->judul_bab) }}"
+                            class="w-full border-0 focus:ring-0 p-2"
+                            placeholder="Contoh: Nasihat yang Berisi Dua Perkara">
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1 italic">Prefix "Nashaihul Ibad Bab [Nomor]" akan ditambahkan secara otomatis.</p>
                 </div>
 
                 <!-- Deskripsi -->
