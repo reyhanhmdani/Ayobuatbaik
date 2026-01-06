@@ -73,7 +73,6 @@
                                     </div>
                                     <div>
                                         <h4 class="font-bold text-gray-900">Bab {{ $chapter->nomor_bab }}</h4>
-                                        <p class="text-xs text-gray-500">{{ $chapter->judul_bab ?: 'Tanpa Judul' }}</p>
                                     </div>
                                 </div>
                                 <div class="text-xs font-medium text-gray-400">
