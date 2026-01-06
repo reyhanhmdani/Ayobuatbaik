@@ -62,13 +62,13 @@
                             <div class="flex items-start gap-3">
                                 {{-- Number Badge --}}
                                 <div class="flex-shrink-0 w-8 h-8 bg-gray-50 border border-gray-100 group-hover:bg-secondary/10 group-hover:border-secondary/20 rounded-lg flex items-center justify-center transition-colors">
-                                    <span class="text-gray-500 group-hover:text-secondary font-bold text-xs">{{ $index + 1 }}</span>
+                                    <span class="text-gray-500 group-hover:text-secondary font-bold text-xs">{{ $maqolah->nomor_maqolah }}</span>
                                 </div>
 
                                 {{-- Content --}}
                                 <div class="flex-1 min-w-0 pt-1">
                                     <h3 class="font-bold text-gray-800 text-sm group-hover:text-secondary transition-colors mb-1 line-clamp-2">
-                                        {{ $maqolah->judul ?? 'Maqolah ' . ($index + 1) }}
+                                        {{ $maqolah->judul ?? 'Maqolah ' . $maqolah->nomor_maqolah }}
                                     </h3>
                                     <p class="text-xs text-gray-500 line-clamp-2 leading-relaxed font-light">
                                         {{ Str::limit(html_entity_decode(strip_tags($maqolah->konten)), 120) }}
