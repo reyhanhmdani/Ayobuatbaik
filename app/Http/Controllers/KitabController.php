@@ -15,7 +15,9 @@ class KitabController extends Controller
     public function index()
     {
         $chapters = Cache::remember("kitab_chapters_list", 43200, function () {
-            return KitabChapter::withCount("maqolahs")->orderBy("urutan")->get();
+            return KitabChapter::with(['maqolahs' => function ($query) {
+                $query->select('id', 'chapter_id', 'nomor_maqolah', 'judul', 'urutan')->orderBy('urutan');
+            }])->withCount("maqolahs")->orderBy("urutan")->get();
         });
 
         $maqolahs = Cache::remember("kitab_total_maqolah", 43200, function () {

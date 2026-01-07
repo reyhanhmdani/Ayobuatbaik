@@ -24,12 +24,53 @@
                 <p class="text-xs text-gray-400 max-w-sm mx-auto leading-relaxed">
                     Kumpulan maqolah-maqolah hikmah karya Syekh Muhammad Nawawi al-Bantani al-Jawi Al-Indunisi
                 </p>
-                <div class="flex justify-center gap-4 mt-6 text-xs">
+                <div class="flex justify-center gap-4 mt-6 text-xs mb-8">
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                         <i class="fas fa-book-open mr-1.5 text-secondary"></i> {{ count($chapters) }} Bab
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                         <i class="fas fa-scroll mr-1.5 text-secondary"></i> {{ $maqolahs }} Maqolah
+                    </div>
+                </div>
+
+                {{-- Quick Jump / Pencarian Cepat --}}
+                <div class="max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-xl">
+                    <p class="text-xs text-gray-300 mb-3 font-medium uppercase tracking-wider text-left pl-1">
+                        <i class="fas fa-bolt text-secondary mr-1"></i> Pencarian Cepat
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        {{-- Select Bab --}}
+                        <div class="flex-1 relative">
+                            <select id="quick-chapter" 
+                                class="w-full appearance-none bg-white/90 text-gray-800 text-sm rounded-xl px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-secondary cursor-pointer border-0 font-medium">
+                                <option value="" selected disabled>Pilih Bab...</option>
+                                @foreach($chapters as $ch)
+                                    <option value="{{ $ch->slug }}" data-maqolahs="{{ json_encode($ch->maqolahs) }}">
+                                        Bab {{ $ch->nomor_bab }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+
+                        {{-- Select Maqolah --}}
+                        <div class="flex-1 relative">
+                            <select id="quick-maqolah" disabled
+                                class="w-full appearance-none bg-black/20 text-white/50 text-sm rounded-xl px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-secondary cursor-not-allowed border-0 font-medium transition-all">
+                                <option value="" selected disabled>Pilih Maqolah...</option>
+                            </select>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+
+                        {{-- Button Go --}}
+                        <button id="btn-go" disabled
+                            class="bg-secondary text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-yellow-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px]">
+                            Buka
+                        </button>
                     </div>
                 </div>
             </div>
@@ -89,4 +130,73 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chapterSelect = document.getElementById('quick-chapter');
+        const maqolahSelect = document.getElementById('quick-maqolah');
+        const btnGo = document.getElementById('btn-go');
+
+        let currentChapterSlug = '';
+        let currentMaqolahId = '';
+
+        // Handle Chapter Change
+        chapterSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            currentChapterSlug = this.value;
+            
+            // Get maqolahs data from data-attribute
+            const maqolahs = JSON.parse(selectedOption.dataset.maqolahs || '[]');
+
+            // Reset Maqolah Select
+            maqolahSelect.innerHTML = '<option value="" selected disabled>Pilih Maqolah...</option>';
+            
+            if (maqolahs.length > 0) {
+                maqolahs.forEach(m => {
+                    const label = m.judul ? `Maqolah ${m.nomor_maqolah}: ${m.judul}` : `Maqolah ${m.nomor_maqolah}`; // Use fallback if judul is empty
+                    // Truncate if too long
+                    const truncatedLabel = label.length > 30 ? label.substring(0, 30) + '...' : label;
+                    
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = truncatedLabel;
+                    maqolahSelect.appendChild(option);
+                });
+
+                // Enable Select
+                maqolahSelect.disabled = false;
+                maqolahSelect.classList.remove('bg-black/20', 'text-white/50', 'cursor-not-allowed');
+                maqolahSelect.classList.add('bg-white/90', 'text-gray-800', 'cursor-pointer');
+            } else {
+                maqolahSelect.disabled = true;
+                maqolahSelect.classList.add('bg-black/20', 'text-white/50', 'cursor-not-allowed');
+                maqolahSelect.classList.remove('bg-white/90', 'text-gray-800', 'cursor-pointer');
+            }
+            
+            // Reset Button
+            btnGo.disabled = true;
+        });
+
+        // Handle Maqolah Change
+        maqolahSelect.addEventListener('change', function() {
+            currentMaqolahId = this.value;
+            if (currentMaqolahId) {
+                btnGo.disabled = false;
+            } else {
+                btnGo.disabled = true;
+            }
+        });
+
+        // Handle Go Click
+        btnGo.addEventListener('click', function() {
+            if (currentChapterSlug && currentMaqolahId) {
+                // Construct URL: /kitab/{chapterSlug}/maqolah/{id}
+                const url = `{{ route('home.kitab.index') }}/${currentChapterSlug}/maqolah/${currentMaqolahId}`;
+                window.location.href = url;
+            }
+        });
+    });
+</script>
 @endsection
