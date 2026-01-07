@@ -40,35 +40,35 @@
                     </p>
                     <div class="flex gap-2 items-center">
                         {{-- Select Bab --}}
-                        <div class="flex-[1.2] min-w-0 relative">
+                        <div class="flex-1 relative">
                             <select id="quick-chapter" 
-                                class="w-full appearance-none bg-white/90 text-gray-800 text-[11px] rounded-xl px-2 py-2 pr-6 focus:outline-none focus:ring-2 focus:ring-secondary cursor-pointer border-0 font-medium truncate">
-                                <option value="" selected disabled>Bab...</option>
+                                class="w-full appearance-none bg-white/90 text-gray-800 text-xs rounded-xl px-3 py-2 pr-6 focus:outline-none focus:ring-2 focus:ring-secondary cursor-pointer border-0 font-medium">
+                                <option value="" selected disabled>Pilih Bab</option>
                                 @foreach($chapters as $ch)
                                     <option value="{{ $ch->slug }}" data-maqolahs="{{ json_encode($ch->maqolahs) }}">
                                         Bab {{ $ch->nomor_bab }}
                                     </option>
                                 @endforeach
                             </select>
-                            <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                <i class="fas fa-chevron-down text-[10px]"></i>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
 
                         {{-- Select Maqolah --}}
-                        <div class="flex-[2] min-w-0 relative">
+                        <div class="flex-1 relative">
                             <select id="quick-maqolah" disabled
-                                class="w-full appearance-none bg-black/20 text-white/50 text-[11px] rounded-xl px-3 py-2 pr-6 focus:outline-none focus:ring-2 focus:ring-secondary cursor-not-allowed border-0 font-medium transition-all truncate">
-                                <option value="" selected disabled>Pilih Maqolah...</option>
+                                class="w-full appearance-none bg-black/20 text-white/50 text-xs rounded-xl px-3 py-2 pr-6 focus:outline-none focus:ring-2 focus:ring-secondary cursor-not-allowed border-0 font-medium transition-all">
+                                <option value="" selected disabled>Pilih Maqolah</option>
                             </select>
-                            <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
-                                <i class="fas fa-chevron-down text-[10px]"></i>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/30">
+                                <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
 
                         {{-- Button Go --}}
                         <button id="btn-go" disabled
-                            class="flex-none bg-secondary text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-yellow-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="bg-secondary text-white px-5 py-2 rounded-xl font-bold text-xs hover:bg-yellow-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px]">
                             Buka
                         </button>
                     </div>
