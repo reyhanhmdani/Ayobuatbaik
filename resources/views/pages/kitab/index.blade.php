@@ -38,7 +38,7 @@
                     <p class="text-xs text-gray-300 mb-3 font-medium uppercase tracking-wider text-left pl-1">
                         <i class="fas fa-bolt text-secondary mr-1"></i> Pencarian Cepat
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex gap-2 items-center">
                         {{-- Select Bab --}}
                         <div class="flex-1 relative">
                             <select id="quick-chapter" 
