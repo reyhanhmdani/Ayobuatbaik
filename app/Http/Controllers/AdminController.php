@@ -299,6 +299,7 @@ class AdminController extends Controller
 
     public function users()
     {
-        return view("pages.admin.users");
+        $users = User::latest()->paginate(15);
+        return view("pages.admin.users", compact("users"));
     }
 }
