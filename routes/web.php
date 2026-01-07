@@ -16,7 +16,9 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\DonasiController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\KitabController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SitemapController; // Add this import at the top
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get("/", [HomeController::class, "index"])->name("home");
 
