@@ -127,6 +127,12 @@
 
 @section('scripts')
 <script>
+// Event Tracking Jamaah Kajian
+fbq('track', 'JamaahKajian', {
+    chapter: 'Bab {{ $chapter->nomor_bab }}',
+    maqolah: '{{ $maqolah->judul ?: "Maqolah " . $maqolah->nomor_maqolah }}'
+});
+
 function copyToClipboard() {
     // Ambil konten text only
     const title = "{{ $maqolah->judul }}";
