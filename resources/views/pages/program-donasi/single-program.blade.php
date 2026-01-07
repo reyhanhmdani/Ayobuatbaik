@@ -540,6 +540,15 @@
                 }
 
                 /* ===== SEND REQUEST ===== */
+                // Hashing helper for Advanced Matching
+                const hashPII = async (str) => {
+                    if (!str) return null;
+                    const msgUint8 = new TextEncoder().encode(str.trim().toLowerCase());
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                };
+
                 fetch(`/api/donation/${programDonasiId}`, {
                         method: "POST",
                         headers: {
@@ -560,7 +569,7 @@
                         if (!res.ok) throw new Error("Request failed");
                         return res.json();
                     })
-                    .then(data => {
+                    .then(async data => {
                         if (!data.snap_token || !data.donation_code) {
                             alert("Gagal mendapatkan token pembayaran.");
                             resetButton();
@@ -568,8 +577,12 @@
                         }
 
                         const donationCode = data.donation_code;
+                        
+                        // Prepare hashed data for Advanced Matching
+                        const hashedEmail = await hashPII(donorEmail);
+                        const hashedPhone = await hashPII(donorPhone.replace(/[^0-9]/g, ''));
 
-                        // Track Donasi Pending dengan eventID untuk deduplication
+                        // Track Donasi Pending dengan eventID untuk deduplication & Advanced Matching
                         if (typeof fbq !== 'undefined') {
                             fbq('track', 'AddPaymentInfo', {
                                 content_name: {!! json_encode($program->title) !!},
@@ -577,11 +590,16 @@
                                 content_ids: ['{{ $program->id }}'],
                                 value: finalAmount,
                                 currency: 'IDR'
-                            }, { eventID: donationCode });
+                            }, { 
+                                eventID: donationCode,
+                                external_id: donationCode,
+                                em: hashedEmail,
+                                ph: hashedPhone
+                            });
                         }
 
                         snap.pay(data.snap_token, {
-                            onSuccess: () => {
+                            onSuccess: async () => {
                                 // 🔥 META PIXEL: Track Donate Success (Client-Side)
                                 if (typeof fbq !== 'undefined') {
                                     fbq('track', 'Donate', {
@@ -590,7 +608,12 @@
                                         content_ids: ['{{ $program->id }}'],
                                         value: finalAmount,
                                         currency: 'IDR'
-                                    }, { eventID: donationCode });
+                                    }, { 
+                                        eventID: donationCode,
+                                        external_id: donationCode,
+                                        em: hashedEmail,
+                                        ph: hashedPhone
+                                    });
                                 }
                                 window.location.href = `/donate/status/${donationCode}`;
                             },
