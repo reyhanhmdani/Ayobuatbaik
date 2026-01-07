@@ -1,5 +1,5 @@
 
-@extends('pages.admin.layout')
+@extends('components.layout.admin')
 
 @section('title', 'Manajemen Pengguna - Admin Ayobuatbaik')
 
