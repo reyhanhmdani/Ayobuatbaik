@@ -18,7 +18,7 @@ class AdminController extends Controller
         // Jumlahkan semua collected_amount
         $total_amount = ProgramDonasi::sum("collected_amount");
 
-        $total_donations = Donation::count();
+        $total_donations = Donation::where("status", "success")->count();
 
         // Hitung total user
         // $total_users = User::count();
@@ -26,7 +26,7 @@ class AdminController extends Controller
         $stats = Cache::remember("dashboard_stats", 300, function () {
             return [
                 "total_programs" => ProgramDonasi::count(),
-                "total_donations" => Donation::count(),
+                "total_donations" => Donation::where("status", "success")->count(),
                 "total_amount" => ProgramDonasi::sum("collected_amount"),
                 "total_users" => User::count(),
             ];
