@@ -8,9 +8,9 @@
                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 </span>
             </div>
-            <div>
-                <p class="text-white text-sm font-medium">{{ Auth::user()->name }}</p>
-                <p class="text-gray-300 text-xs">Administrator</p>
+            <div class="overflow-hidden">
+                <p class="text-white text-sm font-medium truncate">{{ Auth::user()->name }}</p>
+                <p class="text-gray-300 text-[10px] truncate">{{ Auth::user()->email }}</p>
             </div>
         </div>
     </div>
@@ -70,6 +70,12 @@
             class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.berita.*') ? 'bg-gray-800' : '' }}">
             <i class="fas fa-newspaper w-5"></i>
             <span>Berita</span>
+        </a>
+
+        <a href="{{ route('admin.users') }}"
+            class="flex items-center space-x-3 p-3 rounded-lg text-white hover:bg-gray-800 transition-colors {{ request()->routeIs('admin.users') ? 'bg-gray-800' : '' }}">
+            <i class="fas fa-users w-5"></i>
+            <span>Daftar Pengguna</span>
         </a>
     </nav>
 
