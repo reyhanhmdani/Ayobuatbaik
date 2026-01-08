@@ -76,6 +76,13 @@
         {{-- Maqolah List --}}
         <div class="px-4 -mt-6 pb-24 relative z-20">
             <div class="max-w-7xl mx-auto space-y-3">
+                <div id="empty-state" class="hidden text-center py-12">
+                     <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-search text-2xl text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500 font-medium">Maqolah tidak ditemukan</p>
+                </div>
+                
                 @forelse ($chapter->maqolahs as $index => $maqolah)
                     <a href="{{ route('home.kitab.maqolah', ['chapterSlug' => $chapter->slug, 'id' => $maqolah->id]) }}"
                         data-nomor="{{ $maqolah->nomor_maqolah }}"
@@ -122,19 +129,36 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search-maqolah');
             const cards = document.querySelectorAll('.maqolah-card');
+            const emptyState = document.getElementById('empty-state');
 
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     const value = this.value.trim();
+                    let hasVisible = false;
                     
                     cards.forEach(card => {
                         const nomor = card.getAttribute('data-nomor');
+                        
+                        // Remove previous highlight
+                        card.classList.remove('border-secondary', 'ring-1', 'ring-secondary/50', 'bg-secondary/5');
+                        
                         if (value === '' || nomor.includes(value)) {
                             card.style.display = 'block';
+                            hasVisible = true;
+                            
+                            // Add highlight if searching
+                            if (value !== '') {
+                                card.classList.add('border-secondary', 'ring-1', 'ring-secondary/50', 'bg-secondary/5');
+                            }
                         } else {
                             card.style.display = 'none';
                         }
                     });
+
+                    // Show empty state if no cards visible
+                    if (emptyState) {
+                        emptyState.style.display = hasVisible ? 'none' : 'block';
+                    }
                 });
             }
         });
