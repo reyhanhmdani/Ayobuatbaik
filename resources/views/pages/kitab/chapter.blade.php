@@ -21,34 +21,55 @@
             </div>
 
             <div class="relative z-10 max-w-7xl mx-auto">
-                {{-- Back Button --}}
-                <a href="{{ route('home.kitab.index') }}" 
-                    class="inline-flex items-center text-sm text-gray-300 hover:text-secondary mb-6 transition-colors font-medium">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Kembali ke Daftar Bab
-                </a>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    {{-- Back Button --}}
+                    <a href="{{ route('home.kitab.index') }}" 
+                        class="inline-flex items-center text-sm text-gray-300 hover:text-secondary transition-colors font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Kembali ke Daftar Bab
+                    </a>
 
-                <div class="flex items-start gap-4">
-                    <div class="flex-shrink-0 w-16 h-16 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center shadow-lg">
-                        <span class="text-secondary font-black text-2xl drop-shadow-sm">{{ $chapter->nomor_bab }}</span>
-                    </div>
-                    <div>
-                        <span class="inline-block px-2 py-0.5 rounded-md bg-secondary/20 text-secondary text-[10px] font-bold tracking-wider mb-2 border border-secondary/20">
-                            BAB {{ $chapter->nomor_bab }}
-                        </span>
-                        <h1 class="text-xl font-bold leading-tight mb-2">Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}</h1>
-                        @if($chapter->deskripsi)
-                            <p class="text-sm text-gray-300 leading-relaxed font-light">
-                                {!! $chapter->deskripsi !!}
+                    {{-- Pencarian maqolah cepat --}}
+                    <div class="flex-shrink-0">
+                        <div class="bg-white/10 backdrop-blur-md p-1.5 px-3 rounded-xl border border-white/10 shadow-lg flex items-center gap-3">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                <i class="fa-solid fa-magnifying-glass text-secondary mr-1"></i> Maqolah
                             </p>
-                        @endif
-                        
-                        <div class="flex items-center mt-4 text-xs text-gray-400 font-medium">
-                            <i class="fas fa-scroll text-secondary mr-2"></i>
-                            <span>{{ $chapter->maqolahs->count() }} Maqolah dalam bab ini</span>
+                            <div class="relative bg-white/5 rounded-lg flex items-center px-2 py-1 focus-within:ring-1 focus-within:ring-secondary/50 transition-all border border-white/5">
+                                <input type="number" id="search-maqolah" placeholder="No..." 
+                                    class="bg-transparent border-0 text-white text-xs placeholder-gray-500 focus:ring-0 p-0 w-10 font-bold appearance-none text-center"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex-shrink-0 w-16 h-16 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center shadow-lg">
+                            <span class="text-secondary font-black text-2xl drop-shadow-sm">{{ $chapter->nomor_bab }}</span>
+                        </div>
+                        <div>
+                            <span class="inline-block px-2 py-0.5 rounded-md bg-secondary/20 text-secondary text-[10px] font-bold tracking-wider mb-2 border border-secondary/20">
+                                BAB {{ $chapter->nomor_bab }}
+                            </span>
+                            <h1 class="text-xl font-bold leading-tight mb-2">Nashaihul Ibad Bab {{ $chapter->nomor_bab }}{{ $chapter->judul_bab ? ' : ' . $chapter->judul_bab : '' }}</h1>
+                            <div class="flex items-center text-xs text-gray-400 font-medium">
+                                <i class="fas fa-scroll text-secondary mr-2"></i>
+                                <span>{{ $chapter->maqolahs->count() }} Maqolah dalam bab ini</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                @if($chapter->deskripsi)
+                    <div class="mt-6 max-w-2xl">
+                        <div class="text-sm text-gray-300 leading-relaxed font-light bg-white/5 p-4 rounded-xl border border-white/5">
+                            {!! $chapter->deskripsi !!}
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -57,7 +78,8 @@
             <div class="max-w-7xl mx-auto space-y-3">
                 @forelse ($chapter->maqolahs as $index => $maqolah)
                     <a href="{{ route('home.kitab.maqolah', ['chapterSlug' => $chapter->slug, 'id' => $maqolah->id]) }}"
-                        class="block bg-white rounded-xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-md transition-all duration-300 overflow-hidden group">
+                        data-nomor="{{ $maqolah->nomor_maqolah }}"
+                        class="maqolah-card block bg-white rounded-xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-md transition-all duration-300 overflow-hidden group">
                         <div class="p-4">
                             <div class="flex items-start gap-3">
                                 {{-- Number Badge --}}
@@ -96,4 +118,25 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-maqolah');
+            const cards = document.querySelectorAll('.maqolah-card');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const value = this.value.trim();
+                    
+                    cards.forEach(card => {
+                        const nomor = card.getAttribute('data-nomor');
+                        if (value === '' || nomor.includes(value)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 @endsection
