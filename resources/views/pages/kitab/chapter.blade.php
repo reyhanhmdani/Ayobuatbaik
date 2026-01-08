@@ -26,7 +26,7 @@
                     <a href="{{ route('home.kitab.index') }}" 
                         class="inline-flex items-center text-sm text-gray-300 hover:text-secondary transition-colors font-medium">
                         <i class="fas fa-arrow-left mr-2"></i>
-                        Kembali ke Daftar Bab
+                        Kembali
                     </a>
 
                     {{-- Pencarian maqolah cepat --}}
