@@ -1,32 +1,39 @@
-<div id="pwa-install-prompt" class="fixed top-0 left-0 right-0 z-[9999] transform -translate-y-full transition-transform duration-500 will-change-transform hidden">
-    <div class="bg-white/90 backdrop-blur-md shadow-lg border-b border-gray-100 p-4 mx-auto max-w-md">
-        <div class="flex items-start gap-4">
-            {{-- Icon --}}
-            <div class="flex-shrink-0 bg-primary/10 rounded-xl p-2">
-                <img src="{{ asset('icon ABBI.png') }}" alt="App Icon" class="w-10 h-10 object-contain">
+<div id="pwa-install-prompt" 
+    class="fixed top-0 left-0 right-0 z-[9999] transform -translate-y-[120%] transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] will-change-transform {{-- Hidden by default via transform --}}">
+    
+    {{-- Container: Glassmorphism, Rounded Bottom, Shadow --}}
+    <div class="mx-auto max-w-md bg-white/95 backdrop-blur-xl shadow-2xl rounded-b-[2rem] border-x border-b border-white/20 p-5 relative overflow-hidden">
+        
+        {{-- Shine Effect --}}
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-50"></div>
+
+        <div class="flex items-center gap-4 relative z-10">
+            {{-- Icon with modern styling --}}
+            <div class="flex-shrink-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-2 shadow-inner border border-white/50">
+                <img src="{{ asset('icon ABBI.png') }}" alt="App Icon" class="w-12 h-12 object-contain drop-shadow-sm">
             </div>
 
-            {{-- Text --}}
-            <div class="flex-1 min-w-0">
-                <h3 class="text-sm font-bold text-gray-900 leading-tight mb-1">Install Aplikasi Ayobuatbaik</h3>
-                <p class="text-xs text-gray-500 leading-snug mb-3">
-                    Akses lebih cepat & hemat kuota tanpa buka browser.
+            {{-- Content --}}
+            <div class="flex-1 min-w-0 pt-1">
+                <h3 class="text-sm font-black text-gray-800 leading-none mb-1 tracking-tight">Ayobuatbaik App</h3>
+                <p class="text-[11px] text-gray-500 font-medium leading-snug mb-3">
+                    Nikmati pengalaman lebih cepat & lancar.
                 </p>
 
-                {{-- Buttons --}}
+                {{-- Action Buttons --}}
                 <div class="flex gap-2">
-                    <button id="pwa-install-yes" class="flex-1 bg-primary text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm hover:bg-primary/90 active:scale-95 transition-all">
-                        <i class="fas fa-download mr-1.5"></i> Install
+                    <button id="pwa-install-yes" class="flex-1 bg-gradient-to-r from-primary to-yellow-600 text-white text-[11px] font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 active:scale-95 transition-all text-center tracking-wide">
+                        INSTALL SEKARANG
                     </button>
-                    <button id="pwa-install-no" class="flex-none bg-gray-100 text-gray-600 text-xs font-bold py-2 px-3 rounded-lg hover:bg-gray-200 active:scale-95 transition-all">
-                        Nanti dulu
+                    <button id="pwa-install-no" class="flex-none bg-gray-50 text-gray-400 text-[11px] font-bold py-2.5 px-4 rounded-xl border border-gray-100 hover:bg-gray-100 hover:text-gray-600 active:scale-95 transition-all">
+                        Nanti
                     </button>
                 </div>
             </div>
 
-            {{-- Close X --}}
-            <button id="pwa-close-btn" class="text-gray-400 hover:text-gray-600 p-1 -mt-1 -mr-1">
-                <i class="fas fa-times"></i>
+            {{-- Subtle Close Button --}}
+            <button id="pwa-close-btn" class="absolute -top-1 -right-1 p-2 text-gray-300 hover:text-gray-500 transition-colors">
+                <i class="fas fa-times text-xs"></i>
             </button>
         </div>
     </div>
@@ -40,55 +47,46 @@
         const closeBtn = document.getElementById('pwa-close-btn');
         const noBtn = document.getElementById('pwa-install-no');
 
-        // Logic: Cek apakah sudah pernah di-close sebelumnya (Session Storage)
-        // Biar nggak muncul terus kalau user refresh halaman
+        // Cek session biar gak spam
         if (sessionStorage.getItem('pwa_prompt_dismissed')) {
             return;
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // 1. Prevent Chrome default mini-infobar
             e.preventDefault();
-            // 2. Save event for later
             deferredPrompt = e;
-            // 3. Show our custom UI
-            showPrompt();
+            
+            // Delay sedikit biar halaman loaded dulu baru muncul "Twing!"
+            setTimeout(() => {
+                showPrompt();
+            }, 2000);
         });
 
         function showPrompt() {
-            installPrompt.classList.remove('hidden');
-            // Sedikit delay biar transisi slide-down jalan mulus
+            // Slide Down Animation
+            installPrompt.classList.remove('-translate-y-[120%]');
+            
+            // Auto hide dalam 15 detik (dilemakan dikit biar user sempat baca)
             setTimeout(() => {
-                installPrompt.classList.remove('-translate-y-full');
-            }, 100);
-
-            // Auto-hide after 10 seconds
-            setTimeout(() => {
-               hidePrompt();
-            }, 10000);
+                // Cek kalau user belum interaksi (masih visible)
+                if (!installPrompt.classList.contains('-translate-y-[120%]')) {
+                     hidePrompt();
+                }
+            }, 15000); 
         }
 
         function hidePrompt() {
-            installPrompt.classList.add('-translate-y-full');
-            setTimeout(() => {
-                installPrompt.classList.add('hidden');
-            }, 500); // Wait for transition
+            // Slide Up Animation
+            installPrompt.classList.add('-translate-y-[120%]');
             
-            // Simpan status bahwa user sudah melihat prompt ini
+            // Tandai sudah dilihat
             sessionStorage.setItem('pwa_prompt_dismissed', 'true');
         }
 
         installBtn.addEventListener('click', async () => {
             if (!deferredPrompt) return;
-            
-            // Show native prompt
             deferredPrompt.prompt();
-            
-            // Wait for choice
             const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install prompt: ${outcome}`);
-            
-            // Reset
             deferredPrompt = null;
             hidePrompt();
         });
