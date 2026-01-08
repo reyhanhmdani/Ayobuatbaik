@@ -21,7 +21,7 @@
             </div>
 
             <div class="relative z-10 max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div class="flex justify-between items-center mb-6 gap-4">
                     {{-- Back Button --}}
                     <a href="{{ route('home.kitab.index') }}" 
                         class="inline-flex items-center text-sm text-gray-300 hover:text-secondary transition-colors font-medium">
