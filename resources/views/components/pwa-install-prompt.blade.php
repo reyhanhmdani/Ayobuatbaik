@@ -10,7 +10,7 @@
         <div class="flex items-center gap-4 relative z-10">
             {{-- Icon with modern styling --}}
             <div class="flex-shrink-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-2 shadow-inner border border-white/50">
-                <img src="{{ asset('icon ABBI.png') }}" alt="App Icon" class="w-12 h-12 object-contain drop-shadow-sm">
+                <img src="{{ asset('icon ABBI.png') }}" alt="App Icon" class="w-12 h-12 object-contain bg-black drop-shadow-sm">
             </div>
 
             {{-- Content --}}
