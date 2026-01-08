@@ -36,11 +36,10 @@
             </button>
         </div>
 
-        {{-- iOS Instruction (Hidden by default) --}}
-        <div id="ios-instruction" class="hidden mt-3 pt-3 border-t border-gray-50 text-center">
-             <p class="text-[10px] text-gray-500 animate-pulse">
-                Ketuk tombol <span class="font-bold text-blue-500"><i class="fas fa-share-square"></i> Share</span> dibawah, <br>
-                lalu pilih <span class="font-bold text-gray-800"><i class="fas fa-plus-square"></i> Tambah ke Layar Utama</span>
+        {{-- Fallback Instruction (Hidden by default) --}}
+        <div id="manual-instruction" class="hidden mt-3 pt-3 border-t border-gray-50 text-center">
+             <p id="instruction-text" class="text-[10px] text-gray-500 animate-pulse">
+                <!-- Text will be injected via JS -->
             </p>
         </div>
     </div>
@@ -51,28 +50,24 @@
         let deferredPrompt;
         const installPrompt = document.getElementById('pwa-install-prompt');
         const installBtn = document.getElementById('pwa-install-yes');
-        const iosInstruction = document.getElementById('ios-instruction');
+        const manualInstruction = document.getElementById('manual-instruction');
+        const instructionText = document.getElementById('instruction-text');
         const installPromptDesc = document.getElementById('pwa-desc');
         
-        // Cek User Agent (Apakah iPhone/iPad?)
+        // Detect Device
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        // Cek Browser Mode (Apakah sudah mode aplikasi/standalone?)
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
 
-        // 1. Logic untuk ANDROID (Chrome/Edge/Samsung Internet)
+        // 1. Listen for Native Android Event (Always, just in case)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            deferredPrompt = e;
-            
-            // Tunda sebentar biar smooth loadingnya
-            setTimeout(() => {
-                showPrompt();
-            }, 2000);
+            deferredPrompt = e; // Save it!
         });
 
-        // 2. Logic untuk iOS (iPhone/iPad)
-        // Paksa muncul kalau di iPhone + BELUM Install (bukan standalone)
-        if (isIOS && !isStandalone) {
+        // 2. FORCE SHOW (Blindly)
+        // Pokoknya kalau bukan aplikasi (standalone), munculkan saja setelah 2 detik.
+        // Nanti urusan bisa install atau manual, dipikir belakangan pas tombol diklik.
+        if (!isStandalone) {
              setTimeout(() => {
                 showPrompt();
             }, 2000);
@@ -87,22 +82,45 @@
         }
 
         installBtn.addEventListener('click', async () => {
-             // Jika Android (Ada event install bawaan)
+            
+            // SKENARIO 1: Android Native (Event Ready)
+            // Ini kondisi ideal (HTTPS OK, Chrome OK)
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 hidePrompt();
+                return;
             } 
-            // Jika iOS (Manual Instructions)
-            else if (isIOS) {
-                installBtn.innerHTML = 'IKUTI PETUNJUK DI BAWAH 👇';
-                installBtn.classList.remove('bg-gradient-to-r', 'from-primary', 'to-yellow-600');
-                installBtn.classList.add('bg-gray-800', 'text-white');
-                iosInstruction.classList.remove('hidden');
-                installPromptDesc.textContent = "Khusus iPhone perlu manual sedikit ya:";
+            
+            // SKENARIO 2: iOS (iPhone)
+            if (isIOS) {
+                showManualGuide(
+                    'IKUTI PETUNJUK DI BAWAH 👇',
+                    'Ketuk tombol <span class="font-bold text-blue-500"><i class="fas fa-share-square"></i> Share</span> dibawah, <br> lalu pilih <span class="font-bold text-gray-800"><i class="fas fa-plus-square"></i> Tambah ke Layar Utama</span>'
+                );
+            }
+            // SKENARIO 3: Android "Bandel" (Chrome/Browser Lain yg Eventnya Gagal)
+            // Biasanya karena HTTP atau browser non-standard.
+            else {
+                showManualGuide(
+                    'IKUTI PETUNJUK MANUAL 👇',
+                    'Ketuk <span class="font-bold text-gray-800">Titik Tiga (⋮)</span> di pojok kanan atas, <br> lalu pilih <span class="font-bold text-gray-800"><i class="fas fa-mobile-alt"></i> Install App</span> atau <span class="font-bold text-gray-800">Tambahkan ke Layar Utama</span>'
+                );
             }
         });
+
+        // Helper untuk ubah tampilan jadi panduan
+        function showManualGuide(btnText, htmlInstruction) {
+            installBtn.textContent = btnText;
+            installBtn.classList.remove('bg-gradient-to-r', 'from-primary', 'to-yellow-600');
+            installBtn.classList.add('bg-gray-800', 'text-white', 'cursor-default');
+            
+            manualInstruction.classList.remove('hidden');
+            instructionText.innerHTML = htmlInstruction;
+            
+            installPromptDesc.textContent = "Browser ini perlu instalasi manual:";
+        }
 
         document.getElementById('pwa-install-no').addEventListener('click', hidePrompt);
         document.getElementById('pwa-close-btn').addEventListener('click', hidePrompt);
