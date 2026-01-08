@@ -86,6 +86,9 @@
 </head>
 
 <body class="bg-grayLight font-poppins">
+    {{-- Custom PWA Install Prompt --}}
+    @include('components.pwa-install-prompt')
+
     <div class="mobile-container">
         <div class="content">
             @yield('header-content')
