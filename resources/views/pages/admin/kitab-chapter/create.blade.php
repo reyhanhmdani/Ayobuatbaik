@@ -45,7 +45,7 @@
 
                 <!-- Deskripsi -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (Optional) <span class="text-xs text-gray-400 font-normal">(Maksimal ~4 baris / 400 karakter)</span></label>
                     <textarea name="deskripsi" id="deskripsi" class="w-full">{{ old('deskripsi') }}</textarea>
                 </div>
 
