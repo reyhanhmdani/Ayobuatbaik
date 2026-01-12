@@ -160,7 +160,7 @@
                 <div id="deskripsi-tab" class="tab-content">
                     {{-- Bagian Deskripsi tidak berubah --}}
                     <div class="mb-6">
-                        <h3 class="font-bold text-lg mb-3">Tentang Program</h3>
+                        {{-- <h3 class="font-bold text-lg mb-3">Tentang Program</h3> --}}
                         <div class="prose prose-sm text-gray-700">
                             {!! $program->deskripsi !!}
                         </div>
