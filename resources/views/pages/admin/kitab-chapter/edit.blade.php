@@ -67,7 +67,7 @@
     <script>
         try {
             CKEDITOR.replace('deskripsi', {
-                height: 400,
+                height: 200,
                 filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
                 filebrowserUploadMethod: 'form',
                 toolbar: [{

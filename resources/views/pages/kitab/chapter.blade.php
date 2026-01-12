@@ -63,19 +63,24 @@
 
                 </div>
 
-                @if($chapter->deskripsi)
-                    <div class="mt-6 max-w-2xl">
-                        <div class="text-sm text-gray-300 leading-relaxed font-light bg-white/5 p-4 rounded-xl border border-white/5">
-                            {!! $chapter->deskripsi !!}
-                        </div>
-                    </div>
-                @endif
+
             </div>
         </div>
 
         {{-- Maqolah List --}}
         <div class="px-4 -mt-6 pb-24 relative z-20">
             <div class="max-w-7xl mx-auto space-y-3">
+                
+                @if($chapter->deskripsi)
+                    <div class="flex justify-center mb-8">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-6 text-center relative overflow-hidden group max-w-4xl w-fit">
+                            <div class="prose prose-xl max-w-none text-gray-800 leading-loose font-serif line-clamp-4 mx-auto">
+                                 {!! strip_tags($chapter->deskripsi) !!}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div id="empty-state" class="hidden text-center py-12">
                      <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-search text-2xl text-gray-400"></i>
