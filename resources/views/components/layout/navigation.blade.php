@@ -21,11 +21,10 @@
             <span class="text-xs">Berita</span>
         </a>
 
-        <!-- Kitab Menu for Mobile -->
-        <div class="mobile-nav-item text-primary" id="kitab-menu-toggle">
+        <a href="{{ route('home.kitab.index') }}" class="mobile-nav-item text-primary {{ isActive('kitab*') }}">
             <i class="fas fa-book text-lg mb-1"></i>
-            <span class="text-xs">Hikmah</span>
-        </div>
+            <span class="text-xs">Kitab</span>
+        </a>
 
         @auth
             <div class="mobile-nav-item text-primary" id="akun-menu-toggle">
@@ -40,31 +39,7 @@
         @endauth
     </div>
 
-    <!-- Mobile Kitab Menu -->
-    <div class="hidden bg-white border-t border-gray-200 pt-3 pb-2 px-4" id="kitab-menu">
-        <div class="grid grid-cols-2 gap-3">
-            <a href="{{ route('home.kitab.index') }}"
-                class="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-book mr-2"></i>
-                <span>Kitab Nashohul Ibad</span>
-            </a>
-            {{-- <a href="#"
-                class="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-book-quran mr-2"></i>
-                <span>Al-Quran</span>
-            </a> --}}
-            {{-- <a href="#"
-                class="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-hands-praying mr-2"></i>
-                <span>Doa Sehari-hari</span>
-            </a> --}}
-            {{-- <a href="#"
-                class="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-secondary hover:text-white transition-colors text-sm">
-                <i class="fas fa-images mr-2"></i>
-                <span>Webtoon ABBI</span>
-            </a> --}}
-        </div>
-    </div>
+    <!-- Mobile Kitab Menu (Removed) -->
 
     <!-- Mobile Akun Menu -->
     <div class="hidden bg-white border-t border-gray-200 pt-3 pb-2 px-4" id="akun-menu">
@@ -111,12 +86,9 @@
         // Mobile menu functionality
         const akunMenuToggle = document.getElementById("akun-menu-toggle");
         const akunMenu = document.getElementById("akun-menu");
-        const kitabMenuToggle = document.getElementById("kitab-menu-toggle");
-        const kitabMenu = document.getElementById("kitab-menu");
 
         function closeAllMenus() {
-            kitabMenu.classList.add("hidden");
-            akunMenu.classList.add("hidden");
+            if (akunMenu) akunMenu.classList.add("hidden");
         }
 
         if (akunMenuToggle && akunMenu) {
@@ -125,16 +97,6 @@
                 closeAllMenus();
                 if (!isAkunMenuOpen) {
                     akunMenu.classList.remove("hidden");
-                }
-            });
-        }
-
-        if (kitabMenuToggle && kitabMenu) {
-            kitabMenuToggle.addEventListener("click", function() {
-                const isKitabMenuOpen = !kitabMenu.classList.contains("hidden");
-                closeAllMenus();
-                if (!isKitabMenuOpen) {
-                    kitabMenu.classList.remove("hidden");
                 }
             });
         }
