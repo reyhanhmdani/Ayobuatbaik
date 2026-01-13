@@ -28,14 +28,17 @@
 <script type="text/javascript">
     // Initialize the service worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/serviceworker.js', {
-            scope: '.'
+        navigator.serviceWorker.register('/serviceworker.js?v=20260113', {
+            scope: '/'
         }).then(function (registration) {
             // Registration was successful
-            console.log('Laravel PWA: ServiceWorker registration successful with scope: ', registration.scope);
+            console.log('PWA: ServiceWorker registration successful with scope: ', registration.scope);
+            
+            // Check for updates every page load
+            registration.update();
         }, function (err) {
             // registration failed :(
-            console.log('Laravel PWA: ServiceWorker registration failed: ', err);
+            console.log('PWA: ServiceWorker registration failed: ', err);
         });
     }
 </script>
