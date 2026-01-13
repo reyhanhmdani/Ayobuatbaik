@@ -64,4 +64,31 @@ class KitabController extends Controller
 
         return view("pages.kitab.maqolah", $data);
     }
+
+    /**
+     * API: Mengembalikan semua URL Kitab untuk offline caching
+     */
+    public function getAllUrls()
+    {
+        $urls = ['/kitab']; // Index page
+
+        $chapters = KitabChapter::with('maqolahs:id,chapter_id,nomor_maqolah')
+            ->orderBy('urutan')
+            ->get();
+
+        foreach ($chapters as $chapter) {
+            // Chapter URL
+            $urls[] = '/kitab/' . $chapter->slug;
+
+            // Maqolah URLs
+            foreach ($chapter->maqolahs as $maqolah) {
+                $urls[] = '/kitab/' . $chapter->slug . '/maqolah/' . $maqolah->id;
+            }
+        }
+
+        return response()->json([
+            'total' => count($urls),
+            'urls' => $urls
+        ]);
+    }
 }

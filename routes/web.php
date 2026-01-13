@@ -29,6 +29,7 @@ Route::get("/", [HomeController::class, "index"])->name("home");
 
 // Kitab Nashaihul Ibad
 Route::get("/kitab", [KitabController::class, "index"])->name("home.kitab.index");
+Route::get("/kitab/api/urls", [KitabController::class, "getAllUrls"])->name("home.kitab.urls"); // API for offline download
 Route::get("/kitab/{slug}", [KitabController::class, "showChapter"])->name("home.kitab.chapter");
 Route::get("/kitab/{chapterSlug}/maqolah/{id}", [KitabController::class, "showMaqolah"])->name("home.kitab.maqolah");
     

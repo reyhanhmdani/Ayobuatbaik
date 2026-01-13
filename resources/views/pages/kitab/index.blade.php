@@ -24,12 +24,29 @@
                 <p class="text-xs text-gray-400 max-w-sm mx-auto leading-relaxed">
                     Kumpulan maqolah-maqolah hikmah karya Syekh Muhammad Nawawi al-Bantani al-Jawi Al-Indunisi
                 </p>
-                <div class="flex justify-center gap-4 mt-6 text-xs mb-8">
+                <div class="flex justify-center gap-4 mt-6 text-xs mb-4">
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                         <i class="fas fa-book-open mr-1.5 text-secondary"></i> {{ count($chapters) }} Bab
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                         <i class="fas fa-scroll mr-1.5 text-secondary"></i> {{ $maqolahs }} Maqolah
+                    </div>
+                </div>
+
+                {{-- Download for Offline Button --}}
+                <div id="offline-download-wrapper" class="mb-8">
+                    <button id="btn-download-offline" 
+                        class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-5 py-2.5 rounded-full border border-white/20 transition-all">
+                        <i class="fas fa-cloud-download-alt"></i>
+                        <span>Simpan untuk Dibaca Offline</span>
+                    </button>
+                    
+                    {{-- Progress Bar (Hidden by default) --}}
+                    <div id="download-progress" class="hidden mt-4 max-w-xs mx-auto">
+                        <div class="bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div id="progress-bar" class="bg-secondary h-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p id="progress-text" class="text-[10px] text-gray-400 mt-2">Memulai download...</p>
                     </div>
                 </div>
 
@@ -195,6 +212,86 @@
                 // Construct URL: /kitab/{chapterSlug}/maqolah/{id}
                 const url = `{{ route('home.kitab.index') }}/${currentChapterSlug}/maqolah/${currentMaqolahId}`;
                 window.location.href = url;
+            }
+        });
+
+        // =============================================
+        // OFFLINE DOWNLOAD FEATURE
+        // =============================================
+        const btnDownload = document.getElementById('btn-download-offline');
+        const progressWrapper = document.getElementById('download-progress');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        // Check if already downloaded
+        if (localStorage.getItem('kitab_offline_downloaded')) {
+            btnDownload.innerHTML = '<i class="fas fa-check-circle"></i> <span>Sudah Tersimpan Offline</span>';
+            btnDownload.classList.remove('bg-white/10', 'hover:bg-white/20');
+            btnDownload.classList.add('bg-green-600/50', 'cursor-default');
+        }
+
+        btnDownload.addEventListener('click', async function() {
+            // Prevent double click
+            if (this.disabled) return;
+            this.disabled = true;
+            
+            // Show progress
+            progressWrapper.classList.remove('hidden');
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengunduh...</span>';
+            this.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                // 1. Fetch all URLs from API
+                progressText.textContent = 'Mengambil daftar halaman...';
+                const response = await fetch('/kitab/api/urls');
+                const data = await response.json();
+                const urls = data.urls;
+                const total = urls.length;
+
+                progressText.textContent = `Ditemukan ${total} halaman. Memulai download...`;
+
+                // 2. Cache each URL
+                let completed = 0;
+                let failed = 0;
+
+                for (const url of urls) {
+                    try {
+                        await fetch(url, { cache: 'reload' }); // Force fresh fetch
+                        completed++;
+                    } catch (e) {
+                        failed++;
+                        console.warn('[Offline Download] Failed:', url);
+                    }
+
+                    // Update progress
+                    const percent = Math.round((completed + failed) / total * 100);
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = `Mengunduh ${completed}/${total} halaman...`;
+                }
+
+                // 3. Done!
+                progressBar.style.width = '100%';
+                progressText.textContent = `Selesai! ${completed} halaman tersimpan untuk offline.`;
+                
+                // Save to localStorage
+                localStorage.setItem('kitab_offline_downloaded', Date.now().toString());
+
+                // Update button
+                this.innerHTML = '<i class="fas fa-check-circle"></i> <span>Tersimpan!</span>';
+                this.classList.remove('opacity-50');
+                this.classList.add('bg-green-600/50');
+
+                // Hide progress after 3 seconds
+                setTimeout(() => {
+                    progressWrapper.classList.add('hidden');
+                }, 3000);
+
+            } catch (error) {
+                console.error('[Offline Download] Error:', error);
+                progressText.textContent = 'Gagal mengunduh. Coba lagi nanti.';
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-cloud-download-alt"></i> <span>Coba Lagi</span>';
+                this.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         });
     });
