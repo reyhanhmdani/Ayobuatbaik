@@ -28,7 +28,7 @@
 <script type="text/javascript">
     // Initialize the service worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/serviceworker.js?v=20260113', {
+        navigator.serviceWorker.register('/serviceworker.js?v=20260113b', {
             scope: '/'
         }).then(function (registration) {
             // Registration was successful

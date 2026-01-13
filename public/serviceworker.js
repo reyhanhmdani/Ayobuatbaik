@@ -4,7 +4,7 @@
  * - Other pages: Network-First with Offline Fallback
  */
 
-const CACHE_VERSION = 'ayobuatbaik-v1';
+const CACHE_VERSION = 'ayobuatbaik-v2';
 const OFFLINE_URL = '/offline';
 
 // Files to pre-cache on install
