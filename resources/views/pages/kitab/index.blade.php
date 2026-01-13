@@ -34,12 +34,22 @@
                 </div>
 
                 {{-- Download for Offline Button --}}
-                <div id="offline-download-wrapper" class="mb-8">
+                <div id="offline-download-wrapper" class="mb-8" data-total-maqolah="{{ $maqolahs }}">
                     <button id="btn-download-offline" 
-                        class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-5 py-2.5 rounded-full border border-white/20 transition-all">
+                        class="relative inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-5 py-2.5 rounded-full border border-white/20 transition-all">
                         <i class="fas fa-cloud-download-alt"></i>
-                        <span>Simpan untuk Dibaca Offline</span>
+                        <span id="btn-download-text">Simpan untuk Dibaca Offline</span>
+                        {{-- Update Badge (Hidden by default) --}}
+                        <span id="update-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                            UPDATE
+                        </span>
                     </button>
+                    
+                    {{-- Update Notification (Hidden by default) --}}
+                    <p id="update-notification" class="hidden text-[10px] text-yellow-400 mt-2">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        Ada konten baru! Klik untuk update data offline.
+                    </p>
                     
                     {{-- Progress Bar (Hidden by default) --}}
                     <div id="download-progress" class="hidden mt-4 max-w-xs mx-auto">
@@ -219,16 +229,39 @@
         // OFFLINE DOWNLOAD FEATURE
         // =============================================
         const btnDownload = document.getElementById('btn-download-offline');
+        const btnDownloadText = document.getElementById('btn-download-text');
+        const updateBadge = document.getElementById('update-badge');
+        const updateNotification = document.getElementById('update-notification');
         const progressWrapper = document.getElementById('download-progress');
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
+        const wrapper = document.getElementById('offline-download-wrapper');
 
-        // Check if already downloaded
-        if (localStorage.getItem('kitab_offline_downloaded')) {
+        // Get current total from server (passed via data attribute)
+        const currentTotal = parseInt(wrapper.dataset.totalMaqolah) || 0;
+        
+        // Get stored data from localStorage
+        const storedData = JSON.parse(localStorage.getItem('kitab_offline_data') || '{}');
+        const storedTotal = storedData.total || 0;
+        const wasDownloaded = !!storedData.downloadedAt;
+
+        // Determine state
+        if (wasDownloaded && storedTotal === currentTotal) {
+            // Already downloaded and up to date
             btnDownload.innerHTML = '<i class="fas fa-check-circle"></i> <span>Sudah Tersimpan Offline</span>';
             btnDownload.classList.remove('bg-white/10', 'hover:bg-white/20');
-            btnDownload.classList.add('bg-green-600/50', 'cursor-default');
+            btnDownload.classList.add('bg-green-600/50');
+        } else if (wasDownloaded && storedTotal < currentTotal) {
+            // Downloaded before but there's new content
+            const newCount = currentTotal - storedTotal;
+            btnDownloadText.textContent = 'Update Data Offline';
+            updateBadge.classList.remove('hidden');
+            updateNotification.textContent = `Ada ${newCount} maqolah baru! Klik untuk update.`;
+            updateNotification.classList.remove('hidden');
+            btnDownload.classList.remove('bg-white/10');
+            btnDownload.classList.add('bg-yellow-600/50', 'border-yellow-500/50');
         }
+        // else: Never downloaded - keep default state
 
         btnDownload.addEventListener('click', async function() {
             // Prevent double click
@@ -273,13 +306,20 @@
                 progressBar.style.width = '100%';
                 progressText.textContent = `Selesai! ${completed} halaman tersimpan untuk offline.`;
                 
-                // Save to localStorage
-                localStorage.setItem('kitab_offline_downloaded', Date.now().toString());
+                // Save to localStorage (with total count for update detection)
+                localStorage.setItem('kitab_offline_data', JSON.stringify({
+                    downloadedAt: Date.now(),
+                    total: currentTotal
+                }));
 
                 // Update button
                 this.innerHTML = '<i class="fas fa-check-circle"></i> <span>Tersimpan!</span>';
-                this.classList.remove('opacity-50');
+                this.classList.remove('opacity-50', 'bg-yellow-600/50', 'border-yellow-500/50');
                 this.classList.add('bg-green-600/50');
+                
+                // Hide update notification
+                updateBadge.classList.add('hidden');
+                updateNotification.classList.add('hidden');
 
                 // Hide progress after 3 seconds
                 setTimeout(() => {
