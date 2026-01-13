@@ -199,13 +199,13 @@
         <p>
             Koneksi internet terputus.<br>
             Tapi tenang, kamu tetap bisa baca<br>
-            <span class="highlight">Kitab Hikmah</span>!
+            <span class="highlight">Kitab Nashoihul Ibad</span>!
         </p>
 
         <!-- Kitab Button -->
         <a href="/kitab" class="btn-primary">
             <span class="book-icon"></span>
-            Buka Kitab Hikmah
+            Buka Kitab Nashoihul Ibad
         </a>
 
         <!-- Retry -->
