@@ -20,6 +20,11 @@ use App\Http\Controllers\SitemapController; // Add this import at the top
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
+// PWA Offline Fallback
+Route::get('/offline', function () {
+    return view('vendor.laravelpwa.offline');
+})->name('offline');
+
 Route::get("/", [HomeController::class, "index"])->name("home");
 
 // Kitab Nashaihul Ibad

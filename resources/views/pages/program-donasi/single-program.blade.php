@@ -171,7 +171,6 @@
                     <h3 class="font-bold text-lg mb-4">Daftar Donatur</h3>
                     <div class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
 
-                        {{-- 🚀 UBAH DARI DUMMY KE DATA REAL 🚀 --}}
                         @forelse($donations as $donation)
                             <div class="flex items-center justify-between py-2 border-b last:border-0">
                                 <div class="flex items-center">

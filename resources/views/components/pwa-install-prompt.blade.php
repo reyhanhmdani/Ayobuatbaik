@@ -58,6 +58,17 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
 
+        // Check if user already dismissed prompt recently (24 hours)
+        const dismissedAt = localStorage.getItem('pwa_prompt_dismissed_at');
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+        const wasDismissedRecently = dismissedAt && parseInt(dismissedAt) > oneDayAgo;
+
+        // JANGAN tampilkan jika: Sudah di install ATAU baru ditutup <24 jam
+        if (isStandalone || wasDismissedRecently) {
+            console.log('[PWA Prompt] Tidak ditampilkan (Standalone: ' + isStandalone + ', DismissedRecently: ' + wasDismissedRecently + ')');
+            return; // Exit early, jangan jalankan kode di bawah
+        }
+
         // 1. Listen for Native Android Event (Always, just in case)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -65,13 +76,10 @@
         });
 
         // 2. FORCE SHOW (Blindly)
-        // Pokoknya kalau bukan aplikasi (standalone), munculkan saja setelah 2 detik.
-        // Nanti urusan bisa install atau manual, dipikir belakangan pas tombol diklik.
-        if (!isStandalone) {
-             setTimeout(() => {
-                showPrompt();
-            }, 2000);
-        }
+        // Kalau bukan standalone DAN belum dismiss, munculkan setelah 2 detik.
+        setTimeout(() => {
+            showPrompt();
+        }, 2000);
 
         function showPrompt() {
             installPrompt.classList.remove('-translate-y-[120%]');
@@ -79,6 +87,8 @@
 
         function hidePrompt() {
             installPrompt.classList.add('-translate-y-[120%]');
+            // Simpan waktu dismiss agar tidak muncul lagi selama 24 jam
+            localStorage.setItem('pwa_prompt_dismissed_at', Date.now().toString());
         }
 
         installBtn.addEventListener('click', async () => {

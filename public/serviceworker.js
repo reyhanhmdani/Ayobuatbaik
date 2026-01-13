@@ -1,52 +1,146 @@
-var staticCacheName = "pwa-v" + new Date().getTime();
-var filesToCache = [
-    '/offline',
-    '/css/app.css',
-    '/js/app.js',
-    '/images/icons/icon-72x72.png',
-    '/images/icons/icon-96x96.png',
-    '/images/icons/icon-128x128.png',
-    '/images/icons/icon-144x144.png',
-    '/images/icons/icon-152x152.png',
-    '/images/icons/icon-192x192.png',
-    '/images/icons/icon-384x384.png',
-    '/images/icons/icon-512x512.png',
+/**
+ * Ayobuatbaik PWA Service Worker
+ * - Kitab pages: Cache-First (Available Offline)
+ * - Other pages: Network-First with Offline Fallback
+ */
+
+const CACHE_VERSION = 'ayobuatbaik-v1';
+const OFFLINE_URL = '/offline';
+
+// Files to pre-cache on install
+const PRECACHE_ASSETS = [
+    OFFLINE_URL,
+    '/icon ABBI.png',
+    '/img/icon_ABBI.png',
 ];
 
-// Cache on install
-self.addEventListener("install", event => {
-    this.skipWaiting();
+// ==========================================
+// INSTALL: Pre-cache essential assets
+// ==========================================
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+    
     event.waitUntil(
-        caches.open(staticCacheName)
-            .then(cache => {
-                return cache.addAll(filesToCache);
-            })
-    )
-});
-
-// Clear cache on activate
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(cacheName => (cacheName.startsWith("pwa-")))
-                    .filter(cacheName => (cacheName !== staticCacheName))
-                    .map(cacheName => caches.delete(cacheName))
-            );
+        caches.open(CACHE_VERSION).then((cache) => {
+            console.log('[SW] Pre-caching offline assets');
+            return cache.addAll(PRECACHE_ASSETS);
         })
     );
 });
 
-// Serve from Cache
-self.addEventListener("fetch", event => {
+// ==========================================
+// ACTIVATE: Clean up old caches
+// ==========================================
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_VERSION)
+                    .map((name) => {
+                        console.log('[SW] Deleting old cache:', name);
+                        return caches.delete(name);
+                    })
+            );
+        }).then(() => self.clients.claim())
+    );
+});
+
+// ==========================================
+// FETCH: Smart caching strategies
+// ==========================================
+self.addEventListener('fetch', (event) => {
+    const request = event.request;
+    const url = new URL(request.url);
+
+    // Only handle GET requests
+    if (request.method !== 'GET') return;
+
+    // Skip external requests (CDNs, analytics, etc.)
+    if (url.origin !== location.origin) return;
+
+    // -----------------------------------------
+    // STRATEGY 1: KITAB PAGES (Cache-First)
+    // Jika sudah pernah dibuka, ambil dari cache.
+    // Jika belum ada di cache, ambil dari network lalu simpan.
+    // -----------------------------------------
+    if (url.pathname.startsWith('/kitab')) {
+        event.respondWith(
+            caches.open(CACHE_VERSION).then((cache) => {
+                return cache.match(request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        // Ada di cache, pakai itu
+                        console.log('[SW] Kitab from cache:', url.pathname);
+                        
+                        // Background update (Stale-While-Revalidate)
+                        fetch(request).then((networkResponse) => {
+                            if (networkResponse.ok) {
+                                cache.put(request, networkResponse.clone());
+                            }
+                        }).catch(() => {});
+                        
+                        return cachedResponse;
+                    }
+
+                    // Tidak ada di cache, ambil dari network
+                    return fetch(request).then((networkResponse) => {
+                        if (networkResponse.ok) {
+                            console.log('[SW] Caching Kitab page:', url.pathname);
+                            cache.put(request, networkResponse.clone());
+                        }
+                        return networkResponse;
+                    }).catch(() => {
+                        // Network gagal dan tidak ada cache
+                        return caches.match(OFFLINE_URL);
+                    });
+                });
+            })
+        );
+        return;
+    }
+
+    // -----------------------------------------
+    // STRATEGY 2: STATIC ASSETS (Cache-First)
+    // CSS, JS, Images
+    // -----------------------------------------
+    if (
+        url.pathname.endsWith('.css') ||
+        url.pathname.endsWith('.js') ||
+        url.pathname.endsWith('.png') ||
+        url.pathname.endsWith('.jpg') ||
+        url.pathname.endsWith('.jpeg') ||
+        url.pathname.endsWith('.svg') ||
+        url.pathname.endsWith('.woff2')
+    ) {
+        event.respondWith(
+            caches.match(request).then((cachedResponse) => {
+                return cachedResponse || fetch(request).then((networkResponse) => {
+                    // Cache static assets for future
+                    if (networkResponse.ok) {
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_VERSION).then((cache) => {
+                            cache.put(request, responseClone);
+                        });
+                    }
+                    return networkResponse;
+                });
+            })
+        );
+        return;
+    }
+
+    // -----------------------------------------
+    // STRATEGY 3: OTHER PAGES (Network-First)
+    // Coba network dulu, kalau gagal tampilkan offline page.
+    // -----------------------------------------
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
+        fetch(request)
+            .then((response) => {
+                return response;
             })
             .catch(() => {
-                return caches.match('offline');
+                console.log('[SW] Network failed, showing offline page');
+                return caches.match(OFFLINE_URL);
             })
-    )
+    );
 });
