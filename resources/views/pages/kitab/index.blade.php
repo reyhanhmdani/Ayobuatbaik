@@ -280,15 +280,18 @@
         }
         // else: Never downloaded - keep default state
 
-        btnDownload.addEventListener('click', async function() {
-            // Prevent double click
-            if (this.disabled) return;
-            this.disabled = true;
+        // =============================================
+        // MANUAL DOWNLOAD FUNCTION (Auto-Triggered)
+        // =============================================
+        async function startDownload() {
+            // Prevent double run
+            if (btnDownload.disabled) return;
+            btnDownload.disabled = true;
             
-            // Show progress
+            // Show progress UI
             progressWrapper.classList.remove('hidden');
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengunduh...</span>';
-            this.classList.add('opacity-50', 'cursor-not-allowed');
+            btnDownload.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengunduh...</span>';
+            btnDownload.classList.add('opacity-50', 'cursor-not-allowed');
 
             try {
                 // 1. Fetch all URLs from API
@@ -300,13 +303,13 @@
 
                 progressText.textContent = `Ditemukan ${total} halaman. Memulai download...`;
 
-                // 2. Cache each URL
+                // 2. Cache each URL (One by one)
                 let completed = 0;
                 let failed = 0;
 
                 for (const url of urls) {
                     try {
-                        await fetch(url, { cache: 'reload' }); // Force fresh fetch
+                        await fetch(url, { cache: 'reload' }); // Force fresh fetch via Service Worker
                         completed++;
                     } catch (e) {
                         failed++;
@@ -323,17 +326,17 @@
                 progressBar.style.width = '100%';
                 progressText.textContent = `Selesai! ${completed} halaman tersimpan untuk offline.`;
                 
-                // Save to localStorage (with total count AND latest update for detection)
+                // Save to localStorage
                 localStorage.setItem('kitab_offline_data', JSON.stringify({
                     downloadedAt: Date.now(),
                     total: currentTotal,
                     latestUpdate: currentLatestUpdate
                 }));
 
-                // Update button
-                this.innerHTML = '<i class="fas fa-check-circle"></i> <span>Tersimpan!</span>';
-                this.classList.remove('opacity-50', 'bg-yellow-600/50', 'border-yellow-500/50');
-                this.classList.add('bg-green-600/50');
+                // Update button state
+                btnDownload.innerHTML = '<i class="fas fa-check-circle"></i> <span>Tersimpan!</span>';
+                btnDownload.classList.remove('opacity-50', 'bg-yellow-600/50', 'border-yellow-500/50', 'cursor-not-allowed');
+                btnDownload.classList.add('bg-green-600/50');
                 
                 // Hide update notification
                 updateBadge.classList.add('hidden');
@@ -347,11 +350,23 @@
             } catch (error) {
                 console.error('[Offline Download] Error:', error);
                 progressText.textContent = 'Gagal mengunduh. Coba lagi nanti.';
-                this.disabled = false;
-                this.innerHTML = '<i class="fas fa-cloud-download-alt"></i> <span>Coba Lagi</span>';
-                this.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = '<i class="fas fa-cloud-download-alt"></i> <span>Coba Lagi</span>';
+                btnDownload.classList.remove('opacity-50', 'cursor-not-allowed');
             }
-        });
+        }
+
+        // Attach to button click (Manual override)
+        btnDownload.addEventListener('click', startDownload);
+
+        // AUTO-TRIGGER LOGIC
+        // If not downloaded OR needs update -> Auto click after 2 seconds
+        if (!wasDownloaded || needsUpdate) {
+            setTimeout(() => {
+                console.log('[Auto] Starting download...');
+                startDownload();
+            }, 1000);
+        }
     });
 </script>
 @endsection
