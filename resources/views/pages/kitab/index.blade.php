@@ -309,7 +309,11 @@
 
                 for (const url of urls) {
                     try {
-                        await fetch(url, { cache: 'reload' }); // Force fresh fetch via Service Worker
+                        // Use default cache mode (handled by Service Worker)
+                        // This allows "Smart Caching": 
+                        // - If in cache: Returns fast (and updates in background)
+                        // - If missing: Downloads from network
+                        await fetch(url);
                         completed++;
                     } catch (e) {
                         failed++;
