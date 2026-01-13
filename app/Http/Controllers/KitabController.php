@@ -24,7 +24,13 @@ class KitabController extends Controller
             return KitabMaqolah::count();
         });
 
-        return view("pages.kitab.index", compact("chapters", "maqolahs"));
+        // Get latest update timestamp for offline sync detection
+        $latestUpdate = Cache::remember("kitab_latest_update", 43200, function () {
+            $latest = KitabMaqolah::max('updated_at');
+            return $latest ? strtotime($latest) : 0;
+        });
+
+        return view("pages.kitab.index", compact("chapters", "maqolahs", "latestUpdate"));
     }
 
     /**
@@ -72,9 +78,12 @@ class KitabController extends Controller
     {
         $urls = ['/kitab']; // Index page
 
-        $chapters = KitabChapter::with('maqolahs:id,chapter_id,nomor_maqolah')
+        $chapters = KitabChapter::with('maqolahs:id,chapter_id,nomor_maqolah,updated_at')
             ->orderBy('urutan')
             ->get();
+
+        // Track latest update time
+        $latestUpdate = null;
 
         foreach ($chapters as $chapter) {
             // Chapter URL
@@ -83,12 +92,18 @@ class KitabController extends Controller
             // Maqolah URLs
             foreach ($chapter->maqolahs as $maqolah) {
                 $urls[] = '/kitab/' . $chapter->slug . '/maqolah/' . $maqolah->id;
+                
+                // Track latest updated_at
+                if (!$latestUpdate || $maqolah->updated_at > $latestUpdate) {
+                    $latestUpdate = $maqolah->updated_at;
+                }
             }
         }
 
         return response()->json([
             'total' => count($urls),
-            'urls' => $urls
+            'urls' => $urls,
+            'latest_update' => $latestUpdate ? $latestUpdate->timestamp : null
         ]);
     }
 }

@@ -34,7 +34,7 @@
                 </div>
 
                 {{-- Download for Offline Button --}}
-                <div id="offline-download-wrapper" class="mb-8" data-total-maqolah="{{ $maqolahs }}">
+                <div id="offline-download-wrapper" class="mb-8" data-total-maqolah="{{ $maqolahs }}" data-latest-update="{{ $latestUpdate }}">
                     <button id="btn-download-offline" 
                         class="relative inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-5 py-2.5 rounded-full border border-white/20 transition-all">
                         <i class="fas fa-cloud-download-alt"></i>
@@ -237,26 +237,43 @@
         const progressText = document.getElementById('progress-text');
         const wrapper = document.getElementById('offline-download-wrapper');
 
-        // Get current total from server (passed via data attribute)
+        // Get current data from server (passed via data attributes)
         const currentTotal = parseInt(wrapper.dataset.totalMaqolah) || 0;
+        const currentLatestUpdate = parseInt(wrapper.dataset.latestUpdate) || 0;
         
         // Get stored data from localStorage
         const storedData = JSON.parse(localStorage.getItem('kitab_offline_data') || '{}');
         const storedTotal = storedData.total || 0;
+        const storedLatestUpdate = storedData.latestUpdate || 0;
         const wasDownloaded = !!storedData.downloadedAt;
 
+        // Determine if there's any update (new maqolah OR edited content)
+        const hasNewMaqolah = storedTotal < currentTotal;
+        const hasContentUpdate = storedLatestUpdate < currentLatestUpdate;
+        const needsUpdate = hasNewMaqolah || hasContentUpdate;
+
         // Determine state
-        if (wasDownloaded && storedTotal === currentTotal) {
+        if (wasDownloaded && !needsUpdate) {
             // Already downloaded and up to date
             btnDownload.innerHTML = '<i class="fas fa-check-circle"></i> <span>Sudah Tersimpan Offline</span>';
             btnDownload.classList.remove('bg-white/10', 'hover:bg-white/20');
             btnDownload.classList.add('bg-green-600/50');
-        } else if (wasDownloaded && storedTotal < currentTotal) {
-            // Downloaded before but there's new content
-            const newCount = currentTotal - storedTotal;
+        } else if (wasDownloaded && needsUpdate) {
+            // Downloaded before but there's new/updated content
+            let updateMessage = '';
+            if (hasNewMaqolah && hasContentUpdate) {
+                const newCount = currentTotal - storedTotal;
+                updateMessage = `Ada ${newCount} maqolah baru & konten terupdate!`;
+            } else if (hasNewMaqolah) {
+                const newCount = currentTotal - storedTotal;
+                updateMessage = `Ada ${newCount} maqolah baru!`;
+            } else {
+                updateMessage = 'Ada konten yang diperbarui!';
+            }
+            
             btnDownloadText.textContent = 'Update Data Offline';
             updateBadge.classList.remove('hidden');
-            updateNotification.textContent = `Ada ${newCount} maqolah baru! Klik untuk update.`;
+            updateNotification.textContent = updateMessage + ' Klik untuk update.';
             updateNotification.classList.remove('hidden');
             btnDownload.classList.remove('bg-white/10');
             btnDownload.classList.add('bg-yellow-600/50', 'border-yellow-500/50');
@@ -306,10 +323,11 @@
                 progressBar.style.width = '100%';
                 progressText.textContent = `Selesai! ${completed} halaman tersimpan untuk offline.`;
                 
-                // Save to localStorage (with total count for update detection)
+                // Save to localStorage (with total count AND latest update for detection)
                 localStorage.setItem('kitab_offline_data', JSON.stringify({
                     downloadedAt: Date.now(),
-                    total: currentTotal
+                    total: currentTotal,
+                    latestUpdate: currentLatestUpdate
                 }));
 
                 // Update button
