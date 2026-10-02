@@ -115,5 +115,15 @@ Route::middleware(["auth", "isAdmin"])
         Route::post("settings", [SettingsController::class, "update"])->name("settings.update");
     });
 
-// Route::get('/programs', [ProgramController::class, 'index'])->name('program.index');
-// Route::get('/single-program', [ProgramController::class, 'show'])->name('program.show');
+// Fallback jika symlink storage terhapus setelah git pull
+Route::get('/storage/{path}', function (string $path) {
+    $storageRoot = realpath(storage_path('app/public'));
+    $targetPath = realpath($storageRoot . DIRECTORY_SEPARATOR . $path);
+
+    // Mencegah Directory Traversal Attack
+    if (! $storageRoot || ! $targetPath || ! str_starts_with($targetPath, $storageRoot) || ! is_file($targetPath)) {
+        abort(404);
+    }
+
+    return response()->file($targetPath);
+})->where('path', '.*');
