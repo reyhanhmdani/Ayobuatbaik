@@ -7,6 +7,7 @@ use App\Models\ProgramDonasi;
 use App\Models\User;
 use Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AdminController extends Controller
 {
@@ -146,7 +147,9 @@ class AdminController extends Controller
 
     public function pageEditManualDonasi($id)
     {
-        $donation = Donation::find($id);
+        $donation = Donation::findOrFail($id);
+        Gate::authorize("update", $donation);
+
         $programs = ProgramDonasi::where("status", "active")
             ->orderBy("title", "asc")
             ->get(["id", "title"]);
@@ -155,6 +158,9 @@ class AdminController extends Controller
 
     public function updateManualDonasi(Request $request, $id)
     {
+        $donation = Donation::findOrFail($id);
+        Gate::authorize("update", $donation);
+
         $validated = $request->validate([
             "program_donasi_id" => "required|exists:program_donasi,id",
             "donor_name" => "required|string|max:255",
@@ -165,8 +171,6 @@ class AdminController extends Controller
             "note" => "nullable|string",
             "created_at" => "required|date",
         ]);
-
-        $donation = Donation::findOrFail($id);
 
         // --- LOGIC REKALKULASI DANA PROGRAM ---
 

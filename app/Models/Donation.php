@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -159,5 +160,26 @@ class Donation extends Model
             "pending_reconciliation" => "Menunggu sinkronisasi fee",
             default => "Belum dihitung",
         };
+    }
+
+    /**
+     * Scope a query to apply row-level security:
+     * - Admins can view all donations.
+     * - Authenticated users can only view their own donations.
+     * - Guests/unauthenticated users receive no rows.
+     */
+    public function scopeForUser(Builder $query, ?User $user = null): Builder
+    {
+        $user = $user ?? auth()->user();
+
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->is_admin) {
+            return $query;
+        }
+
+        return $query->where('user_id', $user->id);
     }
 }

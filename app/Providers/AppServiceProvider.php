@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Donation;
+use App\Policies\DonationPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +33,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Prevent lazy loading & catch model bugs early in local development
         Model::shouldBeStrict(! $this->app->isProduction());
+
+        // Row-Level Security: Register model policies
+        Gate::policy(Donation::class, DonationPolicy::class);
 
         // Self-heal storage symlink if deleted or missing after git pull
         if (! file_exists(public_path('storage'))) {
